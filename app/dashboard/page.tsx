@@ -3,44 +3,61 @@ import { curriculum } from "@/content/curriculum";
 export default function DashboardPage() {
   return (
     <main>
-      <h1>Future Ready™ Student Dashboard</h1>
+      <section className="hero">
+        <h1>Future Ready™ Student Dashboard</h1>
+        <p>
+          Discover Purpose. Build Skills. Launch Your Future.
+        </p>
+      </section>
 
-      <p>
-        Discover Purpose. Build Skills. Launch Your Future.
-      </p>
+      <section>
+        <h2>Your Future Ready™ Journey</h2>
 
-      <h2>Your Journey</h2>
+        <div className="journey-grid">
+          {curriculum.map((phase) => (
+            <article className="journey-card" key={phase.phase}>
+              <h3>{phase.phase}</h3>
 
-      {curriculum.map((phase) => (
-        <section key={phase.phase}>
-          <h3>{phase.phase}</h3>
-          <p>{phase.weeks}</p>
-          <p>{phase.description}</p>
+              <p className="weeks">
+                {phase.weeks}
+              </p>
 
-          <ul>
-            {phase.modules.map((module) => (
-              <li key={module}>{module}</li>
-            ))}
-          </ul>
-        </section>
-      ))}
+              <p>
+                {phase.description}
+              </p>
 
-      <h2>Skills You Are Building</h2>
+              <ul>
+                {phase.modules.map((module) => (
+                  <li key={module}>
+                    {module}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
 
-      <ul>
-        <li>Communication</li>
-        <li>Leadership</li>
-        <li>Collaboration</li>
-        <li>Problem Solving</li>
-        <li>Adaptability</li>
-      </ul>
+      <section>
+        <h2>Skills You Are Building</h2>
 
-      <h2>Your Future Portfolio</h2>
+        <div className="skills">
+          <span>Communication</span>
+          <span>Leadership</span>
+          <span>Collaboration</span>
+          <span>Problem Solving</span>
+          <span>Adaptability</span>
+          <span>Professional Presence</span>
+        </div>
+      </section>
 
-      <p>
-        Build your collection of experiences, achievements,
-        projects, and future goals.
-      </p>
+      <section>
+        <h2>Your Future Portfolio</h2>
+        <p>
+          Capture your strengths, experiences, projects,
+          accomplishments, and goals.
+        </p>
+      </section>
     </main>
   );
 }

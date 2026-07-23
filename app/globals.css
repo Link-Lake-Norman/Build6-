@@ -6,6 +6,11 @@
   --future-accent: #F4B942;
   --future-light: #F7FAFC;
   --future-dark: #1F2937;
+  --future-card: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -18,18 +23,68 @@ body {
 main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 48px 24px;
 }
 
-h1 {
-  color: var(--future-primary);
+.hero {
+  background: var(--future-primary);
+  color: white;
+  padding: 48px;
+  border-radius: 24px;
+  margin-bottom: 48px;
+}
+
+.hero h1 {
+  color: white;
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 20px;
 }
 
 h2 {
   color: var(--future-primary);
+  margin-bottom: 24px;
 }
 
 h3 {
   color: var(--future-secondary);
+  font-size: 24px;
 }
 
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.journey-card {
+  background: var(--future-card);
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.weeks {
+  font-weight: bold;
+  color: var(--future-accent);
+}
+
+.journey-card li {
+  margin-bottom: 8px;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.skills span {
+  background: var(--future-secondary);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 999px;
+}
