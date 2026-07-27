@@ -1,11 +1,8 @@
-export default function ImpactROIDashboardPage() {
+"use client";
 
-  const impact = {
-    students: 250,
-    employers: 35,
-    experiences: 120,
-    readinessGrowth: 38,
-  };
+import { impact } from "../../content/impact";
+
+export default function ImpactROIDashboardPage() {
 
   return (
     <main>
@@ -33,7 +30,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.students}
+            {impact.studentsServed}
           </h3>
 
         </article>
@@ -46,7 +43,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.employers}
+            {impact.employerPartners}
           </h3>
 
         </article>
@@ -55,11 +52,24 @@ export default function ImpactROIDashboardPage() {
         <article className="journey-card">
 
           <h2>
-            Experiences Created
+            Opportunities Created
           </h2>
 
           <h3>
-            {impact.experiences}
+            {impact.opportunitiesCreated}
+          </h3>
+
+        </article>
+
+
+        <article className="journey-card">
+
+          <h2>
+            Experiences Completed
+          </h2>
+
+          <h3>
+            {impact.experiencesCompleted}
           </h3>
 
         </article>
