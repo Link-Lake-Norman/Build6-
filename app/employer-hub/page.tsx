@@ -1,45 +1,6 @@
+import Link from "next/link";
+
 export default function EmployerHubPage() {
-  const partners = [
-    {
-      title: "Career Exploration",
-      description:
-        "Introduce students to industries, careers, and opportunities through real-world employer connections.",
-    },
-    {
-      title: "Workplace Experiences",
-      description:
-        "Create meaningful exposure through workplace tours, job shadowing, and project-based learning.",
-    },
-    {
-      title: "Mentorship",
-      description:
-        "Develop the next generation of talent through employee mentorship and career guidance.",
-    },
-    {
-      title: "Internship Readiness",
-      description:
-        "Connect with students who are building professional skills, confidence, and workplace readiness.",
-    },
-  ];
-
-  const engagement = [
-    "Career Talks",
-    "Workplace Tours",
-    "Job Shadowing",
-    "Mentorship",
-    "Internships",
-    "Project-Based Learning",
-  ];
-
-  const readiness = [
-    "Communication",
-    "Problem Solving",
-    "Teamwork",
-    "Leadership",
-    "Professionalism",
-    "Technology Skills",
-  ];
-
   return (
     <main>
 
@@ -54,94 +15,60 @@ export default function EmployerHubPage() {
           employers with future talent.
         </p>
 
+        <Link href="/employer-hub/dashboard">
+          <button>
+            Open Employer Dashboard →
+          </button>
+        </Link>
+
       </section>
 
 
       <section className="journey-grid">
 
-        {partners.map((partner) => (
+        <article className="journey-card">
+          <h2>
+            Career Exploration
+          </h2>
 
-          <article
-            className="journey-card"
-            key={partner.title}
-          >
-
-            <h2>
-              {partner.title}
-            </h2>
-
-            <p>
-              {partner.description}
-            </p>
-
-          </article>
-
-        ))}
-
-      </section>
+          <p>
+            Help students discover industries, careers, and opportunities
+            through real-world employer connections.
+          </p>
+        </article>
 
 
-      <section>
+        <article className="journey-card">
+          <h2>
+            Workplace Experiences
+          </h2>
 
-        <h2>
-          Employer Engagement Opportunities
-        </h2>
-
-        <div className="journey-grid">
-
-          {engagement.map((item) => (
-
-            <article
-              className="journey-card"
-              key={item}
-            >
-
-              <h3>
-                {item}
-              </h3>
-
-              <p>
-                Partner with Future Ready™ students through meaningful
-                workforce connections.
-              </p>
-
-            </article>
-
-          ))}
-
-        </div>
-
-      </section>
+          <p>
+            Provide workplace tours, job shadowing, and project-based learning.
+          </p>
+        </article>
 
 
-      <section>
+        <article className="journey-card">
+          <h2>
+            Mentorship
+          </h2>
 
-        <h2>
-          Student Readiness Indicators
-        </h2>
+          <p>
+            Develop future talent through employee mentorship and guidance.
+          </p>
+        </article>
 
-        <div className="journey-grid">
 
-          {readiness.map((skill) => (
+        <article className="journey-card">
+          <h2>
+            Internship Readiness
+          </h2>
 
-            <article
-              className="journey-card"
-              key={skill}
-            >
-
-              <h3>
-                {skill}
-              </h3>
-
-              <p>
-                Developing through the Future Ready™ learning journey.
-              </p>
-
-            </article>
-
-          ))}
-
-        </div>
+          <p>
+            Connect with students building professional skills and confidence.
+          </p>
+        </article>
 
       </section>
 
@@ -153,16 +80,11 @@ export default function EmployerHubPage() {
         </h2>
 
         <p>
-          Help prepare students today while strengthening your future workforce
-          pipeline.
+          Strengthen your workforce pipeline while helping students discover
+          their future.
         </p>
 
-        <button>
-          Partner With Future Ready™
-        </button>
-
       </section>
-
 
     </main>
   );

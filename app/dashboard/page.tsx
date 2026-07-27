@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { student } from "../../content/student";
 import { curriculum } from "../../content/curriculum";
 import { portfolio } from "../../content/portfolio";
@@ -24,14 +25,12 @@ export default function DashboardPage() {
     (completedLessons.length / lessons.length) * 100
   );
 
-  const currentWeek =
-    completedLessons.length + 1 <= lessons.length
-      ? completedLessons.length + 1
-      : lessons.length;
+  const nextLesson =
+    lessons.find(
+      (lesson) =>
+        !completedLessons.includes(lesson.week)
+    ) || lessons[lessons.length - 1];
 
-  const currentLesson = lessons.find(
-    (lesson) => lesson.week === currentWeek
-  );
 
   return (
     <main>
@@ -51,37 +50,58 @@ export default function DashboardPage() {
         </p>
 
 
-        <div className="journey-grid">
-
-          <article className="journey-card">
-            <h3>Current Week</h3>
-            <p>
-              Week {currentWeek}
-            </p>
-            <p>
-              {currentLesson?.title}
-            </p>
-          </article>
+        <Link
+          href={`/lesson?phase=${encodeURIComponent(
+            nextLesson.phase
+          )}&lesson=${nextLesson.week}`}
+        >
+          <button>
+            Continue My Journey →
+          </button>
+        </Link>
 
 
-          <article className="journey-card">
-            <h3>Journey Progress</h3>
-            <p>
-              {progress}%
-            </p>
-          </article>
+        <div className="journey-card">
+
+          <h3>
+            Journey Progress
+          </h3>
+
+          <p>
+            {completedLessons.length} of {lessons.length} lessons completed
+          </p>
 
 
-          <article className="journey-card">
-            <h3>Lessons Completed</h3>
-            <p>
-              {completedLessons.length}/{lessons.length}
-            </p>
-          </article>
+          <div
+            style={{
+              width: "100%",
+              height: "20px",
+              border: "1px solid black",
+              borderRadius: "10px",
+            }}
+          >
+
+            <div
+              style={{
+                width: `${progress}%`,
+                height: "100%",
+                borderRadius: "10px",
+                background: "black",
+              }}
+            />
+
+          </div>
+
+
+          <p>
+            {progress}% Complete
+          </p>
 
         </div>
 
+
       </section>
+
 
 
       <section>
@@ -90,40 +110,61 @@ export default function DashboardPage() {
           Your Future Ready™ Journey
         </h2>
 
+
         <div className="journey-grid">
 
-          {curriculum.map((phase) => (
+          {curriculum.map((phase) => {
 
-            <article
-              className="journey-card"
-              key={phase.phase}
-            >
+            const phaseLessons =
+              lessons.filter(
+                (lesson) =>
+                  lesson.phase === phase.phase
+              );
 
-              <h3>
-                {phase.phase}
-              </h3>
+            const completed =
+              phaseLessons.filter(
+                (lesson) =>
+                  completedLessons.includes(
+                    lesson.week
+                  )
+              ).length;
 
-              <p>
-                {phase.weeks}
-              </p>
 
-              <p>
-                {phase.description}
-              </p>
+            return (
 
-            </article>
+              <article
+                className="journey-card"
+                key={phase.phase}
+              >
 
-          ))}
+                <h3>
+                  {phase.phase}
+                </h3>
+
+                <p>
+                  {phase.description}
+                </p>
+
+                <p>
+                  {completed}/{phaseLessons.length} completed
+                </p>
+
+              </article>
+
+            );
+
+          })}
 
         </div>
 
       </section>
 
 
+
       <section>
 
         <h2>
-          Your Skills Growth
+          Skills Growth
         </h2>
 
         <div className="journey-grid">
@@ -152,10 +193,11 @@ export default function DashboardPage() {
       </section>
 
 
+
       <section>
 
         <h2>
-          Your Portfolio
+          Portfolio Progress
         </h2>
 
         <div className="journey-grid">
@@ -184,11 +226,13 @@ export default function DashboardPage() {
       </section>
 
 
+
       <section>
 
         <h2>
-          Future Ready™ Milestones
+          Future Ready™ Badges
         </h2>
+
 
         <div className="journey-grid">
 
