@@ -1,60 +1,40 @@
-"use client";
-
-import { opportunities } from "../../../content/opportunities";
+import { opportunities } from "@/content/opportunities";
 
 export default function ManageOpportunitiesPage() {
 
   return (
     <main>
 
-      <section className="hero">
+      <h1>
+        Employer Opportunity Management
+      </h1>
 
-        <h1>
-          Future Ready™ Employer Opportunity Management
-        </h1>
-
-        <p>
-          Manage workplace experiences, internships,
-          and career opportunities.
-        </p>
-
-      </section>
+      <p>
+        Create, manage, and review Future Ready™ career experiences.
+      </p>
 
 
-      <section className="journey-grid">
+      <section>
+
+        <h2>
+          Active Opportunities
+        </h2>
 
         {opportunities.map((opportunity) => (
 
-          <article
-            className="journey-card"
-            key={opportunity.id}
-          >
+          <article key={opportunity.id}>
 
-            <h2>
+            <h3>
               {opportunity.title}
-            </h2>
-
-            <p>
-              Industry: {opportunity.industry}
-            </p>
+            </h3>
 
             <p>
               Type: {opportunity.type}
             </p>
 
             <p>
-              Status: {opportunity.status}
+              Employer: {opportunity.employer}
             </p>
-
-            <h3>
-              Skills Needed:
-            </h3>
-
-            {opportunity.skills.map((skill) => (
-              <p key={skill}>
-                {skill}
-              </p>
-            ))}
 
           </article>
 
