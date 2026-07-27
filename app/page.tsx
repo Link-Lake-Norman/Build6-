@@ -1,4 +1,6 @@
-export default function Home() {
+import Link from "next/link";
+
+export default function HomePage() {
   return (
     <main>
 
@@ -8,148 +10,67 @@ export default function Home() {
           Future Ready™
         </h1>
 
-        <h2>
+        <p>
           Discover Purpose. Build Skills. Launch Your Future.
-        </h2>
-
-        <p>
-          A workforce readiness experience helping students discover who they are,
-          build essential skills, explore careers, connect with opportunities,
-          and launch their future.
         </p>
 
-        <div className="hero-actions">
-
-          <a href="/dashboard">
-            Enter Student Dashboard →
-          </a>
-
-          <a href="/academy">
-            Explore Academy →
-          </a>
-
-        </div>
-
-      </section>
-
-
-      <section>
-
-        <h2>
-          The Future Ready™ Journey
-        </h2>
-
-
-        <div className="journey-grid">
-
-
-          <div className="journey-card">
-
-            <h3>
-              DISCOVER™
-            </h3>
-
-            <p>
-              Understand your strengths, interests, values, identity,
-              and purpose.
-            </p>
-
-          </div>
-
-
-          <div className="journey-card">
-
-            <h3>
-              DEVELOP™
-            </h3>
-
-            <p>
-              Build communication, confidence, leadership,
-              and professional skills.
-            </p>
-
-          </div>
-
-
-          <div className="journey-card">
-
-            <h3>
-              EXPLORE™
-            </h3>
-
-            <p>
-              Discover careers, industries, technology,
-              and the future of work.
-            </p>
-
-          </div>
-
-
-          <div className="journey-card">
-
-            <h3>
-              CONNECT™
-            </h3>
-
-            <p>
-              Build relationships with mentors, employers,
-              and community partners.
-            </p>
-
-          </div>
-
-
-          <div className="journey-card">
-
-            <h3>
-              EXPERIENCE™
-            </h3>
-
-            <p>
-              Apply skills through projects, internships,
-              and real-world experiences.
-            </p>
-
-          </div>
-
-
-          <div className="journey-card">
-
-            <h3>
-              LAUNCH™
-            </h3>
-
-            <p>
-              Create your portfolio and prepare for your next step.
-            </p>
-
-          </div>
-
-
-        </div>
-
-      </section>
-
-
-      <section className="hero">
-
-        <h2>
-          Your Future Starts Here.
-        </h2>
-
         <p>
-          Future Ready™ helps students move from uncertainty to opportunity
-          by connecting identity, skills, experiences, and pathways.
+          A workforce readiness platform connecting students,
+          employers, and communities.
         </p>
 
-
-        <a href="/dashboard">
-          Start Your Journey →
-        </a>
-
-
       </section>
 
+
+      <section className="journey-grid">
+
+        <Link
+          href="/student-portal"
+          className="journey-card"
+        >
+          <h2>
+            Student Journey
+          </h2>
+
+          <p>
+            Explore strengths, skills, opportunities,
+            and career experiences.
+          </p>
+
+        </Link>
+
+
+        <Link
+          href="/employer-hub"
+          className="journey-card"
+        >
+          <h2>
+            Employer Partnership
+          </h2>
+
+          <p>
+            Connect with future talent through experiences,
+            mentorship, and internships.
+          </p>
+
+        </Link>
+
+
+        <Link
+          href="/impact-dashboard"
+          className="journey-card"
+        >
+          <h2>
+            Community Impact
+          </h2>
+
+          <p>
+            Measure workforce readiness and outcomes.
+          </p>
+
+        </Link>
+
+      </section>
 
     </main>
   );
