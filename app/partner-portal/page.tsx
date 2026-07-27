@@ -1,61 +1,57 @@
-export default function PartnerPortalPage() {
+"use client";
 
-  const partners = [
-    {
-      title: "School Partners",
-      description:
-        "Manage student programs, cohorts, schedules, and curriculum delivery.",
-    },
-    {
-      title: "Employer Partners",
-      description:
-        "Connect organizations with students through experiences and career pathways.",
-    },
-    {
-      title: "Community Partners",
-      description:
-        "Coordinate mentors, resources, and workforce development support.",
-    },
-    {
-      title: "Licensed Partners",
-      description:
-        "Access implementation resources, training, and Future Ready™ tools.",
-    },
-  ];
+import { partners } from "@/content/partners";
+
+export default function PartnerPortal() {
 
   return (
     <main>
 
-      <section className="hero">
-
+      <section>
         <h1>
           Future Ready™ Partner Portal
         </h1>
 
         <p>
-          Connect schools, employers, and communities
-          to build future-ready talent pipelines.
+          Manage partnerships, programs, student engagement, and impact.
         </p>
-
       </section>
 
 
-      <section className="journey-grid">
+      <section>
 
         {partners.map((partner) => (
 
-          <article
-            className="journey-card"
-            key={partner.title}
-          >
+          <article key={partner.id}>
 
             <h2>
-              {partner.title}
+              {partner.name}
             </h2>
 
             <p>
-              {partner.description}
+              Partner Type: {partner.type}
             </p>
+
+            <p>
+              Students Supported: {partner.studentsSupported}
+            </p>
+
+            <p>
+              Status: {partner.status}
+            </p>
+
+
+            <h3>
+              Programs
+            </h3>
+
+            {partner.programs.map((program) => (
+
+              <p key={program}>
+                {program}
+              </p>
+
+            ))}
 
           </article>
 
