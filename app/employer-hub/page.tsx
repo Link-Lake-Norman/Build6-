@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { readiness } from "../../content/readiness";
 
 export default function EmployerHubPage() {
   return (
@@ -11,15 +11,9 @@ export default function EmployerHubPage() {
         </h1>
 
         <p>
-          Building the bridge between education and the workforce by connecting
-          employers with future talent.
+          Connecting employers with future talent through skills,
+          career interests, mentorship, and workplace experiences.
         </p>
-
-        <Link href="/employer-hub/dashboard">
-          <button>
-            Open Employer Dashboard →
-          </button>
-        </Link>
 
       </section>
 
@@ -27,48 +21,124 @@ export default function EmployerHubPage() {
       <section className="journey-grid">
 
         <article className="journey-card">
+
           <h2>
-            Career Exploration
+            Student Readiness Score
           </h2>
 
           <p>
-            Help students discover industries, careers, and opportunities
-            through real-world employer connections.
+            {readiness.student.readinessScore}%
           </p>
+
         </article>
 
 
         <article className="journey-card">
+
           <h2>
-            Workplace Experiences
+            Career Interests
           </h2>
 
-          <p>
-            Provide workplace tours, job shadowing, and project-based learning.
-          </p>
+          {readiness.student.careerInterests.map((interest) => (
+
+            <p key={interest}>
+              {interest}
+            </p>
+
+          ))}
+
         </article>
 
 
-        <article className="journey-card">
-          <h2>
-            Mentorship
-          </h2>
-
-          <p>
-            Develop future talent through employee mentorship and guidance.
-          </p>
-        </article>
+      </section>
 
 
-        <article className="journey-card">
-          <h2>
-            Internship Readiness
-          </h2>
+      <section>
 
-          <p>
-            Connect with students building professional skills and confidence.
-          </p>
-        </article>
+        <h2>
+          Future Ready™ Skills Profile
+        </h2>
+
+
+        <div className="journey-grid">
+
+          {readiness.skills.map((skill) => (
+
+            <article
+              className="journey-card"
+              key={skill.name}
+            >
+
+              <h3>
+                {skill.name}
+              </h3>
+
+              <p>
+                {skill.category}
+              </p>
+
+              <p>
+                Readiness Level: {skill.level}%
+              </p>
+
+            </article>
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+      <section>
+
+        <h2>
+          Employer Engagement Opportunities
+        </h2>
+
+
+        <div className="journey-grid">
+
+          <article className="journey-card">
+
+            <h3>
+              Mentorship
+            </h3>
+
+            <p>
+              Share knowledge and career guidance with Future Ready™ students.
+            </p>
+
+          </article>
+
+
+          <article className="journey-card">
+
+            <h3>
+              Workplace Experiences
+            </h3>
+
+            <p>
+              Provide tours, job shadowing, and real-world exposure.
+            </p>
+
+          </article>
+
+
+          <article className="journey-card">
+
+            <h3>
+              Internship Pipeline
+            </h3>
+
+            <p>
+              Connect with students preparing for future opportunities.
+            </p>
+
+          </article>
+
+
+        </div>
 
       </section>
 
@@ -76,15 +146,27 @@ export default function EmployerHubPage() {
       <section className="hero">
 
         <h2>
-          Become a Future Ready™ Employer Partner
+          Employer Partnership Status
         </h2>
 
         <p>
-          Strengthen your workforce pipeline while helping students discover
-          their future.
+          Internship Ready:
+          {" "}
+          {readiness.employerReadiness.internshipReady
+            ? "✅ Yes"
+            : "Not Yet"}
+        </p>
+
+        <p>
+          Mentorship Ready:
+          {" "}
+          {readiness.employerReadiness.mentorshipReady
+            ? "✅ Yes"
+            : "Not Yet"}
         </p>
 
       </section>
+
 
     </main>
   );
