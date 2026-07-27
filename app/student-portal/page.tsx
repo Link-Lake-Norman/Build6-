@@ -1,30 +1,39 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { student } from "../../content/student";
-import { badges } from "../../content/badges";
+import Link from "next/link";
 
 export default function StudentPortalPage() {
-  const [completedLessons, setCompletedLessons] = useState<number[]>([]);
+  const journey = [
+    {
+      title: "Discover™",
+      description:
+        "Explore your strengths, interests, values, and possible career paths.",
+    },
+    {
+      title: "Build™",
+      description:
+        "Develop skills, confidence, and professional readiness.",
+    },
+    {
+      title: "Launch™",
+      description:
+        "Connect your learning to employers, internships, and opportunities.",
+    },
+  ];
 
-  useEffect(() => {
-    const saved =
-      localStorage.getItem("future-ready-progress");
+  const skills = [
+    "Communication",
+    "Leadership",
+    "Problem Solving",
+    "Teamwork",
+    "Professionalism",
+    "Technology",
+  ];
 
-    if (saved) {
-      setCompletedLessons(JSON.parse(saved));
-    }
-  }, []);
-
-  const progress = Math.round(
-    (completedLessons.length / 36) * 100
-  );
-
-  const currentWeek =
-    completedLessons.length + 1 > 36
-      ? 36
-      : completedLessons.length + 1;
-
+  const opportunities = [
+    "Career Exploration",
+    "Mentorship",
+    "Workplace Tours",
+    "Internships",
+  ];
 
   return (
     <main>
@@ -35,85 +44,40 @@ export default function StudentPortalPage() {
           Future Ready™ Student Portal
         </h1>
 
-        <h2>
-          Welcome, {student.name}
-        </h2>
-
         <p>
           Discover Purpose. Build Skills. Launch Your Future.
         </p>
 
-      </section>
-
-
-
-      <section className="journey-grid">
-
-        <article className="journey-card">
-
-          <h3>
-            Current Journey Stage
-          </h3>
-
-          <p>
-            Week {currentWeek} of 36
-          </p>
-
-        </article>
-
-
-        <article className="journey-card">
-
-          <h3>
-            Progress
-          </h3>
-
-          <p>
-            {progress}%
-          </p>
-
-        </article>
-
-
-        <article className="journey-card">
-
-          <h3>
-            Lessons Complete
-          </h3>
-
-          <p>
-            {completedLessons.length}/36
-          </p>
-
-        </article>
+        <Link href="/student-portal/profile">
+          <button>
+            View My Future Ready™ Profile →
+          </button>
+        </Link>
 
       </section>
-
-
 
 
       <section>
 
         <h2>
-          Your Skills Profile
+          Your Future Ready™ Journey
         </h2>
-
 
         <div className="journey-grid">
 
-          {student.skills.map((skill) => (
+          {journey.map((item) => (
 
             <article
               className="journey-card"
-              key={skill.name}
+              key={item.title}
             >
 
               <h3>
-                {skill.name}
+                {item.title}
               </h3>
 
               <p>
-                Developing Future Ready™ skills
+                {item.description}
               </p>
 
             </article>
@@ -125,73 +89,97 @@ export default function StudentPortalPage() {
       </section>
 
 
-
-
       <section>
 
         <h2>
-          Your Achievements
+          Skills You Are Building
         </h2>
-
 
         <div className="journey-grid">
 
-          {badges.map((badge) => {
+          {skills.map((skill) => (
 
-            const unlocked =
-              completedLessons.length >=
-              badge.requiredLessons;
+            <article
+              className="journey-card"
+              key={skill}
+            >
 
+              <h3>
+                {skill}
+              </h3>
 
-            return (
+              <p>
+                Developing through Future Ready™ lessons and experiences.
+              </p>
 
-              <article
-                className="journey-card"
-                key={badge.name}
-              >
+            </article>
 
-                <h3>
-                  🏆 {badge.name}
-                </h3>
-
-                <p>
-                  {badge.description}
-                </p>
-
-                <p>
-                  {unlocked
-                    ? "Unlocked"
-                    : "Locked"}
-                </p>
-
-              </article>
-
-            );
-
-          })}
+          ))}
 
         </div>
 
       </section>
 
 
-
-      <section className="journey-card">
+      <section>
 
         <h2>
-          Next Step
+          Career Opportunities
+        </h2>
+
+        <div className="journey-grid">
+
+          {opportunities.map((opportunity) => (
+
+            <article
+              className="journey-card"
+              key={opportunity}
+            >
+
+              <h3>
+                {opportunity}
+              </h3>
+
+              <p>
+                Connect learning with real-world experiences.
+              </p>
+
+            </article>
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+      <section className="hero">
+
+        <h2>
+          Continue Your Journey
         </h2>
 
         <p>
-          Continue your Future Ready™ journey by completing Week {currentWeek}.
+          Track your growth, build your portfolio, and prepare for your future.
         </p>
 
 
-        <a
-          href={`/lesson?phase=${currentWeek}&lesson=${currentWeek}`}
-        >
-          Continue Learning →
-        </a>
+        <div>
+
+          <Link href="/dashboard">
+            <button>
+              Student Dashboard →
+            </button>
+          </Link>
+
+
+          <Link href="/student-portal/profile">
+            <button>
+              My Readiness Profile →
+            </button>
+          </Link>
+
+        </div>
 
       </section>
 
