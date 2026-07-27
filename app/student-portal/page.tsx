@@ -1,102 +1,138 @@
 import Link from "next/link";
-import { readiness } from "../../content/readiness";
+
+import { readiness } from "@/content/readiness";
+
+import Card from "@/components/ui/Card";
+import StatCard from "@/components/ui/StatCard";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Badge from "@/components/ui/Badge";
+
 
 export default function StudentPortalPage() {
+
   return (
+
     <main>
 
-      <section className="hero">
-        <h1>
-          Future Ready™ Student Portal
-        </h1>
 
-        <p>
-          Discover your strengths, build skills, and connect your future.
-        </p>
+      <SectionHeader
+        title="Future Ready™ Student Portal"
+        description="Discover your strengths, build skills, and connect your future."
+      />
+
+
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "20px",
+          marginTop: "32px",
+        }}
+      >
+
+        <StatCard
+          label="Readiness Score"
+          value={`${readiness.student.readinessScore}%`}
+        />
+
+
+        <StatCard
+          label="Skills Tracked"
+          value={readiness.skills.length}
+        />
+
+
+        <StatCard
+          label="Career Interests"
+          value={readiness.student.careerInterests.length}
+        />
+
+
       </section>
 
 
-      <section className="journey-grid">
+      <section style={{ marginTop: "40px" }}>
 
-        <article className="journey-card">
-          <h2>
-            Readiness Score
-          </h2>
-
-          <h3>
-            {readiness.student.readinessScore}%
-          </h3>
-
-          <p>
-            Your current Future Ready™ progress
-          </p>
-        </article>
+        <SectionHeader
+          title="Career Identity"
+          description="Your interests and strengths help shape your future pathway."
+        />
 
 
-        <article className="journey-card">
-          <h2>
-            Career Interests
-          </h2>
+        <Card>
 
           {readiness.student.careerInterests.map((interest) => (
-            <p key={interest}>
-              {interest}
-            </p>
+
+            <div key={interest}>
+
+              <Badge status={interest} />
+
+            </div>
+
           ))}
-        </article>
 
+        </Card>
 
-        <article className="journey-card">
-          <h2>
-            Skills Building
-          </h2>
-
-          <p>
-            {readiness.skills.length} Future Ready™ skills tracked
-          </p>
-        </article>
 
       </section>
 
 
-      <section>
 
-        <h2>
-          Your Future Ready™ Journey
-        </h2>
+      <section style={{ marginTop: "40px" }}>
+
+        <SectionHeader
+          title="Your Future Ready™ Journey"
+          description="Explore the next steps in your growth pathway."
+        />
 
 
-        <div className="journey-grid">
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+          }}
+        >
 
-          <Link
-            href="/student-portal/profile"
-            className="journey-card"
-          >
-            <h3>
-              My Profile
-            </h3>
 
-            <p>
-              View your strengths, interests, and career identity.
-            </p>
+          <Link href="/student-portal/profile">
+
+            <Card>
+
+              <h3>
+                My Profile
+              </h3>
+
+              <p>
+                View your strengths, interests, and career identity.
+              </p>
+
+            </Card>
+
           </Link>
 
 
-          <Link
-            href="/student-portal/opportunities"
-            className="journey-card"
-          >
-            <h3>
-              Opportunities
-            </h3>
 
-            <p>
-              Explore internships, mentorships, and experiences.
-            </p>
+          <Link href="/student-portal/opportunities">
+
+            <Card>
+
+              <h3>
+                Opportunities
+              </h3>
+
+              <p>
+                Explore internships, mentorships, and experiences.
+              </p>
+
+            </Card>
+
           </Link>
 
 
-          <article className="journey-card">
+
+          <Card>
+
             <h3>
               Skills Growth
             </h3>
@@ -105,12 +141,17 @@ export default function StudentPortalPage() {
               Continue building communication, leadership,
               teamwork, and professional skills.
             </p>
-          </article>
 
-        </div>
+          </Card>
+
+
+        </section>
+
 
       </section>
 
+
     </main>
+
   );
 }
