@@ -21,7 +21,6 @@ export default function StudentExperiencesPage() {
     <main>
 
       <section className="hero">
-
         <h1>
           Future Ready™ Experience Tracker
         </h1>
@@ -30,7 +29,6 @@ export default function StudentExperiencesPage() {
           Track your career experiences, mentorships,
           and workplace learning journey.
         </p>
-
       </section>
 
 
