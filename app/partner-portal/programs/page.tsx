@@ -12,7 +12,7 @@ export default function PartnerProgramsPage() {
       </h1>
 
       <p>
-        Explore career readiness programs, curriculum pathways, and learning experiences.
+        Explore career readiness pathways, learning experiences, and future roles.
       </p>
 
 
@@ -22,17 +22,34 @@ export default function PartnerProgramsPage() {
           Curriculum Pathways
         </h2>
 
-        {curriculum.map((item) => (
+        {curriculum.map((item, index) => (
 
-          <article key={item.id}>
+          <article key={index}>
 
             <h3>
-              {item.title}
+              {item.phase}
             </h3>
+
+            <p>
+              {item.weeks}
+            </p>
 
             <p>
               {item.description}
             </p>
+
+
+            <h4>
+              Modules
+            </h4>
+
+            {item.modules.map((module) => (
+
+              <p key={module}>
+                {module}
+              </p>
+
+            ))}
 
           </article>
 
@@ -51,18 +68,6 @@ export default function PartnerProgramsPage() {
           Total Lessons: {lessons.length}
         </p>
 
-        {lessons.slice(0, 5).map((lesson) => (
-
-          <article key={lesson.id}>
-
-            <h3>
-              {lesson.title}
-            </h3>
-
-          </article>
-
-        ))}
-
       </section>
 
 
@@ -75,18 +80,6 @@ export default function PartnerProgramsPage() {
         <p>
           Available Roles: {roles.length}
         </p>
-
-        {roles.map((role) => (
-
-          <article key={role.id}>
-
-            <h3>
-              {role.title}
-            </h3>
-
-          </article>
-
-        ))}
 
       </section>
 
