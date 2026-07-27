@@ -1,25 +1,8 @@
-export default function ManageOpportunitiesPage() {
+"use client";
 
-  const opportunities = [
-    {
-      title: "Healthcare Shadow Experience",
-      type: "Career Exploration",
-      students: 12,
-      status: "Active",
-    },
-    {
-      title: "Manufacturing Internship",
-      type: "Internship",
-      students: 5,
-      status: "Recruiting",
-    },
-    {
-      title: "Business Mentor Program",
-      type: "Mentorship",
-      students: 8,
-      status: "Active",
-    },
-  ];
+import { opportunities } from "../../../content/opportunities";
+
+export default function ManageOpportunitiesPage() {
 
   return (
     <main>
@@ -31,8 +14,8 @@ export default function ManageOpportunitiesPage() {
         </h1>
 
         <p>
-          Manage workplace experiences, mentorships,
-          and talent pipeline opportunities.
+          Manage workplace experiences, internships,
+          and career opportunities.
         </p>
 
       </section>
@@ -44,7 +27,7 @@ export default function ManageOpportunitiesPage() {
 
           <article
             className="journey-card"
-            key={opportunity.title}
+            key={opportunity.id}
           >
 
             <h2>
@@ -52,16 +35,26 @@ export default function ManageOpportunitiesPage() {
             </h2>
 
             <p>
-              {opportunity.type}
+              Industry: {opportunity.industry}
             </p>
 
             <p>
-              Students Interested: {opportunity.students}
+              Type: {opportunity.type}
             </p>
 
             <p>
               Status: {opportunity.status}
             </p>
+
+            <h3>
+              Skills Needed:
+            </h3>
+
+            {opportunity.skills.map((skill) => (
+              <p key={skill}>
+                {skill}
+              </p>
+            ))}
 
           </article>
 
