@@ -17,7 +17,6 @@ export default function EmployerHubPage() {
       <section>
 
         <article>
-
           <h2>
             Manage Opportunities
           </h2>
@@ -29,12 +28,10 @@ export default function EmployerHubPage() {
           <Link href="/employer-hub/manage-opportunities">
             Manage Opportunities
           </Link>
-
         </article>
 
 
         <article>
-
           <h2>
             Talent Matching
           </h2>
@@ -46,12 +43,10 @@ export default function EmployerHubPage() {
           <Link href="/employer-hub/talent-matching">
             View Talent Matches
           </Link>
-
         </article>
 
 
         <article>
-
           <h2>
             Employer Impact
           </h2>
@@ -63,12 +58,9 @@ export default function EmployerHubPage() {
           <Link href="/impact-roi">
             View Impact
           </Link>
-
         </article>
 
-
       </section>
-
 
     </main>
   );
