@@ -1,28 +1,8 @@
-export default function OpportunityMatchPage() {
+"use client";
 
-  const opportunities = [
-    {
-      title: "Healthcare Career Exploration",
-      type: "Workplace Experience",
-      match: 95,
-      description:
-        "Meet healthcare professionals and explore career pathways.",
-    },
-    {
-      title: "Technology Mentorship",
-      type: "Mentorship",
-      match: 82,
-      description:
-        "Connect with technology professionals and build career insight.",
-    },
-    {
-      title: "Leadership Internship",
-      type: "Internship",
-      match: 88,
-      description:
-        "Gain professional experience through a workplace internship.",
-    },
-  ];
+import { opportunities } from "../../../content/opportunities";
+
+export default function OpportunityMatchPage() {
 
   return (
     <main>
@@ -34,7 +14,8 @@ export default function OpportunityMatchPage() {
         </h1>
 
         <p>
-          Discover experiences connected to your career goals.
+          Explore opportunities aligned with your
+          skills, interests, and future goals.
         </p>
 
       </section>
@@ -46,24 +27,34 @@ export default function OpportunityMatchPage() {
 
           <article
             className="journey-card"
-            key={opportunity.title}
+            key={opportunity.id}
           >
 
             <h2>
               {opportunity.title}
             </h2>
 
+            <p>
+              Employer: {opportunity.employer}
+            </p>
+
+            <p>
+              Industry: {opportunity.industry}
+            </p>
+
+            <p>
+              Type: {opportunity.type}
+            </p>
+
             <h3>
-              Match: {opportunity.match}%
+              Skills:
             </h3>
 
-            <p>
-              {opportunity.type}
-            </p>
-
-            <p>
-              {opportunity.description}
-            </p>
+            {opportunity.skills.map((skill) => (
+              <p key={skill}>
+                {skill}
+              </p>
+            ))}
 
           </article>
 
