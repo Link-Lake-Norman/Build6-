@@ -19,7 +19,6 @@ export default function StudentOpportunitiesPage() {
     <main>
 
       <section className="hero">
-
         <h1>
           Future Ready™ Opportunities
         </h1>
@@ -27,7 +26,6 @@ export default function StudentOpportunitiesPage() {
         <p>
           Explore internships, mentorships, and workplace experiences.
         </p>
-
       </section>
 
 
@@ -52,15 +50,21 @@ export default function StudentOpportunitiesPage() {
               Employer: {opportunity.employer}
             </p>
 
-
             <button
               onClick={() => showInterest(opportunity.id)}
+              style={{
+                padding: "12px 20px",
+                marginTop: "15px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
             >
               {selected.includes(opportunity.id)
                 ? "Interested ✓"
                 : "I'm Interested"}
             </button>
-
 
           </article>
 
@@ -80,7 +84,6 @@ export default function StudentOpportunitiesPage() {
         </p>
 
       </section>
-
 
     </main>
   );
