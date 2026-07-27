@@ -37,7 +37,6 @@ main {
 .hero h1 {
   color: white;
   font-size: 44px;
-  margin-bottom: 12px;
 }
 
 .hero p {
@@ -67,24 +66,25 @@ h3 {
   border: 1px solid #e5e7eb;
 }
 
-.weeks {
-  font-weight: bold;
-  color: var(--future-accent);
+button.journey-card {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  appearance: none;
 }
 
-.journey-card li {
-  margin-bottom: 8px;
+button.journey-card:hover {
+  transform: translateY(-3px);
 }
 
-.skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+button {
+  cursor: pointer;
 }
 
-.skills span {
-  background: var(--future-secondary);
-  color: white;
-  padding: 12px 18px;
-  border-radius: 999px;
+textarea {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
 }

@@ -1,24 +1,112 @@
-import { curriculum } from "@/content/curriculum";
+"use client";
+
+import { useEffect, useState } from "react";
+import { student } from "../../content/student";
+import { curriculum } from "../../content/curriculum";
+import { portfolio } from "../../content/portfolio";
+import { badges } from "../../content/badges";
 
 export default function DashboardPage() {
+  const [completedLessons, setCompletedLessons] = useState<number[]>([]);
+
+  useEffect(() => {
+    const saved =
+      localStorage.getItem("future-ready-progress");
+
+    if (saved) {
+      setCompletedLessons(JSON.parse(saved));
+    }
+  }, []);
+
+  const progress = Math.round(
+    (completedLessons.length / 36) * 100
+  );
+
+  const currentWeek =
+    completedLessons.length + 1 <= 36
+      ? completedLessons.length + 1
+      : 36;
+
+
   return (
     <main>
+
       <section className="hero">
-        <h1>Future Ready™ Student Dashboard</h1>
+
+        <h1>
+          Welcome to Future Ready™
+        </h1>
+
+        <h2>
+          {student.name}'s Student Dashboard
+        </h2>
+
         <p>
           Discover Purpose. Build Skills. Launch Your Future.
         </p>
-      </section>
 
-      <section>
-        <h2>Your Future Ready™ Journey</h2>
 
         <div className="journey-grid">
-          {curriculum.map((phase) => (
-            <article className="journey-card" key={phase.phase}>
-              <h3>{phase.phase}</h3>
 
-              <p className="weeks">
+          <article className="journey-card">
+            <h3>
+              Current Week
+            </h3>
+
+            <p>
+              Week {currentWeek}
+            </p>
+          </article>
+
+
+          <article className="journey-card">
+            <h3>
+              Journey Progress
+            </h3>
+
+            <p>
+              {progress}%
+            </p>
+          </article>
+
+
+          <article className="journey-card">
+            <h3>
+              Lessons Completed
+            </h3>
+
+            <p>
+              {completedLessons.length}/36
+            </p>
+          </article>
+
+        </div>
+
+      </section>
+
+
+
+      <section>
+
+        <h2>
+          Your Future Ready™ Journey
+        </h2>
+
+
+        <div className="journey-grid">
+
+          {curriculum.map((phase) => (
+
+            <article
+              className="journey-card"
+              key={phase.phase}
+            >
+
+              <h3>
+                {phase.phase}
+              </h3>
+
+              <p>
                 {phase.weeks}
               </p>
 
@@ -26,38 +114,135 @@ export default function DashboardPage() {
                 {phase.description}
               </p>
 
-              <ul>
-                {phase.modules.map((module) => (
-                  <li key={module}>
-                    {module}
-                  </li>
-                ))}
-              </ul>
             </article>
+
           ))}
+
         </div>
+
       </section>
+
+
+
 
       <section>
-        <h2>Skills You Are Building</h2>
 
-        <div className="skills">
-          <span>Communication</span>
-          <span>Leadership</span>
-          <span>Collaboration</span>
-          <span>Problem Solving</span>
-          <span>Adaptability</span>
-          <span>Professional Presence</span>
+        <h2>
+          Your Skills Growth
+        </h2>
+
+
+        <div className="journey-grid">
+
+          {student.skills.map((skill) => (
+
+            <article
+              className="journey-card"
+              key={skill.name}
+            >
+
+              <h3>
+                {skill.name}
+              </h3>
+
+              <p>
+                Progress: {skill.progress}%
+              </p>
+
+            </article>
+
+          ))}
+
         </div>
+
       </section>
+
+
+
 
       <section>
-        <h2>Your Future Portfolio</h2>
-        <p>
-          Capture your strengths, experiences, projects,
-          accomplishments, and goals.
-        </p>
+
+        <h2>
+          Your Portfolio
+        </h2>
+
+
+        <div className="journey-grid">
+
+          {portfolio.sections.map((section) => (
+
+            <article
+              className="journey-card"
+              key={section.title}
+            >
+
+              <h3>
+                {section.title}
+              </h3>
+
+              <p>
+                {section.description}
+              </p>
+
+            </article>
+
+          ))}
+
+        </div>
+
       </section>
+
+
+
+
+      <section>
+
+        <h2>
+          Future Ready™ Milestones
+        </h2>
+
+
+        <div className="journey-grid">
+
+          {badges.map((badge) => {
+
+            const unlocked =
+              completedLessons.length >=
+              badge.requiredLessons;
+
+
+            return (
+
+              <article
+                className="journey-card"
+                key={badge.name}
+              >
+
+                <h3>
+                  🏆 {badge.name}
+                </h3>
+
+                <p>
+                  {badge.description}
+                </p>
+
+                <p>
+                  {unlocked
+                    ? "✅ Unlocked"
+                    : "🔒 Locked"}
+                </p>
+
+              </article>
+
+            );
+
+          })}
+
+        </div>
+
+      </section>
+
+
     </main>
   );
 }

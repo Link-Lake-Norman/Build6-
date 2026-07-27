@@ -13,6 +13,7 @@ export const curriculum = [
       "My Future Vision",
     ],
   },
+
   {
     phase: "DEVELOP™",
     weeks: "Weeks 7-12",
@@ -27,6 +28,7 @@ export const curriculum = [
       "Future Ready Skills",
     ],
   },
+
   {
     phase: "EXPLORE™",
     weeks: "Weeks 13-18",
@@ -41,6 +43,7 @@ export const curriculum = [
       "Opportunity Mapping",
     ],
   },
+
   {
     phase: "CONNECT™",
     weeks: "Weeks 19-24",
@@ -55,6 +58,7 @@ export const curriculum = [
       "Building Relationships",
     ],
   },
+
   {
     phase: "EXPERIENCE™",
     weeks: "Weeks 25-30",
@@ -69,6 +73,7 @@ export const curriculum = [
       "Career Evidence",
     ],
   },
+
   {
     phase: "LAUNCH™",
     weeks: "Weeks 31-36",

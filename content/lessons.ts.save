@@ -1,0 +1,80 @@
+export const lessons = [
+  {
+    phase: "DISCOVER™",
+    week: 1,
+    title: "Discover Who I Am",
+    objective:
+      "Students explore their identity, strengths, interests, values, personality, and what makes them unique.",
+    activity:
+      "Complete a personal discovery activity identifying strengths, interests, experiences, and personal qualities that shape who you are.",
+    reflection:
+      "What are three things that make you uniquely you?",
+    lessonContent:
+      "Every person has a unique combination of experiences, strengths, interests, and values. Understanding who you are is the first step toward building a future that fits.",
+  },
+  {
+    phase: "DISCOVER™",
+    week: 2,
+    title: "Strengths, Interests & Values",
+    objective:
+      "Students identify personal strengths and understand how values influence decisions.",
+    activity:
+      "Complete a strengths and values reflection exercise.",
+    reflection:
+      "Which strengths do you want to continue developing and why?",
+    lessonContent:
+      "Your strengths are the abilities and qualities that help you succeed. Your interests show what energizes you. Your values guide the choices you make.",
+  },
+  {
+    phase: "DISCOVER™",
+    week: 3,
+    title: "Understanding My Story",
+    objective:
+      "Students reflect on their experiences and begin building their personal story.",
+    activity:
+      "Create a personal timeline highlighting important moments, challenges, accomplishments, and lessons learned.",
+    reflection:
+      "How have your experiences shaped who you are today?",
+    lessonContent:
+      "Your story matters. Every experience helps shape your skills, perspective, and future possibilities.",
+  },
+  {
+    phase: "DISCOVER™",
+    week: 4,
+    title: "Communication That Connects",
+    objective:
+      "Students develop communication skills needed for school, careers, and relationships.",
+    activity:
+      "Practice active listening, professional introductions, and sharing your ideas clearly.",
+    reflection:
+      "How can stronger communication help you reach your goals?",
+    lessonContent:
+      "Communication is one of the most important skills in every career. Great communicators build trust and create opportunities.",
+  },
+  {
+    phase: "DISCOVER™",
+    week: 5,
+    title: "Building Confidence",
+    objective:
+      "Students learn strategies for developing confidence and overcoming challenges.",
+    activity:
+      "Identify moments of growth and create a personal confidence plan.",
+    reflection:
+      "What is one area where you want to become more confident?",
+    lessonContent:
+      "Confidence grows through action, practice, learning, and believing that your abilities can improve.",
+  },
+  {
+    phase: "DISCOVER™",
+    week: 6,
+    title: "My Future Vision",
+    objective:
+      "Students begin creating a vision for their future goals.",
+    activity:
+      "Create a future vision statement describing goals, interests, and possibilities.",
+    reflection:
+      "What future do you want to create for yourself?",
+    lessonContent:
+      "A clear vision helps you make decisions and identify the steps needed to move forward.",
+  },
+];
