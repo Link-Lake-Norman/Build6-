@@ -3,70 +3,48 @@ import { employers } from "@/content/employers";
 import { matches } from "@/content/matches";
 
 export default function EmployerImpactPage() {
-
   return (
     <main>
 
       <h1>
-        Employer Impact Dashboard
+        Future Ready™ Employer Impact
       </h1>
 
       <p>
-        Measure the workforce development impact of your Future Ready™ partnership.
+        Measure employer engagement and workforce development outcomes.
       </p>
 
-
       <section>
 
         <h2>
-          Partnership Overview
+          Platform Impact
         </h2>
 
-        <p>
-          Employer Partners: {employers.length}
-        </p>
-
-        <p>
-          Active Talent Matches: {matches.length}
-        </p>
+        <p>Students Served: {impact.studentsServed}</p>
+        <p>Employer Partners: {impact.employerPartners}</p>
+        <p>Opportunities Created: {impact.opportunitiesCreated}</p>
+        <p>Experiences Completed: {impact.experiencesCompleted}</p>
+        <p>Readiness Growth: {impact.readinessGrowth}%</p>
 
       </section>
 
-
       <section>
 
         <h2>
-          Ecosystem Impact
+          Employer Network
         </h2>
 
-        <p>
-          Students Served: {impact.studentsServed}
-        </p>
-
-        <p>
-          Opportunities Created: {impact.opportunitiesCreated}
-        </p>
-
-        <p>
-          Experiences Completed: {impact.experiencesCompleted}
-        </p>
-
-        <p>
-          Readiness Growth: {impact.readinessGrowth}%
-        </p>
+        <p>Total Employer Partners: {employers.length}</p>
 
       </section>
 
-
       <section>
 
         <h2>
-          Employer Value
+          Talent Matches
         </h2>
 
-        <p>
-          Future Ready™ helps employers build talent pipelines, support career exploration, and create measurable community workforce impact.
-        </p>
+        <p>Successful Matches: {matches.length}</p>
 
       </section>
 
