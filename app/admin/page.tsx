@@ -1,3 +1,8 @@
+import SectionHeader from "@/components/ui/SectionHeader";
+import StatCard from "@/components/ui/StatCard";
+import Badge from "@/components/ui/Badge";
+
+
 export default function AdminPage() {
 
   const metrics = [
@@ -23,50 +28,73 @@ export default function AdminPage() {
     },
   ];
 
+
   return (
+
     <main>
 
-      <section className="hero">
-
-        <h1>
-          Future Ready™ Admin Hub
-        </h1>
-
-        <p>
-          Manage students, employers, experiences,
-          and workforce readiness data.
-        </p>
-
-      </section>
+      <SectionHeader
+        title="Future Ready™ Admin Hub"
+        description="Manage students, employers, experiences, and workforce readiness data."
+      />
 
 
-      <section className="journey-grid">
+      <div
+        style={{
+          marginTop: "16px",
+        }}
+      >
+
+        <Badge status="Governance Dashboard" />
+
+      </div>
+
+
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "24px",
+          marginTop: "32px",
+        }}
+      >
 
         {metrics.map((metric) => (
 
-          <article
-            className="journey-card"
+          <StatCard
             key={metric.title}
-          >
-
-            <h2>
-              {metric.title}
-            </h2>
-
-            <h3>
-              {metric.value}
-            </h3>
-
-            <p>
-              {metric.description}
-            </p>
-
-          </article>
+            label={metric.title}
+            value={metric.value}
+          />
 
         ))}
 
       </section>
 
+
+      <section
+        style={{
+          marginTop: "40px",
+        }}
+      >
+
+        <h2>
+          Platform Governance
+        </h2>
+
+
+        <p>
+          Future Ready™ administrators oversee users,
+          organizations, programs, permissions, and
+          platform operations.
+        </p>
+
+
+      </section>
+
+
     </main>
+
   );
+
 }
