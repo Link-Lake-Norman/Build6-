@@ -28,6 +28,7 @@ export default function HomePage() {
           href="/student-portal"
           className="journey-card"
         >
+
           <h2>
             Student Journey
           </h2>
@@ -44,6 +45,7 @@ export default function HomePage() {
           href="/employer-hub"
           className="journey-card"
         >
+
           <h2>
             Employer Partnership
           </h2>
@@ -60,6 +62,7 @@ export default function HomePage() {
           href="/impact-dashboard"
           className="journey-card"
         >
+
           <h2>
             Community Impact
           </h2>
