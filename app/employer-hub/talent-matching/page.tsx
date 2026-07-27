@@ -1,62 +1,67 @@
-"use client";
-
-import { matches } from "../../../content/matches";
+import { matches } from "@/content/matches";
 
 export default function TalentMatchingPage() {
 
   return (
     <main>
 
-      <section className="hero">
+      <h1>
+        Employer Talent Matching
+      </h1>
 
-        <h1>
-          Future Ready™ Talent Matching
-        </h1>
-
-        <p>
-          Connect with students whose skills,
-          interests, and goals align with your needs.
-        </p>
-
-      </section>
+      <p>
+        Connect Future Ready™ students with aligned career opportunities.
+      </p>
 
 
-      <section className="journey-grid">
+      <section>
+
+        <h2>
+          Recommended Matches
+        </h2>
+
 
         {matches.map((match) => (
 
-          <article
-            className="journey-card"
-            key={match.id}
-          >
+          <article key={match.id}>
 
-            <h2>
-              {match.student}
-            </h2>
+            <h3>
+              {match.studentName}
+            </h3>
 
             <p>
               Opportunity: {match.opportunity}
             </p>
 
-            <h3>
+            <p>
               Match Score: {match.matchScore}%
-            </h3>
+            </p>
 
-            <h3>
-              Alignment:
-            </h3>
+
+            <h4>
+              Alignment Reasons
+            </h4>
 
             {match.reasons.map((reason) => (
+
               <p key={reason}>
                 {reason}
               </p>
+
             ))}
+
+
+            <p>
+              Status: {match.status}
+            </p>
 
           </article>
 
         ))}
 
+
       </section>
+
 
     </main>
   );
