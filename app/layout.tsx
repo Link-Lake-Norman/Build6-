@@ -25,21 +25,17 @@ export default function RootLayout({
               Future Ready™
             </Link>
 
-
             <Link href="/student-portal">
               Student Portal
             </Link>
-
 
             <Link href="/employer-hub">
               Employer Hub
             </Link>
 
-
             <Link href="/impact-dashboard">
               Impact
             </Link>
-
 
             <Link href="/admin">
               Admin
@@ -48,7 +44,6 @@ export default function RootLayout({
           </nav>
 
         </header>
-
 
         {children}
 
