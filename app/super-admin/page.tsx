@@ -27,42 +27,54 @@ export default function SuperAdminPage() {
       <section className="journey-grid">
 
         <article className="journey-card">
+
           <h2>
             School Partners
           </h2>
+
           <h3>
             {metrics.schools}
           </h3>
+
         </article>
 
 
         <article className="journey-card">
+
           <h2>
             Employer Partners
           </h2>
+
           <h3>
             {metrics.employers}
           </h3>
+
         </article>
 
 
         <article className="journey-card">
+
           <h2>
             Licensed Partners
           </h2>
+
           <h3>
             {metrics.partners}
           </h3>
+
         </article>
 
 
         <article className="journey-card">
+
           <h2>
             Students
           </h2>
+
           <h3>
             {metrics.students}
           </h3>
+
         </article>
 
       </section>
