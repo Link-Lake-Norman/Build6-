@@ -88,3 +88,49 @@ textarea {
   margin-top: 20px;
   padding: 12px;
 }
+
+.navigation {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.navigation a {
+  text-decoration: none;
+}
+
+.navigation section,
+.navigation div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navigation h3 {
+  margin: 0;
+}
+
+
+.navigation {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.navigation a {
+  text-decoration: none;
+}
+
+.navigation section,
+.navigation div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navigation h3 {
+  margin: 0;
+}
+

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
+import Navigation from "../components/navigation";
 
 export const metadata: Metadata = {
   title: "Future Ready™",
@@ -17,33 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
 
-        <header>
-
-          <nav>
-
-            <Link href="/">
-              Future Ready™
-            </Link>
-
-            <Link href="/student-portal">
-              Student Portal
-            </Link>
-
-            <Link href="/employer-hub">
-              Employer Hub
-            </Link>
-
-            <Link href="/impact-dashboard">
-              Impact
-            </Link>
-
-            <Link href="/admin">
-              Admin
-            </Link>
-
-          </nav>
-
-        </header>
+        <Navigation />
 
         {children}
 
