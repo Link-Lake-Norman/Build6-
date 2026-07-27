@@ -1,64 +1,136 @@
-"use client";
+import Link from "next/link";
 
-import { partners } from "@/content/partners";
+import Card from "@/components/ui/Card";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Badge from "@/components/ui/Badge";
 
-export default function PartnerPortal() {
+
+export default function PartnerPortalPage() {
 
   return (
+
     <main>
 
-      <section>
-        <h1>
-          Future Ready™ Partner Portal
-        </h1>
-
-        <p>
-          Manage partnerships, programs, student engagement, and impact.
-        </p>
-      </section>
+      <SectionHeader
+        title="Future Ready™ Partner Portal"
+        description="Connect programs, students, employers, and community impact."
+      />
 
 
-      <section>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "24px",
+          marginTop: "32px",
+        }}
+      >
 
-        {partners.map((partner) => (
 
-          <article key={partner.id}>
+        <Link href="/partner-portal/home">
+
+          <Card>
+
+            <Badge status="Partner" />
 
             <h2>
-              {partner.name}
+              Partner Home
             </h2>
 
             <p>
-              Partner Type: {partner.type}
+              Access your partner dashboard and platform resources.
             </p>
 
-            <p>
-              Students Supported: {partner.studentsSupported}
-            </p>
+          </Card>
 
-            <p>
-              Status: {partner.status}
-            </p>
+        </Link>
 
 
-            <h3>
+
+        <Link href="/partner-portal/programs">
+
+          <Card>
+
+            <Badge status="Programs" />
+
+            <h2>
               Programs
-            </h3>
+            </h2>
 
-            {partner.programs.map((program) => (
+            <p>
+              Manage curriculum pathways and learning experiences.
+            </p>
 
-              <p key={program}>
-                {program}
-              </p>
+          </Card>
 
-            ))}
+        </Link>
 
-          </article>
 
-        ))}
+
+        <Link href="/partner-portal/students">
+
+          <Card>
+
+            <Badge status="Students" />
+
+            <h2>
+              Students
+            </h2>
+
+            <p>
+              Review student readiness and engagement.
+            </p>
+
+          </Card>
+
+        </Link>
+
+
+
+        <Link href="/partner-portal/employers">
+
+          <Card>
+
+            <Badge status="Employers" />
+
+            <h2>
+              Employers
+            </h2>
+
+            <p>
+              Explore employer connections and opportunities.
+            </p>
+
+          </Card>
+
+        </Link>
+
+
+
+        <Link href="/partner-portal/analytics">
+
+          <Card>
+
+            <Badge status="Analytics" />
+
+            <h2>
+              Impact Analytics
+            </h2>
+
+            <p>
+              Measure Future Ready™ outcomes.
+            </p>
+
+          </Card>
+
+        </Link>
+
 
       </section>
 
+
     </main>
+
   );
+
 }
