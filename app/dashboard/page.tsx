@@ -1,20 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { student } from "../../content/student";
 import { curriculum } from "../../content/curriculum";
 import { portfolio } from "../../content/portfolio";
 import { badges } from "../../content/badges";
-import { lessons } from "../../content/lessons";
 
 export default function DashboardPage() {
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem(
-      "future-ready-progress"
-    );
+    const saved =
+      localStorage.getItem("future-ready-progress");
 
     if (saved) {
       setCompletedLessons(JSON.parse(saved));
@@ -22,15 +18,13 @@ export default function DashboardPage() {
   }, []);
 
   const progress = Math.round(
-    (completedLessons.length / lessons.length) * 100
+    (completedLessons.length / 36) * 100
   );
 
-  const nextLesson =
-    lessons.find(
-      (lesson) =>
-        !completedLessons.includes(lesson.week)
-    ) || lessons[lessons.length - 1];
-
+  const currentWeek =
+    completedLessons.length + 1 <= 36
+      ? completedLessons.length + 1
+      : 36;
 
   return (
     <main>
@@ -50,58 +44,54 @@ export default function DashboardPage() {
         </p>
 
 
-        <Link
-          href={`/lesson?phase=${encodeURIComponent(
-            nextLesson.phase
-          )}&lesson=${nextLesson.week}`}
-        >
-          <button>
-            Continue My Journey →
-          </button>
-        </Link>
+        <div style={{ marginTop: "20px" }}>
+
+          <Link href="/student-portal/profile">
+            <button>
+              View My Future Ready™ Profile →
+            </button>
+          </Link>
+
+        </div>
+
+      </section>
 
 
-        <div className="journey-card">
+      <section className="journey-grid">
 
+        <article className="journey-card">
+          <h3>
+            Current Week
+          </h3>
+
+          <p>
+            Week {currentWeek}
+          </p>
+        </article>
+
+
+        <article className="journey-card">
           <h3>
             Journey Progress
           </h3>
 
           <p>
-            {completedLessons.length} of {lessons.length} lessons completed
+            {progress}%
           </p>
+        </article>
 
 
-          <div
-            style={{
-              width: "100%",
-              height: "20px",
-              border: "1px solid black",
-              borderRadius: "10px",
-            }}
-          >
-
-            <div
-              style={{
-                width: `${progress}%`,
-                height: "100%",
-                borderRadius: "10px",
-                background: "black",
-              }}
-            />
-
-          </div>
-
+        <article className="journey-card">
+          <h3>
+            Lessons Completed
+          </h3>
 
           <p>
-            {progress}% Complete
+            {completedLessons.length}/36
           </p>
-
-        </div>
-
+        </article>
 
       </section>
-
 
 
       <section>
@@ -110,55 +100,34 @@ export default function DashboardPage() {
           Your Future Ready™ Journey
         </h2>
 
-
         <div className="journey-grid">
 
-          {curriculum.map((phase) => {
+          {curriculum.map((phase) => (
 
-            const phaseLessons =
-              lessons.filter(
-                (lesson) =>
-                  lesson.phase === phase.phase
-              );
+            <article
+              className="journey-card"
+              key={phase.phase}
+            >
 
-            const completed =
-              phaseLessons.filter(
-                (lesson) =>
-                  completedLessons.includes(
-                    lesson.week
-                  )
-              ).length;
+              <h3>
+                {phase.phase}
+              </h3>
 
+              <p>
+                {phase.weeks}
+              </p>
 
-            return (
+              <p>
+                {phase.description}
+              </p>
 
-              <article
-                className="journey-card"
-                key={phase.phase}
-              >
+            </article>
 
-                <h3>
-                  {phase.phase}
-                </h3>
-
-                <p>
-                  {phase.description}
-                </p>
-
-                <p>
-                  {completed}/{phaseLessons.length} completed
-                </p>
-
-              </article>
-
-            );
-
-          })}
+          ))}
 
         </div>
 
       </section>
-
 
 
       <section>
@@ -193,11 +162,10 @@ export default function DashboardPage() {
       </section>
 
 
-
       <section>
 
         <h2>
-          Portfolio Progress
+          Portfolio Development
         </h2>
 
         <div className="journey-grid">
@@ -226,42 +194,68 @@ export default function DashboardPage() {
       </section>
 
 
-
       <section>
 
         <h2>
-          Future Ready™ Badges
+          Future Ready™ Milestones
         </h2>
-
 
         <div className="journey-grid">
 
-          {badges.map((badge) => (
+          {badges.map((badge) => {
 
-            <article
-              className="journey-card"
-              key={badge.name}
-            >
+            const unlocked =
+              completedLessons.length >= badge.requiredLessons;
 
-              <h3>
-                🏆 {badge.name}
-              </h3>
+            return (
 
-              <p>
-                {badge.description}
-              </p>
+              <article
+                className="journey-card"
+                key={badge.name}
+              >
 
-              <p>
-                {completedLessons.length >= badge.requiredLessons
-                  ? "✅ Unlocked"
-                  : "🔒 Locked"}
-              </p>
+                <h3>
+                  🏆 {badge.name}
+                </h3>
 
-            </article>
+                <p>
+                  {badge.description}
+                </p>
 
-          ))}
+                <p>
+                  {unlocked
+                    ? "✅ Unlocked"
+                    : "🔒 Locked"}
+                </p>
+
+              </article>
+
+            );
+
+          })}
 
         </div>
+
+      </section>
+
+
+      <section className="hero">
+
+        <h2>
+          Employer Connection Pathway
+        </h2>
+
+        <p>
+          Your Future Ready™ profile helps connect your skills,
+          interests, and growth with future opportunities.
+        </p>
+
+
+        <Link href="/employer-hub">
+          <button>
+            Explore Employer Opportunities →
+          </button>
+        </Link>
 
       </section>
 
