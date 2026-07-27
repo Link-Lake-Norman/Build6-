@@ -1,6 +1,20 @@
-import { readiness } from "../../../content/readiness";
-
 export default function StudentProfilePage() {
+
+  const profile = {
+    name: "Future Ready Student",
+    interests: [
+      "Healthcare",
+      "Technology",
+      "Leadership",
+    ],
+    readiness: 84,
+    skills: [
+      "Communication",
+      "Teamwork",
+      "Problem Solving",
+    ],
+  };
+
   return (
     <main>
 
@@ -11,8 +25,8 @@ export default function StudentProfilePage() {
         </h1>
 
         <p>
-          Your personalized readiness profile showing your skills,
-          interests, growth, and future opportunities.
+          Your strengths, skills, interests,
+          and future pathway.
         </p>
 
       </section>
@@ -23,12 +37,16 @@ export default function StudentProfilePage() {
         <article className="journey-card">
 
           <h2>
-            Readiness Score
+            Student
           </h2>
 
           <p>
-            {readiness.student.readinessScore}%
+            {profile.name}
           </p>
+
+          <h3>
+            Readiness Score: {profile.readiness}%
+          </h3>
 
         </article>
 
@@ -39,151 +57,30 @@ export default function StudentProfilePage() {
             Career Interests
           </h2>
 
-          {readiness.student.careerInterests.map((interest) => (
-
+          {profile.interests.map((interest) => (
             <p key={interest}>
               {interest}
             </p>
-
           ))}
 
         </article>
 
 
-      </section>
+        <article className="journey-card">
 
+          <h2>
+            Skills
+          </h2>
 
-      <section>
-
-        <h2>
-          Skills Development
-        </h2>
-
-
-        <div className="journey-grid">
-
-          {readiness.skills.map((skill) => (
-
-            <article
-              className="journey-card"
-              key={skill.name}
-            >
-
-              <h3>
-                {skill.name}
-              </h3>
-
-              <p>
-                Category: {skill.category}
-              </p>
-
-              <p>
-                Progress: {skill.level}%
-              </p>
-
-            </article>
-
+          {profile.skills.map((skill) => (
+            <p key={skill}>
+              {skill}
+            </p>
           ))}
 
-        </div>
+        </article>
 
       </section>
-
-
-      <section>
-
-        <h2>
-          Portfolio Progress
-        </h2>
-
-
-        <div className="journey-grid">
-
-          {readiness.portfolio.map((item) => (
-
-            <article
-              className="journey-card"
-              key={item.title}
-            >
-
-              <h3>
-                {item.title}
-              </h3>
-
-              <p>
-                Status: {item.status}
-              </p>
-
-            </article>
-
-          ))}
-
-        </div>
-
-      </section>
-
-
-      <section>
-
-        <h2>
-          Employer Readiness
-        </h2>
-
-
-        <div className="journey-grid">
-
-          <article className="journey-card">
-
-            <h3>
-              Internship Ready
-            </h3>
-
-            <p>
-              {readiness.employerReadiness.internshipReady
-                ? "✅ Ready"
-                : "Not Yet"}
-
-            </p>
-
-          </article>
-
-
-          <article className="journey-card">
-
-            <h3>
-              Mentorship Ready
-            </h3>
-
-            <p>
-              {readiness.employerReadiness.mentorshipReady
-                ? "✅ Ready"
-                : "Not Yet"}
-
-            </p>
-
-          </article>
-
-
-          <article className="journey-card">
-
-            <h3>
-              Workplace Experience
-            </h3>
-
-            <p>
-              {readiness.employerReadiness.workplaceExperienceNeeded
-                ? "Experience Needed"
-                : "Completed"}
-
-            </p>
-
-          </article>
-
-
-        </div>
-
-      </section>
-
 
     </main>
   );
