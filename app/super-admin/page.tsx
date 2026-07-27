@@ -1,10 +1,17 @@
+"use client";
+
+import { students } from "../../content/students";
+import { employers } from "../../content/employers";
+import { opportunities } from "../../content/opportunities";
+import { impact } from "../../content/impact";
+
 export default function SuperAdminPage() {
 
   const metrics = {
-    schools: 12,
-    employers: 48,
-    partners: 20,
-    students: 500,
+    students: students.length,
+    employers: employers.length,
+    opportunities: opportunities.length,
+    experiences: impact.experiencesCompleted,
   };
 
   return (
@@ -29,11 +36,11 @@ export default function SuperAdminPage() {
         <article className="journey-card">
 
           <h2>
-            School Partners
+            Students
           </h2>
 
           <h3>
-            {metrics.schools}
+            {metrics.students}
           </h3>
 
         </article>
@@ -42,7 +49,7 @@ export default function SuperAdminPage() {
         <article className="journey-card">
 
           <h2>
-            Employer Partners
+            Employers
           </h2>
 
           <h3>
@@ -55,11 +62,11 @@ export default function SuperAdminPage() {
         <article className="journey-card">
 
           <h2>
-            Licensed Partners
+            Opportunities
           </h2>
 
           <h3>
-            {metrics.partners}
+            {metrics.opportunities}
           </h3>
 
         </article>
@@ -68,11 +75,11 @@ export default function SuperAdminPage() {
         <article className="journey-card">
 
           <h2>
-            Students
+            Experiences Completed
           </h2>
 
           <h3>
-            {metrics.students}
+            {metrics.experiences}
           </h3>
 
         </article>
