@@ -1,25 +1,8 @@
-export default function CareerMatchPage() {
+"use client";
 
-  const matches = [
-    {
-      career: "Healthcare Careers",
-      match: 92,
-      reason:
-        "Strong communication skills and interest in helping others.",
-    },
-    {
-      career: "Technology Careers",
-      match: 78,
-      reason:
-        "Strong problem solving and innovation skills.",
-    },
-    {
-      career: "Business & Leadership Careers",
-      match: 85,
-      reason:
-        "Leadership and teamwork strengths align well.",
-    },
-  ];
+import { matches } from "../../../content/matches";
+
+export default function CareerMatchPage() {
 
   return (
     <main>
@@ -31,7 +14,8 @@ export default function CareerMatchPage() {
         </h1>
 
         <p>
-          Explore career pathways connected to your strengths and skills.
+          Discover career pathways aligned with
+          your skills, interests, and experiences.
         </p>
 
       </section>
@@ -43,20 +27,30 @@ export default function CareerMatchPage() {
 
           <article
             className="journey-card"
-            key={match.career}
+            key={match.id}
           >
 
             <h2>
-              {match.career}
+              {match.opportunity}
             </h2>
 
+            <p>
+              Employer: {match.employer}
+            </p>
+
             <h3>
-              Match Score: {match.match}%
+              Match Score: {match.matchScore}%
             </h3>
 
-            <p>
-              {match.reason}
-            </p>
+            <h3>
+              Why This Matches:
+            </h3>
+
+            {match.reasons.map((reason) => (
+              <p key={reason}>
+                {reason}
+              </p>
+            ))}
 
           </article>
 
