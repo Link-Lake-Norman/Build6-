@@ -5,13 +5,15 @@ import { student } from "../../content/student";
 import { curriculum } from "../../content/curriculum";
 import { portfolio } from "../../content/portfolio";
 import { badges } from "../../content/badges";
+import { lessons } from "../../content/lessons";
 
 export default function DashboardPage() {
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
 
   useEffect(() => {
-    const saved =
-      localStorage.getItem("future-ready-progress");
+    const saved = localStorage.getItem(
+      "future-ready-progress"
+    );
 
     if (saved) {
       setCompletedLessons(JSON.parse(saved));
@@ -19,14 +21,17 @@ export default function DashboardPage() {
   }, []);
 
   const progress = Math.round(
-    (completedLessons.length / 36) * 100
+    (completedLessons.length / lessons.length) * 100
   );
 
   const currentWeek =
-    completedLessons.length + 1 <= 36
+    completedLessons.length + 1 <= lessons.length
       ? completedLessons.length + 1
-      : 36;
+      : lessons.length;
 
+  const currentLesson = lessons.find(
+    (lesson) => lesson.week === currentWeek
+  );
 
   return (
     <main>
@@ -49,21 +54,18 @@ export default function DashboardPage() {
         <div className="journey-grid">
 
           <article className="journey-card">
-            <h3>
-              Current Week
-            </h3>
-
+            <h3>Current Week</h3>
             <p>
               Week {currentWeek}
+            </p>
+            <p>
+              {currentLesson?.title}
             </p>
           </article>
 
 
           <article className="journey-card">
-            <h3>
-              Journey Progress
-            </h3>
-
+            <h3>Journey Progress</h3>
             <p>
               {progress}%
             </p>
@@ -71,12 +73,9 @@ export default function DashboardPage() {
 
 
           <article className="journey-card">
-            <h3>
-              Lessons Completed
-            </h3>
-
+            <h3>Lessons Completed</h3>
             <p>
-              {completedLessons.length}/36
+              {completedLessons.length}/{lessons.length}
             </p>
           </article>
 
@@ -85,13 +84,11 @@ export default function DashboardPage() {
       </section>
 
 
-
       <section>
 
         <h2>
           Your Future Ready™ Journey
         </h2>
-
 
         <div className="journey-grid">
 
@@ -123,14 +120,11 @@ export default function DashboardPage() {
       </section>
 
 
-
-
       <section>
 
         <h2>
           Your Skills Growth
         </h2>
-
 
         <div className="journey-grid">
 
@@ -158,14 +152,11 @@ export default function DashboardPage() {
       </section>
 
 
-
-
       <section>
 
         <h2>
           Your Portfolio
         </h2>
-
 
         <div className="journey-grid">
 
@@ -193,50 +184,38 @@ export default function DashboardPage() {
       </section>
 
 
-
-
       <section>
 
         <h2>
           Future Ready™ Milestones
         </h2>
 
-
         <div className="journey-grid">
 
-          {badges.map((badge) => {
+          {badges.map((badge) => (
 
-            const unlocked =
-              completedLessons.length >=
-              badge.requiredLessons;
+            <article
+              className="journey-card"
+              key={badge.name}
+            >
 
+              <h3>
+                🏆 {badge.name}
+              </h3>
 
-            return (
+              <p>
+                {badge.description}
+              </p>
 
-              <article
-                className="journey-card"
-                key={badge.name}
-              >
+              <p>
+                {completedLessons.length >= badge.requiredLessons
+                  ? "✅ Unlocked"
+                  : "🔒 Locked"}
+              </p>
 
-                <h3>
-                  🏆 {badge.name}
-                </h3>
+            </article>
 
-                <p>
-                  {badge.description}
-                </p>
-
-                <p>
-                  {unlocked
-                    ? "✅ Unlocked"
-                    : "🔒 Locked"}
-                </p>
-
-              </article>
-
-            );
-
-          })}
+          ))}
 
         </div>
 
