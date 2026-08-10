@@ -1,7 +1,17 @@
 export const impact = {
-  studentsServed: 250,
-  employerPartners: 35,
-  opportunitiesCreated: 120,
-  experiencesCompleted: 85,
-  readinessGrowth: 38,
+
+  studentsServed: 20,
+
+  schoolsActive: 1,
+
+  employersConnected: 5,
+
+  internshipsCreated: 8,
+
+  skillsDeveloped: 12,
+
+  badgesEarned: 45,
+
+  completionRate: 82,
+
 };

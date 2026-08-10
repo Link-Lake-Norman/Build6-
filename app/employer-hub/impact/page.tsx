@@ -21,10 +21,10 @@ export default function EmployerImpactPage() {
         </h2>
 
         <p>Students Served: {impact.studentsServed}</p>
-        <p>Employer Partners: {impact.employerPartners}</p>
-        <p>Opportunities Created: {impact.opportunitiesCreated}</p>
-        <p>Experiences Completed: {impact.experiencesCompleted}</p>
-        <p>Readiness Growth: {impact.readinessGrowth}%</p>
+        <p>Employer Partners: {impact.employersConnected}</p>
+        <p>Opportunities Created: {impact.internshipsCreated}</p>
+        <p>Experiences Completed: {impact.skillsDeveloped}</p>
+        <p>Readiness Growth: {impact.completionRate}%</p>
 
       </section>
 

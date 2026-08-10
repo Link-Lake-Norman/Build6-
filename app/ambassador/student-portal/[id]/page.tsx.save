@@ -1,0 +1,137 @@
+nano "app/ambassador/student-portal/[id]/page.tsx"import Link from "next/link";
+import { studentAccounts } from "@/content/student-accounts";
+import { studentProgress } from "@/content/student-progress";
+import { studentProfiles } from "@/content/student-profiles";
+import FutureReadyHeader from "@/components/brand/FutureReadyHeader";
+
+export default async function StudentPortalPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const student = studentAccounts.find(
+    (student) => student.id === id
+  );
+
+  const progress = studentProgress.find(
+    (item) => item.studentId === id
+  );
+
+  const profile = studentProfiles.find(
+    (item) => item.studentId === id
+  );
+
+  if (!student || !progress || !profile) {
+    return (
+      <main className="p-8">
+        Student not found
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-50">
+
+      <FutureReadyHeader />
+
+      <section className="p-8 space-y-8">
+
+        <div>
+          <h1 className="text-4xl font-bold">
+            Welcome, {student.name}
+          </h1>
+
+          <p className="mt-2 text-lg text-gray-600">
+            Your Future Ready™ Student Passport
+          </p>
+        </div>
+
+
+        <section className="grid md:grid-cols-4 gap-5">
+
+          <div className="border rounded-xl bg-white p-5">
+            <h2 className="font-bold">
+              Current Week
+            </h2>
+            <p className="text-4xl mt-3">
+              {progress.currentWeek}
+            </p>
+          </div>
+
+
+          <div className="border rounded-xl bg-white p-5">
+            <h2 className="font-bold">
+              Lessons
+            </h2>
+            <p className="text-4xl mt-3">
+              {progress.lessonsCompleted}
+            </p>
+          </div>
+
+
+          <div className="border rounded-xl bg-white p-5">
+            <h2 className="font-bold">
+              Badges
+            </h2>
+            <p className="text-4xl mt-3">
+              {progress.badges.length}
+            </p>
+          </div>
+
+
+          <div className="border rounded-xl bg-white p-5">
+            <h2 className="font-bold">
+              Profile
+            </h2>
+
+            <p className="mt-3">
+              {profile.profileComplete
+                ? "Complete"
+                : "Needs Completion"}
+            </p>
+
+          </div>
+
+        </section>
+
+
+        <section className="border rounded-xl bg-white p-6">
+
+          <h2 className="text-2xl font-bold">
+            Student Profile
+          </h2>
+
+          <div className="mt-4 space-y-2">
+
+            <p>
+              School: {student.school}
+            </p>
+
+            <p>
+              Cohort: {student.cohort}
+            </p>
+
+            <p>
+              Grade: {student.grade}
+            </p>
+
+          </div>
+
+
+          <Link
+            href={`/ambassador/student-portal/${id}/profile`}
+            className="inline-block mt-6 border rounded-lg px-5 py-3"
+          >
+            Build My Future Ready Profile →
+          </Link>
+
+        </section>
+
+      </section>
+
+    </main>
+  );
+}
+

@@ -1,0 +1,150 @@
+
+  {
+    week: 1,
+    phase: "Discover Purpose",
+    title: "Future Ready Identity: Who Am I Beyond My Role?",
+    objective:
+      "Students identify their strengths, experiences, values, and transferable skills to understand their unique Future Ready identity.",
+
+    facilitatorGuide:
+      "Help students understand that their future is built from their experiences, strengths, interests, and choices. Emphasize that every student has valuable skills they can transfer into education, careers, and life.",
+
+    discussionQuestions: [
+      "What makes you unique?",
+      "What strengths do others see in you?",
+      "What skills have you developed through school, sports, work, or life experiences?",
+      "What do you want people to remember about you?"
+    ],
+
+    studentActivity:
+      "Complete the Future Ready Identity Map including strengths, interests, values, experiences, and future goals.",
+
+    workplaceConnection:
+      "Employers look for self-awareness, communication, teamwork, reliability, and problem-solving skills.",
+
+    skillsEarned: [
+      "Self Awareness",
+      "Reflection",
+      "Communication"
+    ],
+
+    portfolioEvidence:
+      "Future Ready Identity Map",
+
+    badgeEarned:
+      "Self Discovery Badge"
+  },
+
+
+  {
+    week: 2,
+    phase: "Discover Purpose",
+    title: "Strengths & Values: Understanding What Drives Me",
+
+    objective:
+      "Students discover their personal strengths, core values, and motivations.",
+
+    facilitatorGuide:
+      "Guide students through identifying the characteristics and behaviors that make them successful. Connect personal values to future decisions.",
+
+    discussionQuestions: [
+      "What activities make you feel energized?",
+      "What challenges have helped you grow?",
+      "What values guide your decisions?",
+      "What strengths do you want to develop?"
+    ],
+
+    studentActivity:
+      "Complete the Strengths and Values Assessment.",
+
+    workplaceConnection:
+      "Strong professionals understand themselves and align their strengths with opportunities.",
+
+    skillsEarned: [
+      "Self Awareness",
+      "Decision Making",
+      "Growth Mindset"
+    ],
+
+    portfolioEvidence:
+      "Personal Strengths Profile",
+
+    badgeEarned:
+      "Strength Finder Badge"
+  },
+
+
+  {
+    week: 3,
+    phase: "Discover Purpose",
+    title: "Personal Brand: How Others Experience Me",
+
+    objective:
+      "Students develop awareness of their reputation, communication style, and personal brand.",
+
+    facilitatorGuide:
+      "Introduce personal branding as the combination of actions, values, skills, and relationships that define how others experience you.",
+
+    discussionQuestions: [
+      "What words describe you today?",
+      "How do your actions impact your reputation?",
+      "What do you want people to know about you?"
+    ],
+
+    studentActivity:
+      "Create a Future Ready Personal Brand Statement.",
+
+    workplaceConnection:
+      "Employers evaluate professionalism, communication, and authenticity.",
+
+    skillsEarned: [
+      "Professional Communication",
+      "Confidence",
+      "Personal Branding"
+    ],
+
+    portfolioEvidence:
+      "Personal Brand Statement",
+
+    badgeEarned:
+      "Personal Brand Badge"
+  },
+
+
+  {
+    week: 4,
+    phase: "Discover Purpose",
+    title: "Career Discovery: Exploring Possibilities",
+
+    objective:
+      "Students explore careers and industries connected to their strengths, interests, and goals.",
+
+    facilitatorGuide:
+      "Help students move from 'What job do I want?' to 'What problems do I want to solve and what impact do I want to make?'",
+
+    discussionQuestions: [
+      "What industries interest you?",
+      "What problems would you like to solve?",
+      "What careers connect with your strengths?"
+    ],
+
+    studentActivity:
+      "Complete Career Exploration Map.",
+
+    workplaceConnection:
+      "Career success begins with curiosity, exploration, and relationship building.",
+
+    skillsEarned: [
+      "Career Awareness",
+      "Research",
+      "Networking"
+    ],
+
+    portfolioEvidence:
+      "Career Exploration Map",
+
+    badgeEarned:
+      "Career Explorer Badge"
+  }
+
+];

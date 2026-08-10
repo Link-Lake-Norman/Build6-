@@ -1,0 +1,69 @@
+nano app/ambassador/page.tsx import Link from "next/link"; export default function AmbassadorPortalPage() {
+  return (
+    <main>
+      <section className="hero">
+        <h1>
+          Ambassador Christian School
+        </h1> <p>
+          Future Ready™ Partner Dashboard
+        </p> <p>
+          2026 5th Year Student Athlete Cohort
+        </p>
+      </section> <section className="journey-grid">
+        <article className="journey-card">
+          <h2>
+            Facilitator Portal
+          </h2> <p>
+            Coach Jones access for curriculum, attendance, and student progress.
+          </p> <Link
+            href="/ambassador/facilitator" className="fr-button"
+          >
+            Open Facilitator Portal
+          </Link>
+        </article> <article className="journey-card">
+          <h2>
+            Student Experience
+          </h2> <p>
+            Preview the Future Ready™ student journey.
+          </p>
+
+          <Link
+            href="/ambassador/student-portal/ambassador-student-001"
+            className="fr-button"
+          >
+            View Student Portal
+          </Link>
+
+        </article>
+
+
+
+        <article className="journey-card">
+
+          <h2>
+            Student Records
+          </h2>
+
+          <p>
+            Manage student profiles, readiness scores, and growth data.
+          </p>
+
+          <Link
+            href="/ambassador/admin"
+            className="fr-button"
+          >
+            Open Admin
+          </Link>
+
+        </article>
+
+
+
+      </section>
+
+
+    </main>
+  );
+}
+
+

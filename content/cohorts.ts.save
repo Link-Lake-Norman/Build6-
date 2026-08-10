@@ -1,0 +1,143 @@
+export const cohorts = [
+  {
+    id: "ambassador-2026-student-athletes",
+    organization: "ambassador-christian-school",
+    program: "ambassador-student-athlete-launch",
+    name: "2026 5th Year Student Athlete Cohort",
+    population: "Student Athletes",
+    gradeLevel: "5th Year Seniors",
+    year: "2026",
+    semester: "Semester 1",
+    students: 20,
+    facilitator: "Coach Jones",
+    currentWeek: 1,
+    status: "active",
+  },
+];
+export const cohorts = [
+  {
+    id: "ambassador-2026-student-athletes",
+    organization: "ambassador-christian-school",
+    program: "ambassador-student-athlete-launch",
+    name: "2026 5th Year Student Athlete Cohort",
+    population: "Student Athletes",
+    gradeLevel: "5th Year Seniors",
+    year: "2026",
+    semester: "Semester 1",
+    students: 20,
+    facilitator: "Coach Jones",
+    currentWeek: 1,
+    status: "active",
+  },
+];
+nano app/student-dashboard/page.tsx
+import { cohorts } from "@/content/cohorts";
+import { organizations } from "@/content/organizations";
+
+export default function StudentDashboardPage() {
+
+  const cohort = cohorts[0];
+  const school = organizations[0];
+
+  const dashboard = {
+    readiness: 84,
+    skills: 4,
+    matches: 3,
+    opportunities: 5,
+  };
+
+  return (
+    <main>
+
+      <section className="hero">
+
+        <h1>
+          Future Ready™ Student Dashboard
+        </h1>
+
+        <p>
+          Your personal pathway to discover purpose,
+          build skills, and launch your future.
+        </p>
+
+        <h2>
+          {school.name}
+        </h2>
+
+        <p>
+          {cohort.name}
+        </p>
+
+        <p>
+          Program Week: {cohort.currentWeek} of 16
+        </p>
+
+      </section>
+
+
+      <section className="journey-grid">
+
+        <article className="journey-card">
+          <h2>
+            Readiness Score
+          </h2>
+          <h3>
+            {dashboard.readiness}%
+          </h3>
+        </article>
+
+
+        <article className="journey-card">
+          <h2>
+            Skills Developed
+          </h2>
+          <h3>
+            {dashboard.skills}
+          </h3>
+        </article>
+
+
+        <article className="journey-card">
+          <h2>
+            Career Matches
+          </h2>
+          <h3>
+            {dashboard.matches}
+          </h3>
+        </article>
+
+
+        <article className="journey-card">
+          <h2>
+            Opportunities
+          </h2>
+          <h3>
+            {dashboard.opportunities}
+          </h3>
+        </article>
+
+      </section>
+
+
+      <section>
+
+        <h2>
+          Current Experience
+        </h2>
+
+        <p>
+          Launch Ready™: Professional Skills & Internship Readiness
+        </p>
+
+        <p>
+          Current Focus:
+          Who You Are Matters
+        </p>
+
+      </section>
+
+    </main>
+  );
+}
+npm run dev
+

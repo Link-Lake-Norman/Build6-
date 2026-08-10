@@ -1,61 +1,109 @@
-import { opportunities } from "../../../content/opportunities";
-
-export default function EmployerMatchingPage() {
-  return (
-    <main>
-
-      <section className="hero">
-
-        <h1>
-          Future Ready™ Talent Matching
-        </h1>
-
-        <p>
-          Connect employers with students building career-ready skills.
-        </p>
-
-      </section>
+import { generateMatches } from "@/content/matching-engine";
 
 
-      <section className="journey-grid">
+export default function MatchingPage(){
 
-        {opportunities.map((opportunity) => (
 
-          <article
-            className="journey-card"
-            key={opportunity.id}
-          >
+const results = generateMatches();
 
-            <h2>
-              {opportunity.title}
-            </h2>
 
-            <p>
-              Type: {opportunity.type}
-            </p>
 
-            <p>
-              Employer: {opportunity.employer}
-            </p>
+return (
 
-            <p>
-              Status: {opportunity.status}
-            </p>
+<main className="p-8 space-y-8">
 
-            <h3>
-              Interested Students
-            </h3>
 
-            <p>
-              {opportunity.interested}
-            </p>
+<section>
 
-          </article>
+<h1 className="text-4xl font-bold">
+Future Ready™ Talent Matching Engine
+</h1>
 
-        ))}
+<p className="mt-3 text-lg">
+AI-assisted workforce connections.
+</p>
 
-      </section>
+</section>
 
-    </main>
-  );
+
+
+{results.map((result)=>(
+
+
+<section
+key={result.opportunity.id}
+className="border rounded-xl p-6"
+>
+
+
+<h2 className="text-2xl font-bold">
+{result.opportunity.title}
+</h2>
+
+
+<p className="mt-2">
+Industry:
+{" "}
+{result.opportunity.industry}
+</p>
+
+
+
+<h3 className="text-xl font-bold mt-6">
+Recommended Students
+</h3>
+
+
+
+{result.matches.map((match)=>(
+
+
+<div
+key={match.student.studentId}
+className="border rounded-lg p-4 mt-4"
+>
+
+
+<h4 className="font-bold text-lg">
+{match.student.name}
+</h4>
+
+
+<p>
+Match Score:
+{" "}
+{match.score}%
+</p>
+
+
+<p>
+Career Interest:
+{" "}
+{match.student.careerInterests}
+</p>
+
+
+<p>
+Matched Skills:
+{" "}
+{match.matchedSkills.join(", ") || "Developing"}
+</p>
+
+
+</div>
+
+
+))}
+
+
+</section>
+
+
+))}
+
+
+</main>
+
+);
+
 }

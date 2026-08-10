@@ -1,78 +1,188 @@
-import { getStudents } from "@/lib/data/students";
-import { readiness } from "@/content/readiness";
-import { matches } from "@/content/matches";
+import { getOpportunities, getStudents } from "@/lib/data/students";
 
 export default async function PartnerStudentsPage() {
   const students = await getStudents();
+  const opportunities = await getOpportunities();
 
   return (
     <main>
-      <h1>Future Ready™ Partner Student Engagement</h1>
 
-      <p>
-        View student participation, readiness progress, and career alignment.
-      </p>
-
-      <section>
-        <h2>Students</h2>
-
-        {students.map((student) => (
-          <article key={student.id}>
-            <h3>{student.name}</h3>
-
-            {student.grade && (
-              <p>
-                Grade: {student.grade}
-              </p>
-            )}
-
-            {student.readinessScore !== null &&
-              student.readinessScore !== undefined && (
-                <p>
-                  Readiness Score: {student.readinessScore}
-                </p>
-              )}
-
-            <h4>Interests</h4>
-
-            {student.interests.length > 0 ? (
-              student.interests.map((interest) => (
-                <p key={interest}>{interest}</p>
-              ))
-            ) : (
-              <p>No interests recorded.</p>
-            )}
-
-            <h4>Skills</h4>
-
-            {student.skills.length > 0 ? (
-              student.skills.map((skill) => (
-                <p key={skill}>{skill}</p>
-              ))
-            ) : (
-              <p>No skills recorded.</p>
-            )}
-          </article>
-        ))}
-      </section>
-
-      <section>
-        <h2>Readiness Progress</h2>
-
-        {Object.entries(readiness).map(([key, value]) => (
-          <p key={key}>
-            {key}: {String(value)}
-          </p>
-        ))}
-      </section>
-
-      <section>
-        <h2>Career Matches</h2>
+      <section className="hero">
+        <h1>
+          Future Ready™ Partner Student Engagement
+        </h1>
 
         <p>
-          Active Matches: {matches.length}
+          View student participation, readiness progress, and career alignment.
         </p>
       </section>
+
+
+      <section className="journey-grid">
+
+        {students.map((student) => (
+
+          <article
+            className="journey-card"
+            key={student.id}
+          >
+
+            <h2>
+              {student.name}
+            </h2>
+
+            <p>
+              Grade: {student.grade}
+            </p>
+
+            <p>
+              Readiness Score: {student.readinessScore}%
+            </p>
+
+
+            <h3>
+              Career Interests
+            </h3>
+
+            {student.interests?.map((interest) => (
+              <p key={interest}>
+                {interest}
+              </p>
+            ))}
+
+
+            <h3>
+              Skills Development
+            </h3>
+
+            {student.skills?.map((skill) => (
+              <p key={skill}>
+                {skill}
+              </p>
+            ))}
+
+          </article>
+
+        ))}
+
+      </section>
+
+
+
+      <section>
+
+        <h2>
+          Readiness Progress
+        </h2>
+
+
+        <div className="journey-grid">
+
+
+          <article className="journey-card">
+
+            <h3>
+              Skills Development
+            </h3>
+
+            <p>
+              Communication
+            </p>
+
+            <p>
+              Leadership
+            </p>
+
+            <p>
+              Professional Skills
+            </p>
+
+          </article>
+
+
+
+          <article className="journey-card">
+
+            <h3>
+              Career Alignment
+            </h3>
+
+            <p>
+              Future career pathways matched
+            </p>
+
+            <p>
+              Employer connections available
+            </p>
+
+          </article>
+
+
+
+          <article className="journey-card">
+
+            <h3>
+              Portfolio Growth
+            </h3>
+
+            <p>
+              Experiences and achievements tracked
+            </p>
+
+          </article>
+
+
+        </div>
+
+      </section>
+
+
+
+      <section>
+
+        <h2>
+          Career Matches
+        </h2>
+
+
+        <p>
+          Active Matches: {opportunities.length}
+        </p>
+
+
+
+        {opportunities.map((opportunity) => (
+
+          <article
+            className="journey-card"
+            key={opportunity.id}
+          >
+
+            <h3>
+              {opportunity.title}
+            </h3>
+
+
+            <p>
+              Employer: {opportunity.employer.name}
+            </p>
+
+
+            <p>
+              {opportunity.description}
+            </p>
+
+
+          </article>
+
+        ))}
+
+
+      </section>
+
+
     </main>
   );
 }
+
+

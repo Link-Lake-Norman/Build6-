@@ -1,0 +1,28 @@
+export const studentAccounts = [
+  {
+    id: "ambassador-student-001",
+    studentId: "ambassador-student-001",
+    name: "Student One",
+    username: "student001",
+    temporaryPassword: "FutureReady2026",
+    role: "STUDENT",
+    school: "Ambassador Christian School",
+    cohort: "Future Ready Pilot",
+    grade: "10",
+    profileComplete: false,
+    active: true,
+  },
+  {
+    id: "ambassador-student-002",
+    studentId: "ambassador-student-002",
+    name: "Student Two",
+    username: "student002",
+    temporaryPassword: "FutureReady2026",
+    role: "STUDENT",
+    school: "Ambassador Christian School",
+    cohort: "Future Ready Pilot",
+    grade: "10",
+    profileComplete: false,
+    active: true,
+  },
+];

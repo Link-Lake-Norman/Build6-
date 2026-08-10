@@ -43,7 +43,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.employerPartners}
+            {impact.employersConnected}
           </h3>
 
         </article>
@@ -56,7 +56,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.opportunitiesCreated}
+            {impact.internshipsCreated}
           </h3>
 
         </article>
@@ -69,7 +69,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.experiencesCompleted}
+            {impact.skillsDeveloped}
           </h3>
 
         </article>
@@ -82,7 +82,7 @@ export default function ImpactROIDashboardPage() {
           </h2>
 
           <h3>
-            {impact.readinessGrowth}%
+            {impact.completionRate}%
           </h3>
 
         </article>

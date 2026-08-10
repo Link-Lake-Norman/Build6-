@@ -11,7 +11,7 @@ export default function SuperAdminPage() {
     students: students.length,
     employers: employers.length,
     opportunities: opportunities.length,
-    experiences: impact.experiencesCompleted,
+    experiences: impact.skillsDeveloped,
   };
 
   return (

@@ -5,5 +5,21 @@ export async function getStudents() {
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      organization: true,
+    },
   });
 }
+
+export async function getOpportunities() {
+  return prisma.opportunity.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      employer: true,
+    },
+  });
+}
+
+
