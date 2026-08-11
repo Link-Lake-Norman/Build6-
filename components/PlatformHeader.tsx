@@ -8,7 +8,6 @@ const links = [
   { href: "/ambassador/operations", label: "Operations" },
   { href: "/ambassador/professionals", label: "Professionals" },
   { href: "/ambassador/session-planner", label: "Session Planner" },
-  { href: "/ambassador/lesson-builder", label: "Lesson Builder" },
   { href: "/ambassador/messages", label: "Messages" },
   { href: "/ambassador/projects", label: "Project Studio" },
   { href: "/ambassador/admin/command-center", label: "Admin Center" },
