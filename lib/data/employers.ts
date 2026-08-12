@@ -2,8 +2,19 @@ import { prisma } from "@/lib/prisma";
 
 export async function getEmployers() {
   return prisma.employer.findMany({
+    where: {
+      deletedAt: null,
+      isActive: true,
+    },
     include: {
-      opportunities: true,
+      internships: {
+        where: {
+          deletedAt: null,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
     },
   });
 }

@@ -12,7 +12,7 @@ export type StudentCareerProfile = {
   strengths: string[];
   interests: string[];
   industries: string[];
-  recommendedPathways: CareerPathway[];
+  recommendedPathways?: CareerPathway[];
 };
 
 

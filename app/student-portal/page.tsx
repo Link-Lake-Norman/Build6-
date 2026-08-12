@@ -14,7 +14,7 @@ export default function StudentPortalPage() {
         </p>
 
         <p>
-          Your readiness score: {readiness}%
+          Your readiness score: {readiness.student.readinessScore}%
         </p>
 
         <Link href="/dashboard">

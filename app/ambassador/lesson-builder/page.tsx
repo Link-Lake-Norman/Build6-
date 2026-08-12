@@ -13,8 +13,11 @@ import {
 
 import {
   generateActivityOptions,
-  type AIGeneratedActivity,
 } from "@/content/ai-lesson-generator";
+
+import type {
+  AIGeneratedActivity,
+} from "@/content/ai-activity-types";
 
 
 type PermissionSnapshot = {
@@ -83,6 +86,9 @@ export default function LessonBuilderPage() {
   const [aiActivities, setAiActivities] =
     useState<AIGeneratedActivity[]>([]);
 
+  const [generationVariation, setGenerationVariation] =
+    useState(0);
+
   const [selectedAIType, setSelectedAIType] =
     useState<
       | "Role Play"
@@ -90,6 +96,10 @@ export default function LessonBuilderPage() {
       | "Improv"
       | "Team Building"
       | "Pop Quiz"
+      | "Media Practice"
+      | "Career Connection"
+      | "Capstone Workshop"
+      | "Guest Speaker Preparation"
     >("Role Play");
 
 
@@ -125,22 +135,20 @@ export default function LessonBuilderPage() {
 
     if (!lesson) return;
 
+    const nextVariation = generationVariation + 1;
 
     const results = generateActivityOptions({
-
       week,
-
       day: "Class Session",
-
       topic: lesson.title,
-
       objective: lesson.objective,
-
+      activityType: selectedAIType,
       audience:
         "Ambassador Christian School Future Ready Students",
-
+      variation: nextVariation,
     });
 
+    setGenerationVariation(nextVariation);
 
     setAiActivities(
       results.filter(
@@ -148,7 +156,6 @@ export default function LessonBuilderPage() {
           activity.activityType === selectedAIType
       )
     );
-
   }
 
 
@@ -215,7 +222,11 @@ export default function LessonBuilderPage() {
                 )
               }
 
-              className="rounded-xl border px-4 py-2 font-bold"
+              className={`rounded-xl border px-4 py-2 font-bold ${
+            selectedAIType === type
+              ? "bg-[#F2B705] text-[#0D1B3D]"
+              : "bg-white"
+          }`}
 
             >
 
@@ -234,7 +245,9 @@ export default function LessonBuilderPage() {
 
           >
 
-            Generate Activity
+            {aiActivities.length > 0
+              ? "Regenerate Activity"
+              : "Generate Activity"}
 
           </button>
 
@@ -250,60 +263,109 @@ export default function LessonBuilderPage() {
             (activity, index) => (
 
             <div
-
               key={index}
-
-              className="rounded-2xl border p-5"
-
+              className="rounded-2xl border p-5 space-y-5"
             >
 
               <h3 className="text-xl font-black">
                 {activity.title}
               </h3>
 
-
-              <p className="mt-2">
-                {activity.purpose}
+              <p>
+                {activity.learningObjective}
               </p>
 
+              <h4 className="mt-4 font-bold">
+                Why This Matters
+              </h4>
+
+              <p>
+                {activity.whyThisMatters}
+              </p>
+
+              <h4 className="mt-4 font-bold">
+                Classroom Setup
+              </h4>
+
+              <p>
+                {activity.classroomSetup}
+              </p>
+
+              <h4 className="mt-4 font-bold">
+                Student Roles
+              </h4>
+
+              <ul className="list-disc pl-5">
+                {activity.studentRoles.map((role) => (
+                  <li key={role.role}>
+                    {role.role}: {role.responsibility}
+                  </li>
+                ))}
+              </ul>
+
+              <h4 className="mt-4 font-bold">
+                Facilitator Script
+              </h4>
+
+              <ul className="list-disc pl-5">
+                {activity.facilitatorScript.map((line) => (
+                  <li key={line}>
+                    {line}
+                  </li>
+                ))}
+              </ul>
 
               <h4 className="mt-4 font-bold">
                 Materials
               </h4>
 
-
               <ul className="list-disc pl-5">
-
-                {activity.materials.map(
-                  (item) => (
-
+                {activity.materials.map((item) => (
                   <li key={item}>
                     {item}
                   </li>
-
                 ))}
-
               </ul>
-
 
               <h4 className="mt-4 font-bold">
                 Directions
               </h4>
 
-
               <ol className="list-decimal pl-5">
-
-                {activity.directions.map(
-                  (step) => (
-
+                {activity.stepByStepInstructions.map((step) => (
                   <li key={step}>
                     {step}
                   </li>
-
                 ))}
-
               </ol>
 
+              <h4 className="mt-4 font-bold">
+                Reflection Prompts
+              </h4>
+
+              <ul className="list-disc pl-5">
+                {activity.reflectionPrompts.map((prompt) => (
+                  <li key={prompt}>
+                    {prompt}
+                  </li>
+                ))}
+              </ul>
+
+              <h4 className="mt-4 font-bold">
+                Portfolio Evidence
+              </h4>
+
+              <p>
+                {activity.portfolioEvidence}
+              </p>
+
+              <h4 className="mt-4 font-bold">
+                Capstone Connection
+              </h4>
+
+              <p>
+                {activity.capstoneConnection}
+              </p>
 
             </div>
 

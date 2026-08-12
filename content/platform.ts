@@ -1,4 +1,4 @@
-import { curriculum } from "./curriculum";
+import { curriculum as curriculumData } from "./curriculum";
 
 export type Student = {
   id: string;
@@ -92,4 +92,4 @@ export const students: Student[] = Array.from(
   },
 );
 
-export { curriculum };
+export const curriculum: CurriculumWeek[] = curriculumData;

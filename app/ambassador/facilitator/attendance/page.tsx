@@ -1413,3 +1413,11 @@ export const portfolioCompleteStudents =
   facilitatorStudents.filter(
     (student) => student.portfolioComplete
   );
+export default function FacilitatorAttendancePage() {
+return (
+<main style={{ padding: "32px" }}>
+<h1>Future Ready™ Attendance</h1>
+<p>Facilitator attendance management.</p>
+</main>
+);
+}

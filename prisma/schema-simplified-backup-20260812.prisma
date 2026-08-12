@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id        String     @id @default(cuid())
+  name      String
+  type      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employers Employer[]
+  partners  Partner[]
+  students  Student[]
+  users     User[]
+}
+
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  name           String
+  role           UserRole
+  organizationId String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+}
+
+model Student {
+  id             String       @id @default(cuid())
+  userId         String?
+  name           String
+  grade          String?
+  readinessScore Int?
+  interests      String[]
+  skills         String[]
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+model Employer {
+  id             String        @id @default(cuid())
+  name           String
+  industry       String?
+  organizationId String
+  createdAt      DateTime      @default(now())
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  opportunities  Opportunity[]
+}
+
+model Partner {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  programs       Program[]
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  partnerId   String
+  createdAt   DateTime @default(now())
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+}
+
+model Opportunity {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  employerId  String
+  createdAt   DateTime @default(now())
+  employer    Employer @relation(fields: [employerId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  userId    String?
+  createdAt DateTime @default(now())
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  PARTNER
+  EMPLOYER
+  STUDENT
+}

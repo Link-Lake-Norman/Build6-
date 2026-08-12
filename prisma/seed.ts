@@ -16,13 +16,45 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  await prisma.student.create({
-    data: {
-      name: "Alex Johnson",
-      grade: "11",
-      readinessScore: 82,
+  let organization = await prisma.organization.findFirst({
+    where: {
+      name: "Ambassador Christian School",
     },
   });
+
+  if (!organization) {
+    organization = await prisma.organization.create({
+      data: {
+        name: "Ambassador Christian School",
+        slug: "ambassador-christian-school",
+        type: "SCHOOL",
+      },
+    });
+  }
+
+  const existingStudent = await prisma.student.findFirst({
+    where: {
+      name: "Alex Johnson",
+      organizationId: organization.id,
+    },
+  });
+
+  if (!existingStudent) {
+    await prisma.student.create({
+      data: {
+        name: "Alex Johnson",
+        grade: "11",
+        readinessScore: 82,
+        interests: [],
+        skills: [],
+        organization: {
+          connect: {
+            id: organization.id,
+          },
+        },
+      },
+    });
+  }
 
   console.log("Future Ready seed complete");
 }
@@ -35,4 +67,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
