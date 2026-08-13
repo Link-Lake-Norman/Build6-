@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 type LessonCompletionProps = {
   week: number;
@@ -9,28 +13,33 @@ type LessonCompletionProps = {
   portfolioEvidence: string;
 };
 
-const STUDENT_ID = "ambassador-student-001";
-const STORAGE_KEY = `future-ready:${STUDENT_ID}:completed-weeks`;
+type ProgressResponse = {
+  studentId: string;
 
-function readCompletedWeeks(): number[] {
-  if (typeof window === "undefined") return [];
+  program: {
+    id: string;
+    name: string;
+    totalWeeks: number;
+  };
 
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (!stored) return [];
+  lesson: {
+    id: string;
+    title: string;
+    week: number;
+  };
 
-    const parsed: unknown = JSON.parse(stored);
+  progress: {
+    isComplete: boolean;
+    percent: number;
+    completedAt: string | null;
+    updatedAt: string | null;
+  };
 
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed
-      .filter((value): value is number => typeof value === "number")
-      .filter((value) => Number.isInteger(value) && value >= 1 && value <= 36)
-      .sort((a, b) => a - b);
-  } catch {
-    return [];
-  }
-}
+  programProgress: {
+    completed: number;
+    progress: number;
+  };
+};
 
 export default function LessonCompletion({
   week,
@@ -38,55 +47,129 @@ export default function LessonCompletion({
   badgeEarned,
   portfolioEvidence,
 }: LessonCompletionProps) {
-  const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [data, setData] =
+    useState<ProgressResponse | null>(
+      null
+    );
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  async function loadProgress() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response =
+        await fetch(
+          `/api/student/lesson-progress?week=${week}`,
+          {
+            cache: "no-store",
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+            "Unable to load lesson progress."
+        );
+      }
+
+      setData(result);
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to load lesson progress."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    setCompletedWeeks(readCompletedWeeks());
-    setHydrated(true);
-  }, []);
+    void loadProgress();
+  }, [week]);
 
-  const isComplete = completedWeeks.includes(week);
+  async function saveCompletion(
+    complete: boolean
+  ) {
+    setSaving(true);
+    setError("");
 
-  const progress = useMemo(
-    () => Math.round((completedWeeks.length / 36) * 100),
-    [completedWeeks.length],
-  );
+    try {
+      const response =
+        await fetch(
+          "/api/student/lesson-progress",
+          {
+            method: "POST",
 
-  function markComplete() {
-    const next = Array.from(new Set([...completedWeeks, week])).sort(
-      (a, b) => a - b,
-    );
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    window.localStorage.setItem(
-      `future-ready:${STUDENT_ID}:last-completed`,
-      JSON.stringify({
-        week,
-        title,
-        badgeEarned,
-        portfolioEvidence,
-        completedAt: new Date().toISOString(),
-      }),
-    );
+            body: JSON.stringify({
+              week,
+              complete,
+            }),
+          }
+        );
 
-    setCompletedWeeks(next);
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+            "Unable to save lesson progress."
+        );
+      }
+
+      setData(result);
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to save lesson progress."
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function markIncomplete() {
-    const next = completedWeeks.filter((value) => value !== week);
-
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    setCompletedWeeks(next);
-  }
-
-  if (!hydrated) {
+  if (loading) {
     return (
       <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="font-bold text-slate-500">Loading lesson progress…</p>
+        <p className="font-bold text-slate-500">
+          Loading lesson progress…
+        </p>
       </section>
     );
   }
+
+  if (!data) {
+    return (
+      <section className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm">
+        <p className="font-black text-red-800">
+          {error ||
+            "Lesson progress is unavailable."}
+        </p>
+      </section>
+    );
+  }
+
+  const isComplete =
+    data.progress.isComplete;
 
   return (
     <section
@@ -96,6 +179,12 @@ export default function LessonCompletion({
           : "border-[#F2B705] bg-[#FFF9DF]"
       }`}
     >
+      {error && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 font-bold text-red-800">
+          {error}
+        </div>
+      )}
+
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#725500]">
@@ -103,23 +192,52 @@ export default function LessonCompletion({
           </p>
 
           <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-            {isComplete ? "Week completed" : "Ready to complete this lesson?"}
+            {isComplete
+              ? "Week completed"
+              : "Ready to complete this lesson?"}
           </h2>
 
           <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
             {isComplete
-              ? `${title} is saved as complete. Your badge and portfolio evidence are now recorded in this browser.`
+              ? `${title} is permanently saved as complete in your Future Ready™ record.`
               : `Complete the discussion, activity, reflection, and portfolio evidence before marking Week ${week} complete.`}
           </p>
 
           <div className="mt-5 flex flex-wrap gap-3">
             <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-[#0D1B3D] shadow-sm">
-              {completedWeeks.length} of 36 weeks complete
+              {
+                data.programProgress
+                  .completed
+              }{" "}
+              of{" "}
+              {
+                data.program.totalWeeks
+              }{" "}
+              weeks complete
             </span>
 
             <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-[#0D1B3D] shadow-sm">
-              {progress}% program progress
+              {
+                data.programProgress
+                  .progress
+              }
+              % program progress
             </span>
+
+            {data.progress.updatedAt && (
+              <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-emerald-700 shadow-sm">
+                ✓ Saved ·{" "}
+                {new Date(
+                  data.progress.updatedAt
+                ).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  }
+                )}
+              </span>
+            )}
           </div>
         </div>
 
@@ -128,26 +246,36 @@ export default function LessonCompletion({
             <>
               <button
                 type="button"
-                onClick={markIncomplete}
-                className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-black text-slate-700"
+                disabled={saving}
+                onClick={() =>
+                  saveCompletion(false)
+                }
+                className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-black text-slate-700 disabled:opacity-50"
               >
-                Mark incomplete
+                {saving
+                  ? "Saving..."
+                  : "Mark incomplete"}
               </button>
 
-              <a
-                href={`/ambassador/student-dashboard/${STUDENT_ID}`}
+              <Link
+                href={`/ambassador/student-portal/${data.studentId}`}
                 className="rounded-xl bg-[#0D1B3D] px-6 py-3 text-center font-black text-white"
               >
                 View dashboard
-              </a>
+              </Link>
             </>
           ) : (
             <button
               type="button"
-              onClick={markComplete}
-              className="rounded-xl bg-[#0D1B3D] px-7 py-4 font-black text-white shadow-lg"
+              disabled={saving}
+              onClick={() =>
+                saveCompletion(true)
+              }
+              className="rounded-xl bg-[#0D1B3D] px-7 py-4 font-black text-white shadow-lg disabled:opacity-50"
             >
-              Complete Week {week}
+              {saving
+                ? "Saving..."
+                : `Complete Week ${week}`}
             </button>
           )}
         </div>
@@ -157,17 +285,25 @@ export default function LessonCompletion({
         <div className="mt-7 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl bg-white p-5">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
-              Badge unlocked
+              Badge milestone
             </p>
+
             <p className="mt-2 text-lg font-black text-[#0D1B3D]">
               {badgeEarned}
+            </p>
+
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Badge awards are managed
+              separately from lesson
+              completion.
             </p>
           </div>
 
           <div className="rounded-2xl bg-white p-5">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
-              Portfolio evidence
+              Portfolio evidence target
             </p>
+
             <p className="mt-2 text-lg font-black text-[#0D1B3D]">
               {portfolioEvidence}
             </p>

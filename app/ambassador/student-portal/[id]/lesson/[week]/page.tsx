@@ -1,0 +1,353 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { authorizeStudentAccess } from "@/lib/auth/student-access";
+import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletion";
+
+type PageProps = {
+  params: Promise<{
+    id: string;
+    week: string;
+  }>;
+};
+
+type LessonContent = {
+  week?: number;
+  focus?: string;
+  title?: string;
+  program?: string;
+  activity?: string;
+  reflection?: string;
+};
+
+export default async function StudentLessonPage({
+  params,
+}: PageProps) {
+  const { id, week } = await params;
+
+  const weekNumber = Number(week);
+
+  if (
+    !Number.isInteger(weekNumber) ||
+    weekNumber < 1
+  ) {
+    notFound();
+  }
+
+  const access =
+    await authorizeStudentAccess(id);
+
+  if (!access.allowed) {
+    if (access.status === 401) {
+      redirect("/ambassador/login");
+    }
+
+    if (access.status === 404) {
+      notFound();
+    }
+
+    redirect("/ambassador");
+  }
+
+  const student =
+    await prisma.student.findUnique({
+      where: {
+        id,
+      },
+
+      select: {
+        id: true,
+
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+
+        enrollments: {
+          where: {
+            status: "ACTIVE",
+          },
+
+          select: {
+            cohort: {
+              select: {
+                id: true,
+                name: true,
+
+                program: {
+                  select: {
+                    id: true,
+                    name: true,
+                    totalWeeks: true,
+
+                    modules: {
+                      select: {
+                        lessons: {
+                          where: {
+                            weekNumber,
+                            status: "ACTIVE",
+                          },
+
+                          select: {
+                            id: true,
+                            title: true,
+                            summary: true,
+                            content: true,
+                            weekNumber: true,
+                            estimatedMinutes: true,
+
+                            deliverySettings: {
+                              where: {
+                                cohortId:
+                                  access.cohortIds[0],
+                                releasedToStudents:
+                                  true,
+                              },
+
+                              select: {
+                                releasedToStudents:
+                                  true,
+                                activity: true,
+                                assessment: true,
+                                homework: true,
+                                workbook: true,
+                                badgeEnabled: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          take: 1,
+        },
+      },
+    });
+
+  if (!student) {
+    notFound();
+  }
+
+  const enrollment =
+    student.enrollments[0];
+
+  if (!enrollment) {
+    notFound();
+  }
+
+  const program =
+    enrollment.cohort.program;
+
+  if (
+    weekNumber > program.totalWeeks
+  ) {
+    notFound();
+  }
+
+  const lesson =
+    program.modules
+      .flatMap(
+        (module) => module.lessons
+      )
+      .find(
+        (item) =>
+          item.weekNumber === weekNumber &&
+          item.deliverySettings.some(
+            (setting) =>
+              setting.releasedToStudents
+          )
+      );
+
+  if (!lesson) {
+    return (
+      <main className="space-y-8">
+        <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-[#F2B705]">
+            Future Ready™ Student Experience
+          </p>
+
+          <h1 className="mt-3 text-4xl font-black">
+            Week {weekNumber}
+          </h1>
+
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-200">
+            This lesson has not been released yet.
+          </p>
+        </section>
+
+        <Link
+          href={`/ambassador/student-portal/${id}`}
+          className="inline-block rounded-xl bg-[#0D1B3D] px-6 py-3 font-black text-white"
+        >
+          ← Return to My Dashboard
+        </Link>
+      </main>
+    );
+  }
+
+  const content =
+    lesson.content &&
+    typeof lesson.content === "object" &&
+    !Array.isArray(lesson.content)
+      ? (lesson.content as LessonContent)
+      : {};
+
+  const delivery =
+    lesson.deliverySettings[0];
+
+  const activity =
+    content.activity ||
+    "Complete the student activity provided by your facilitator.";
+
+  const reflection =
+    content.reflection ||
+    "What did you learn about yourself during this lesson?";
+
+  const focus =
+    content.focus ||
+    lesson.summary ||
+    "";
+
+  const badgeEarned =
+    delivery?.badgeEnabled
+      ? `Week ${weekNumber} Future Ready™ Milestone`
+      : "Lesson Completion";
+
+  const portfolioEvidence =
+    content.activity ||
+    `Week ${weekNumber} learning evidence`;
+
+  return (
+    <main className="space-y-8">
+      <section className="rounded-3xl bg-[#0D1B3D] px-8 py-10 text-white">
+        <p className="text-sm font-black uppercase tracking-[0.18em] text-[#F2B705]">
+          Future Ready™ Student Experience
+        </p>
+
+        <p className="mt-5 font-bold text-slate-300">
+          {enrollment.cohort.name}
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black">
+          Week {lesson.weekNumber}:{" "}
+          {lesson.title}
+        </h1>
+
+        {focus ? (
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
+            {focus}
+          </p>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
+            {lesson.estimatedMinutes} minutes
+          </span>
+
+          <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
+            Week {lesson.weekNumber} of{" "}
+            {program.totalWeeks}
+          </span>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#725500]">
+            My Activity
+          </p>
+
+          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+            What I'm Doing
+          </h2>
+
+          <p className="mt-5 text-lg leading-8 text-slate-700">
+            {activity}
+          </p>
+
+          {delivery?.activity ===
+          "REQUIRED" ? (
+            <div className="mt-6 inline-flex rounded-full bg-[#FFF3C4] px-4 py-2 text-sm font-black text-[#0D1B3D]">
+              Required
+            </div>
+          ) : null}
+        </article>
+
+        <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#725500]">
+            My Reflection
+          </p>
+
+          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+            Think About It
+          </h2>
+
+          <p className="mt-5 text-lg leading-8 text-slate-700">
+            {reflection}
+          </p>
+
+          <Link
+            href={`/ambassador/student-passport/${id}/reflections`}
+            className="mt-6 inline-block rounded-xl border border-[#0D1B3D] px-5 py-3 font-black text-[#0D1B3D]"
+          >
+            Open Reflection Journal →
+          </Link>
+        </article>
+      </section>
+
+      <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <p className="text-sm font-black uppercase tracking-[0.16em] text-[#725500]">
+          My Evidence
+        </p>
+
+        <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+          Build My Future Ready™ Record
+        </h2>
+
+        <p className="mt-4 text-lg leading-8 text-slate-700">
+          Save evidence from this week's work in your
+          Digital Portfolio.
+        </p>
+
+        <Link
+          href={`/ambassador/student-passport/${id}/portfolio`}
+          className="mt-6 inline-block rounded-xl border border-[#0D1B3D] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          Open Digital Portfolio →
+        </Link>
+      </article>
+
+      <LessonCompletion
+        week={lesson.weekNumber}
+        title={lesson.title}
+        badgeEarned={badgeEarned}
+        portfolioEvidence={
+          portfolioEvidence
+        }
+      />
+
+      <nav className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-7">
+        <Link
+          href={`/ambassador/student-portal/${id}`}
+          className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-black text-slate-700"
+        >
+          ← My Dashboard
+        </Link>
+
+        <Link
+          href={`/ambassador/student-passport/${id}`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          My Passport →
+        </Link>
+      </nav>
+    </main>
+  );
+}

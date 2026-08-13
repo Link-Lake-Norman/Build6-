@@ -283,6 +283,7 @@ model Student {
   attendance      AttendanceRecord[]
   readinessProfile StudentReadinessProfile?
   readinessResponses ReadinessResponse[]
+  profile         StudentProfile?
 
   @@index([schoolId, graduationYear])
 }
@@ -963,6 +964,24 @@ model ReadinessResponse {
 
   @@index([studentId])
 }
+
+model StudentProfile {
+  id              String   @id @default(cuid())
+  studentId       String   @unique
+
+  aboutMe         String?
+  strengths       String?
+  values          String?
+  careerInterests String?
+  futureGoals     String?
+  skillsToBuild   String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
 
 model StudentReadinessProfile {
   id                   String   @id @default(cuid())

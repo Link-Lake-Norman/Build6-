@@ -3,28 +3,32 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import {
-  curriculum,
-  students,
-} from "@/content/platform";
 
-type ReflectionRecord = {
+type ReflectionItem = {
+  lessonId: string;
   week: number;
-  response: string;
-  updatedAt: string;
+  lessonTitle: string;
+  reflection: {
+    id: string;
+    prompt: string;
+    response: string;
+    status: string;
+    submittedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+};
+
+type ReflectionResponse = {
+  reflections: ReflectionItem[];
 };
 
 export default function ReflectionJournalPage() {
   const params = useParams<{ id: string }>();
   const studentId = params.id;
 
-  const student = useMemo(
-    () =>
-      students.find(
-        (item) => item.id === studentId
-      ),
-    [studentId]
-  );
+  const [items, setItems] =
+    useState<ReflectionItem[]>([]);
 
   const [selectedWeek, setSelectedWeek] =
     useState(1);
@@ -32,78 +36,172 @@ export default function ReflectionJournalPage() {
   const [response, setResponse] =
     useState("");
 
-  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
 
-  const storageKey =
-    `future-ready-v2-reflections-${studentId}`;
+  const [saving, setSaving] =
+    useState(false);
 
-  const lesson = curriculum.find(
-    (item) => item.week === selectedWeek
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const [savedAt, setSavedAt] =
+    useState<string | null>(null);
+
+  const selectedItem = useMemo(
+    () =>
+      items.find(
+        (item) =>
+          item.week === selectedWeek
+      ) ?? null,
+    [items, selectedWeek]
   );
 
   useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
+    async function loadReflections() {
+      setLoading(true);
+      setError(null);
 
-    if (!stored) {
-      setResponse("");
-      return;
-    }
-
-    try {
-      const records =
-        JSON.parse(stored) as ReflectionRecord[];
-
-      const current = records.find(
-        (item) =>
-          item.week === selectedWeek
-      );
-
-      setResponse(current?.response ?? "");
-    } catch {
-      localStorage.removeItem(storageKey);
-      setResponse("");
-    }
-  }, [selectedWeek, storageKey]);
-
-  function saveReflection() {
-    const stored = localStorage.getItem(storageKey);
-
-    let records: ReflectionRecord[] = [];
-
-    if (stored) {
       try {
-        records = JSON.parse(stored);
-      } catch {
-        records = [];
+        const result = await fetch(
+          `/api/student/reflections?studentId=${encodeURIComponent(
+            studentId
+          )}`,
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        );
+
+        const data =
+          (await result.json()) as
+            | ReflectionResponse
+            | { error?: string };
+
+        if (!result.ok) {
+          throw new Error(
+            "error" in data && data.error
+              ? data.error
+              : "Unable to load reflections."
+          );
+        }
+
+        const reflectionData =
+          (data as ReflectionResponse)
+            .reflections ?? [];
+
+        setItems(reflectionData);
+
+        const firstAvailable =
+          reflectionData[0]?.week ?? 1;
+
+        setSelectedWeek((current) =>
+          reflectionData.some(
+            (item) =>
+              item.week === current
+          )
+            ? current
+            : firstAvailable
+        );
+      } catch (caughtError) {
+        setError(
+          caughtError instanceof Error
+            ? caughtError.message
+            : "Unable to load reflections."
+        );
+      } finally {
+        setLoading(false);
       }
     }
 
-    const nextRecord: ReflectionRecord = {
-      week: selectedWeek,
-      response,
-      updatedAt: new Date().toISOString(),
-    };
+    loadReflections();
+  }, [studentId]);
 
-    const filtered = records.filter(
-      (item) =>
-        item.week !== selectedWeek
+  useEffect(() => {
+    setResponse(
+      selectedItem?.reflection
+        ?.response ?? ""
     );
 
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify([
-        ...filtered,
-        nextRecord,
-      ])
+    setSavedAt(
+      selectedItem?.reflection
+        ?.updatedAt ?? null
     );
+  }, [selectedItem]);
 
-    setSaved(true);
+  async function saveReflection(
+    submit = false
+  ) {
+    if (!selectedItem) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      const prompt =
+        `Reflection for Week ${selectedItem.week}: ${selectedItem.lessonTitle}`;
+
+      const result = await fetch(
+        "/api/student/reflections",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            studentId,
+            week: selectedItem.week,
+            prompt,
+            response,
+            submit,
+          }),
+        }
+      );
+
+      const data = await result.json();
+
+      if (!result.ok) {
+        throw new Error(
+          data.error ??
+            "Unable to save reflection."
+        );
+      }
+
+      const updatedAt =
+        data.reflection.updatedAt;
+
+      setSavedAt(updatedAt);
+
+      setItems((current) =>
+        current.map((item) =>
+          item.week ===
+          selectedItem.week
+            ? {
+                ...item,
+                reflection:
+                  data.reflection,
+              }
+            : item
+        )
+      );
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to save reflection."
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
-  if (!student) {
+  if (loading) {
     return (
       <div className="rounded-3xl bg-white p-8">
-        Student not found.
+        Loading Reflection Journal...
       </div>
     );
   }
@@ -112,7 +210,7 @@ export default function ReflectionJournalPage() {
     <div className="space-y-10">
       <header className="rounded-3xl bg-[#0D1B3D] px-8 py-10 text-white">
         <Link
-          href={`/ambassador/student-passport/${student.id}`}
+          href={`/ambassador/student-passport/${studentId}`}
           className="font-bold text-[#F2B705]"
         >
           ← Back to Student Passport
@@ -127,10 +225,18 @@ export default function ReflectionJournalPage() {
         </h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Reflect on lessons, experiences, skills, goals,
-          and progress throughout the 36-week journey.
+          Reflect on lessons, experiences,
+          skills, goals, and progress
+          throughout your Future Ready™
+          journey.
         </p>
       </header>
+
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 font-bold text-red-800">
+          {error}
+        </div>
+      )}
 
       <section className="grid gap-8 xl:grid-cols-[0.35fr_0.65fr]">
         <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -139,64 +245,112 @@ export default function ReflectionJournalPage() {
           </h2>
 
           <div className="mt-6 grid grid-cols-4 gap-2 xl:grid-cols-3">
-            {curriculum.map((week) => (
+            {items.map((item) => (
               <button
-                key={week.week}
+                key={item.lessonId}
                 type="button"
-                onClick={() => {
-                  setSelectedWeek(week.week);
-                  setSaved(false);
-                }}
+                onClick={() =>
+                  setSelectedWeek(
+                    item.week
+                  )
+                }
                 className={`rounded-xl border-2 px-3 py-3 font-black ${
-                  selectedWeek === week.week
+                  selectedWeek ===
+                  item.week
                     ? "border-[#F2B705] bg-[#FFF3C4] text-[#0D1B3D]"
-                    : "border-slate-200 bg-white text-slate-500"
+                    : item.reflection
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                      : "border-slate-200 bg-white text-slate-500"
                 }`}
               >
-                {week.week}
+                {item.reflection
+                  ? `✓ ${item.week}`
+                  : item.week}
               </button>
             ))}
           </div>
         </aside>
 
         <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
-            Week {selectedWeek}
-          </p>
-
-          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-            {lesson?.title}
-          </h2>
-
-          <p className="mt-4 text-lg leading-8 text-slate-600">
-            {lesson?.discussionQuestions[0]}
-          </p>
-
-          <textarea
-            value={response}
-            onChange={(event) => {
-              setResponse(event.target.value);
-              setSaved(false);
-            }}
-            placeholder="Write your reflection here..."
-            className="mt-7 min-h-72 w-full rounded-2xl border border-slate-300 p-5 text-lg leading-8 outline-none transition focus:border-[#F2B705] focus:ring-4 focus:ring-[#F2B705]/20"
-          />
-
-          <div className="mt-6 flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              onClick={saveReflection}
-              className="rounded-xl bg-[#F2B705] px-7 py-4 font-black text-[#0D1B3D]"
-            >
-              Save Reflection
-            </button>
-
-            {saved ? (
-              <p className="font-black text-emerald-700">
-                Reflection saved.
+          {selectedItem ? (
+            <>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
+                Week {selectedItem.week}
               </p>
-            ) : null}
-          </div>
+
+              <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+                {selectedItem.lessonTitle}
+              </h2>
+
+              <p className="mt-4 text-lg leading-8 text-slate-600">
+                What did you learn,
+                practice, notice, or improve
+                during this lesson? How will
+                you use it moving forward?
+              </p>
+
+              <textarea
+                value={response}
+                onChange={(event) => {
+                  setResponse(
+                    event.target.value
+                  );
+                  setSavedAt(null);
+                }}
+                placeholder="Write your reflection here..."
+                className="mt-7 min-h-72 w-full rounded-2xl border border-slate-300 p-5 text-lg leading-8 outline-none transition focus:border-[#F2B705] focus:ring-4 focus:ring-[#F2B705]/20"
+              />
+
+              <div className="mt-6 flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() =>
+                    saveReflection(false)
+                  }
+                  disabled={saving}
+                  className="rounded-xl bg-[#F2B705] px-7 py-4 font-black text-[#0D1B3D] disabled:opacity-50"
+                >
+                  {saving
+                    ? "Saving..."
+                    : "Save Reflection"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    saveReflection(true)
+                  }
+                  disabled={
+                    saving ||
+                    !response.trim()
+                  }
+                  className="rounded-xl bg-[#0D1B3D] px-7 py-4 font-black text-white disabled:opacity-50"
+                >
+                  Submit Reflection
+                </button>
+
+                {savedAt && (
+                  <p className="font-black text-emerald-700">
+                    ✓ Saved ·{" "}
+                    {new Date(
+                      savedAt
+                    ).toLocaleTimeString(
+                      [],
+                      {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      }
+                    )}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <p className="text-slate-600">
+              No Ambassador lessons are
+              available.
+            </p>
+          )}
         </article>
       </section>
     </div>
