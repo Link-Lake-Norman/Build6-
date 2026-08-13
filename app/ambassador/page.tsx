@@ -66,7 +66,7 @@ export default function AmbassadorDashboardPage() {
         />
 
         <DashboardLink
-          href="/ambassador/student-portal/ambassador-student-001"
+          href="/ambassador/student"
           title="Student Experience"
           description="Student record, readiness, skills, badges, and curriculum."
         />

@@ -18,7 +18,7 @@ const links = [
     label: "Student Portal",
   },
   {
-    href: "/ambassador/student-passport/ambassador-student-001",
+    href: "/ambassador/student",
     label: "Student Passport",
   },
   {

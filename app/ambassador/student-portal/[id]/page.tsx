@@ -121,6 +121,12 @@ export default async function AmbassadorStudentPortalPage({
             id: true,
           },
         },
+
+        readinessProfile: {
+          select: {
+            completedAt: true,
+          },
+        },
       },
     });
 
@@ -236,6 +242,43 @@ export default async function AmbassadorStudentPortalPage({
           )}
         </div>
       </section>
+
+      {!student.readinessProfile?.completedAt ? (
+        <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF9DF] p-7 shadow-sm">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+                Day 1 Baseline
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+                Start with your Future Ready™ Assessment
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
+                Before we measure growth, we need to know where you are starting.
+                This is not a grade. Answer honestly and create your Day 1 baseline.
+              </p>
+            </div>
+
+            <Link
+              href={`/ambassador/student-portal/${student.id}/assessment`}
+              className="shrink-0 rounded-xl bg-[#0D1B3D] px-7 py-4 text-center font-black text-white shadow-lg"
+            >
+              Take Day 1 Assessment →
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
+          <p className="font-black text-emerald-900">
+            ✓ Day 1 Future Ready™ baseline complete
+          </p>
+          <p className="mt-2 text-sm leading-6 text-emerald-800">
+            Your readiness score now reflects your real starting point.
+          </p>
+        </section>
+      )}
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard

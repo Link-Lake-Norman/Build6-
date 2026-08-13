@@ -175,19 +175,15 @@ export default function AdminCommandCenterPage() {
                 </>
               ) : (
                 <p className="mt-3 text-slate-600">
-                  Open Operations and add the first session date.
+                  Schedule the first session when your pilot calendar is confirmed.
                 </p>
               )}
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <Action
-                  href="/ambassador/session-planner"
-                  label="Open Session Planner"
+                  href="/ambassador/curriculum"
+                  label="Open Curriculum"
                   primary
-                />
-                <Action
-                  href="/ambassador/operations"
-                  label="Edit Calendar & Speaker"
                 />
                 <Action
                   href="/ambassador/facilitator/attendance"
@@ -203,21 +199,6 @@ export default function AdminCommandCenterPage() {
                   href="/ambassador/facilitator/students"
                   title="Students"
                   description="Open the cohort directory."
-                />
-                <Tile
-                  href="/ambassador/professionals"
-                  title="Professionals"
-                  description="Invite, edit, and assign contacts."
-                />
-                <Tile
-                  href="/ambassador/projects"
-                  title="Project Studio"
-                  description="Review teams, tasks, and assets."
-                />
-                <Tile
-                  href="/ambassador/messages"
-                  title="Messages"
-                  description="Send private messages or announcements."
                 />
                 <Tile
                   href="/ambassador/admin/permissions"
@@ -259,21 +240,17 @@ export default function AdminCommandCenterPage() {
               <p className={eyebrowClass}>ADMIN ACTIONS</p>
               <div className="mt-5 space-y-3">
                 <Action
-                  href="/ambassador/professionals"
-                  label="+ Add Professional"
+                  href="/ambassador/admin/cohorts"
+                  label="Manage Cohorts"
                   primary
                 />
                 <Action
-                  href="/ambassador/projects"
-                  label="+ Create Project"
+                  href="/ambassador/facilitator/students"
+                  label="Open Student Roster"
                 />
                 <Action
-                  href="/ambassador/messages"
-                  label="Send Announcement"
-                />
-                <Action
-                  href="/ambassador/operations"
-                  label="+ Add Event"
+                  href="/ambassador/curriculum"
+                  label="Open Curriculum"
                 />
               </div>
             </section>

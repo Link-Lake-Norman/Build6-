@@ -39,7 +39,7 @@ export default function Sidebar() {
 
 
         <Link
-          href="/ambassador/student-portal/ambassador-student-001"
+          href="/ambassador/student"
           className="block rounded-lg border p-3 hover:bg-gray-100"
         >
           Student Portal
@@ -49,7 +49,7 @@ export default function Sidebar() {
 
 
         <Link
-          href="/ambassador/student-passport/ambassador-student-001"
+          href="/ambassador/student"
           className="block rounded-lg border p-3 hover:bg-gray-100"
         >
           Student Passport
