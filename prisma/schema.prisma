@@ -811,6 +811,7 @@ model LessonResource {
   visibleToStudent     Boolean            @default(true)
   visibleToFacilitator Boolean            @default(true)
   sortOrder            Int                @default(0)
+  dayNumber            Int?
   uploadedById         String?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
@@ -956,6 +957,7 @@ model Assignment {
   portfolioEligible   Boolean                @default(true)
   badgeName           String?
   dueAt               DateTime?
+  dayNumber           Int?
   status              RecordStatus           @default(ACTIVE)
   createdById         String?
   createdAt           DateTime               @default(now())

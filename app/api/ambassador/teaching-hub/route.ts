@@ -637,6 +637,13 @@ export async function POST(
         dueAt = parsedDate;
       }
 
+      const dayNumber =
+        Number.isInteger(body.dayNumber) &&
+        body.dayNumber >= 1 &&
+        body.dayNumber <= 5
+          ? body.dayNumber
+          : null;
+
       const assignment =
         await prisma.assignment.create({
           data: {
@@ -673,6 +680,7 @@ export async function POST(
                 ? body.badgeName.trim()
                 : null,
             dueAt,
+            dayNumber,
             status: "ACTIVE",
           },
         });
@@ -709,6 +717,13 @@ export async function POST(
       const kind = isResourceKind(body.kind)
         ? body.kind
         : "OTHER";
+
+      const dayNumber =
+        Number.isInteger(body.dayNumber) &&
+        body.dayNumber >= 1 &&
+        body.dayNumber <= 5
+          ? body.dayNumber
+          : null;
 
       const resource =
         await prisma.lessonResource.create({
@@ -753,6 +768,7 @@ export async function POST(
                 ? body.visibleToStudent
                 : true,
             visibleToFacilitator: true,
+            dayNumber,
             sortOrder:
               Number.isInteger(body.sortOrder)
                 ? body.sortOrder

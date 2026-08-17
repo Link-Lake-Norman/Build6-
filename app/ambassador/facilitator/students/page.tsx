@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import FacilitatorShell from "@/components/facilitator/FacilitatorShell";
 import RemoveStudentButton from "./RemoveStudentButton";
+import StudentAttendanceButtons from "@/components/facilitator/StudentAttendanceButtons";
+import MarkAllPresentButton from "@/components/facilitator/MarkAllPresentButton";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth/session";
 
@@ -108,6 +110,12 @@ export default async function Page() {
             readinessScore: true,
             profileComplete: true,
 
+            readinessProfile: {
+              select: {
+                completedAt: true,
+              },
+            },
+
             user: {
               select: {
                 firstName: true,
@@ -161,6 +169,103 @@ export default async function Page() {
       ])
     ).values()
   );
+
+  const attendanceDateParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const attendanceYear =
+    attendanceDateParts.find((part) => part.type === "year")?.value ?? "";
+
+  const attendanceMonth =
+    attendanceDateParts.find((part) => part.type === "month")?.value ?? "";
+
+  const attendanceDay =
+    attendanceDateParts.find((part) => part.type === "day")?.value ?? "";
+
+  const attendanceDate = new Date(
+    `${attendanceYear}-${attendanceMonth}-${attendanceDay}T00:00:00.000Z`
+  );
+
+  const todayAttendance =
+    enrollments.length > 0
+      ? await prisma.attendanceRecord.findMany({
+          where: {
+            date: attendanceDate,
+            OR: enrollments.map((enrollment) => ({
+              cohortId: enrollment.cohort.id,
+              studentId: enrollment.student.id,
+            })),
+          },
+          select: {
+            cohortId: true,
+            studentId: true,
+            status: true,
+          },
+        })
+      : [];
+
+  const attendanceByStudent = new Map(
+    todayAttendance.map((record) => [
+      `${record.cohortId}:${record.studentId}`,
+      record.status,
+    ])
+  );
+
+  const activeStudentIds = enrollments.map(
+    (enrollment) => enrollment.student.id
+  );
+
+  const activeCohortIds = Array.from(
+    new Set(
+      enrollments.map(
+        (enrollment) => enrollment.cohort.id
+      )
+    )
+  );
+
+  const capstoneAssignment =
+    activeCohortIds.length > 0
+      ? await prisma.assignment.findFirst({
+          where: {
+            title:
+              "Capstone Brainstorm — My Story Brain Map",
+            status: "ACTIVE",
+            cohortId: {
+              in: activeCohortIds,
+            },
+          },
+          select: {
+            id: true,
+            submissions: {
+              where: {
+                studentId: {
+                  in: activeStudentIds,
+                },
+              },
+              select: {
+                studentId: true,
+                status: true,
+                updatedAt: true,
+              },
+            },
+          },
+        })
+      : null;
+
+  const capstoneSubmissionByStudent =
+    new Map(
+      (
+        capstoneAssignment?.submissions ??
+        []
+      ).map((submission) => [
+        submission.studentId,
+        submission,
+      ])
+    );
 
   return (
     <FacilitatorShell activePath="/ambassador/facilitator/students">
@@ -284,20 +389,40 @@ export default async function Page() {
               </h2>
             </div>
 
-            <Link
-              href="/ambassador/facilitator/students/new"
+            <div
               style={{
-                background: "#0D1B3D",
-                color: "white",
-                padding: "12px 16px",
-                borderRadius: 12,
-                textDecoration: "none",
-                fontWeight: 900,
-                fontSize: 12,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                alignItems: "center",
               }}
             >
-              Add Student
-            </Link>
+              <MarkAllPresentButton
+                students={enrollments.map(
+                  (enrollment) => ({
+                    studentId:
+                      enrollment.student.id,
+                    cohortId:
+                      enrollment.cohort.id,
+                  })
+                )}
+              />
+
+              <Link
+                href="/ambassador/facilitator/students/new"
+                style={{
+                  background: "#0D1B3D",
+                  color: "white",
+                  padding: "12px 16px",
+                  borderRadius: 12,
+                  textDecoration: "none",
+                  fontWeight: 900,
+                  fontSize: 12,
+                }}
+              >
+                Add Student
+              </Link>
+            </div>
           </div>
 
           {enrollments.length === 0 ? (
@@ -561,6 +686,126 @@ export default async function Page() {
                             : "In Progress"}
                         </strong>
                       </div>
+
+                      <div
+                        style={{
+                          marginTop: 16,
+                          display: "grid",
+                          gridTemplateColumns:
+                            "repeat(2,minmax(0,1fr))",
+                          gap: 8,
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: 12,
+                            borderRadius: 12,
+                            background:
+                              student
+                                .readinessProfile
+                                ?.completedAt
+                                ? "#ECFDF3"
+                                : "#FFF7ED",
+                            border:
+                              student
+                                .readinessProfile
+                                ?.completedAt
+                                ? "1px solid #A6F4C5"
+                                : "1px solid #FED7AA",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: 9,
+                              fontWeight: 900,
+                              letterSpacing: 1,
+                              color: "#667085",
+                            }}
+                          >
+                            DAY 1 ASSESSMENT
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop: 5,
+                              fontSize: 11,
+                              fontWeight: 900,
+                              color:
+                                student
+                                  .readinessProfile
+                                  ?.completedAt
+                                  ? "#067647"
+                                  : "#C2410C",
+                            }}
+                          >
+                            {student
+                              .readinessProfile
+                              ?.completedAt
+                              ? "✓ Completed"
+                              : "Not Completed"}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            padding: 12,
+                            borderRadius: 12,
+                            background:
+                              capstoneSubmissionByStudent.has(
+                                student.id
+                              )
+                                ? "#F4F3FF"
+                                : "#F8FAFC",
+                            border:
+                              capstoneSubmissionByStudent.has(
+                                student.id
+                              )
+                                ? "1px solid #C3B5FD"
+                                : "1px solid #E3E8F0",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: 9,
+                              fontWeight: 900,
+                              letterSpacing: 1,
+                              color: "#667085",
+                            }}
+                          >
+                            CAPSTONE BRAINSTORM
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop: 5,
+                              fontSize: 11,
+                              fontWeight: 900,
+                              color:
+                                capstoneSubmissionByStudent.has(
+                                  student.id
+                                )
+                                  ? "#5925DC"
+                                  : "#667085",
+                            }}
+                          >
+                            {capstoneSubmissionByStudent.has(
+                              student.id
+                            )
+                              ? "✓ Started"
+                              : "Not Started"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <StudentAttendanceButtons
+                        studentId={student.id}
+                        cohortId={enrollment.cohort.id}
+                        currentStatus={
+                          attendanceByStudent.get(
+                            `${enrollment.cohort.id}:${student.id}`
+                          ) ?? null
+                        }
+                      />
 
                       <div
                         style={{

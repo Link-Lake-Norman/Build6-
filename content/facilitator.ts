@@ -138,10 +138,6 @@ export const facilitatorNavigation: FacilitatorNavigationItem[] = [
     href: "/ambassador/facilitator/students",
   },
   {
-    label: "Attendance",
-    href: "/ambassador/facilitator/attendance",
-  },
-  {
     label: "Friday Command Center",
     href: "/ambassador/facilitator/friday",
   },

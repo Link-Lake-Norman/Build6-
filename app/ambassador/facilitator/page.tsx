@@ -174,25 +174,15 @@ export default async function FacilitatorPage() {
 
     return {
       enrollmentId: enrollment.id,
-
       studentId: student.id,
-
       name,
-
       email: student.user.email,
-
       cohortName: enrollment.cohort.name,
-
       cohortCode: enrollment.cohort.code,
-
       progress,
-
       completed,
-
       readiness: Math.round(Number(student.readinessScore)),
-
       artifacts: student.portfolio?.artifacts.length ?? 0,
-
       profileComplete: student.profileComplete,
     };
   });
@@ -205,27 +195,25 @@ export default async function FacilitatorPage() {
         )
       : 0;
 
-  const averageReadiness =
-    students.length > 0
-      ? Math.round(
-          students.reduce((sum, student) => sum + student.readiness, 0) /
-            students.length,
-        )
-      : 0;
+  const studentsAssessed = students.filter(
+    (student) => student.readiness > 0,
+  ).length;
 
   return (
     <FacilitatorShell activePath="/ambassador/facilitator">
       <main
         style={{
           padding: 24,
-          maxWidth: 1400,
+          maxWidth: 1200,
           margin: "0 auto",
         }}
       >
+        {/* SIMPLE WELCOME */}
+
         <section
           style={{
             borderRadius: 28,
-            padding: 32,
+            padding: 30,
             background: "#0D1B3D",
             color: "white",
           }}
@@ -233,18 +221,18 @@ export default async function FacilitatorPage() {
           <div
             style={{
               color: "#F2B705",
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 900,
               letterSpacing: 2,
             }}
           >
-            FACILITATOR COMMAND CENTER
+            FUTURE READY™ FACILITATOR
           </div>
 
           <h1
             style={{
-              margin: "10px 0 0",
-              fontSize: 38,
+              margin: "8px 0 0",
+              fontSize: 34,
             }}
           >
             Welcome, {session.name}
@@ -252,318 +240,377 @@ export default async function FacilitatorPage() {
 
           <p
             style={{
-              marginTop: 14,
-              maxWidth: 760,
-              lineHeight: 1.7,
+              marginTop: 10,
+              maxWidth: 680,
+              lineHeight: 1.6,
               color: "#D7DFEC",
             }}
           >
-            Your live cohort, weekly teaching plan, student progress, and Future
-            Ready™ delivery tools are connected here.
+            Everything you need to teach, support students, and manage your
+            Future Ready™ cohort is here.
           </p>
 
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: 10,
-              marginTop: 22,
+              gap: 8,
+              marginTop: 18,
             }}
           >
             {cohorts.map((cohort) => (
               <span
                 key={cohort.id}
                 style={{
-                  padding: "8px 12px",
+                  padding: "7px 11px",
                   borderRadius: 999,
                   background: "rgba(255,255,255,.10)",
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: 800,
                 }}
               >
-                {cohort.name} · {cohort.code}
+                {cohort.name}
               </span>
             ))}
           </div>
         </section>
 
-        <FacilitatorWeekOneFrontDoor />
+        {/* TODAY - PRIMARY WORK AREA */}
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
-            gap: 16,
-            marginTop: 24,
-          }}
-        >
-          <Metric label="Active Students" value={students.length} />
-
-          <Metric label="Average Progress" value={`${averageProgress}%`} />
-
-          <Metric label="Average Readiness" value={`${averageReadiness}%`} />
-
-          <Metric label="Active Cohorts" value={cohorts.length} />
-        </section>
-
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-            gap: 16,
-            marginTop: 24,
-          }}
-        >
-          <ActionCard
-            eyebrow="TEACH"
-            title="Weekly Delivery Dashboard"
-            description="Core curriculum, daily agenda, AI activity builder, traditions, tangible takeaways, and field experiences."
-            href="/ambassador/planner"
-            action="Open Weekly Planner"
-          />
-
-          <ActionCard
-            eyebrow="STUDENTS"
-            title="Live Student Roster"
-            description="View registered students, progress, readiness, Passports, and cohort enrollment."
-            href="/ambassador/facilitator/students"
-            action="Manage Students"
-          />
-
-          <ActionCard
-            eyebrow="ADD"
-            title="Add Student"
-            description="Add a student to your assigned Future Ready™ cohort."
-            href="/ambassador/facilitator/students/new"
-            action="Add Student"
-          />
-
-          <ActionCard
-            eyebrow="ATTENDANCE"
-            title="Attendance"
-            description="Record participation and attendance for the current cohort."
-            href="/ambassador/facilitator/attendance"
-            action="Open Attendance"
-          />
-
-          <ActionCard
-            eyebrow="COMMUNICATE"
-            title="Messages"
-            description="Communicate directly with students and authorized program administrators."
-            href="/ambassador/messages"
-            action="Open Messages"
-          />
-        </section>
-
-        <section
-          style={{
-            marginTop: 24,
-            border: "1px solid #E3E8F0",
-            borderRadius: 24,
-            background: "white",
-            overflow: "hidden",
-          }}
-        >
+        <section style={{ marginTop: 22 }}>
           <div
             style={{
-              padding: 22,
-              borderBottom: "1px solid #E3E8F0",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 16,
-              flexWrap: "wrap",
+              marginBottom: 12,
             }}
           >
-            <div>
-              <div
-                style={{
-                  color: "#4B2265",
-                  fontSize: 11,
-                  fontWeight: 900,
-                  letterSpacing: 1.5,
-                }}
-              >
-                LIVE ROSTER
-              </div>
-
-              <h2
-                style={{
-                  margin: "5px 0 0",
-                }}
-              >
-                Your Students
-              </h2>
-            </div>
-
-            <Link
-              href="/ambassador/facilitator/students"
+            <div
               style={{
-                color: "#0D1B3D",
-                textDecoration: "none",
+                color: "#4B2265",
+                fontSize: 11,
                 fontWeight: 900,
-                fontSize: 12,
+                letterSpacing: 1.5,
               }}
             >
-              Open Full Roster →
-            </Link>
+              START HERE
+            </div>
+
+            <h2
+              style={{
+                margin: "4px 0 0",
+                color: "#0D1B3D",
+                fontSize: 25,
+              }}
+            >
+              Today&apos;s Class
+            </h2>
+
+            <p
+              style={{
+                margin: "6px 0 0",
+                color: "#667085",
+                fontSize: 13,
+              }}
+            >
+              Your current lesson and the tools you need to deliver it.
+            </p>
           </div>
 
-          {students.length === 0 ? (
-            <div
-              style={{
-                padding: 40,
-                textAlign: "center",
-                color: "#667085",
-              }}
-            >
-              No active students are currently enrolled in your assigned cohort.
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-                gap: 16,
-                padding: 22,
-              }}
-            >
-              {students.map((student) => (
-                <article
-                  key={student.enrollmentId}
-                  style={{
-                    border: "1px solid #E3E8F0",
-                    borderRadius: 18,
-                    padding: 20,
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: 18,
-                    }}
-                  >
-                    {student.name}
-                  </h3>
-
-                  <div
-                    style={{
-                      color: "#7A8494",
-                      fontSize: 11,
-                      marginTop: 4,
-                    }}
-                  >
-                    {student.email}
-                  </div>
-
-                  <div
-                    style={{
-                      color: "#4B2265",
-                      fontSize: 11,
-                      fontWeight: 900,
-                      marginTop: 8,
-                    }}
-                  >
-                    {student.cohortName}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 16,
-                      display: "flex",
-                      justifyContent: "space-between",
-                      fontSize: 11,
-                    }}
-                  >
-                    <span>Progress</span>
-
-                    <strong>{student.progress}%</strong>
-                  </div>
-
-                  <div
-                    style={{
-                      height: 8,
-                      marginTop: 7,
-                      borderRadius: 999,
-                      overflow: "hidden",
-                      background: "#E8ECF2",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${student.progress}%`,
-                        height: "100%",
-                        background: "#F2B705",
-                      }}
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3,1fr)",
-                      gap: 8,
-                      marginTop: 16,
-                      padding: 12,
-                      borderRadius: 12,
-                      background: "#F8FAFC",
-                      textAlign: "center",
-                      fontSize: 10,
-                    }}
-                  >
-                    <div>
-                      <strong>{student.completed}</strong>
-                      <div>Lessons</div>
-                    </div>
-
-                    <div>
-                      <strong>{student.readiness}%</strong>
-                      <div>Readiness</div>
-                    </div>
-
-                    <div>
-                      <strong>{student.artifacts}</strong>
-                      <div>Artifacts</div>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/ambassador/student-passport/${student.studentId}`}
-                    style={{
-                      display: "inline-block",
-                      marginTop: 16,
-                      color: "#0D1B3D",
-                      textDecoration: "none",
-                      fontWeight: 900,
-                      fontSize: 11,
-                    }}
-                  >
-                    Open Passport →
-                  </Link>
-                </article>
-              ))}
-            </div>
-          )}
+          <FacilitatorWeekOneFrontDoor />
         </section>
+
+        {/* QUICK STATUS */}
+
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
+            gap: 12,
+            marginTop: 22,
+          }}
+        >
+          <Metric label="Students" value={students.length} />
+          <Metric
+            label="Assessments Complete"
+            value={`${studentsAssessed}/${students.length}`}
+          />
+          <Metric label="Program Progress" value={`${averageProgress}%`} />
+        </section>
+
+        {/* LESSON PLANNING */}
+
+        <DashboardSection
+          eyebrow="TEACH"
+          title="Lesson Plan & Teaching Tools"
+          description="Open when you want to plan ahead, customize a lesson, or add materials."
+        >
+          <div style={toolGridStyle}>
+            <ToolLink
+              title="Curriculum & Lesson Plan"
+              description="Review the full lesson, facilitator guidance, activities, and weekly materials."
+              href="/ambassador/curriculum"
+              action="Open Curriculum"
+            />
+
+            <ToolLink
+              title="Weekly Planner"
+              description="Manage the weekly delivery plan, agenda, classroom activities, and experiences."
+              href="/ambassador/planner"
+              action="Open Planner"
+            />
+
+            <ToolLink
+              title="Program / Lesson Builder"
+              description="Customize activities, facilitation, classroom delivery, and supplemental materials."
+              href="/ambassador/lesson-builder?week=1"
+              action="Open Lesson Builder"
+            />
+          </div>
+        </DashboardSection>
+
+        {/* STUDENTS */}
+
+        <DashboardSection
+          eyebrow="STUDENTS"
+          title={`Students & Progress · ${students.length}`}
+          description="Attendance, assessments, Passports, progress, student work, and enrollment."
+        >
+          <div style={toolGridStyle}>
+            <ToolLink
+              title="Live Student Roster"
+              description="Your main student workspace. Take attendance and review each student's progress and Passport."
+              href="/ambassador/facilitator/students"
+              action="Open Students"
+            />
+
+            <ToolLink
+              title="Add Student"
+              description="Enroll a new student into your assigned Future Ready™ cohort."
+              href="/ambassador/facilitator/students/new"
+              action="Add Student"
+            />
+          </div>
+
+          <div
+            style={{
+              marginTop: 18,
+              borderRadius: 16,
+              background: "#F8FAFC",
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 16,
+                alignItems: "center",
+              }}
+            >
+              <strong style={{ color: "#0D1B3D" }}>
+                Quick cohort status
+              </strong>
+
+              <span style={smallStatusStyle}>
+                {students.length} active students
+              </span>
+
+              <span style={smallStatusStyle}>
+                {studentsAssessed} assessments complete
+              </span>
+
+              <span style={smallStatusStyle}>
+                {averageProgress}% average progress
+              </span>
+            </div>
+          </div>
+        </DashboardSection>
+
+        {/* FRIDAY */}
+
+        <DashboardSection
+          eyebrow="APPLY"
+          title="Friday & Applied Learning"
+          description="Use for Friday check-ins, applied learning, reflection, and classroom follow-through."
+        >
+          <div style={toolGridStyle}>
+            <ToolLink
+              title="Friday Command Center"
+              description="Manage the Friday student experience and weekly applied-learning workflow."
+              href="/ambassador/facilitator/friday"
+              action="Open Friday"
+            />
+
+            <ToolLink
+              title="Reflections"
+              description="Review student reflection work and learning evidence."
+              href="/ambassador/facilitator/reflections"
+              action="Review Reflections"
+            />
+
+            <ToolLink
+              title="Badges"
+              description="Review and manage Future Ready™ student milestone recognition."
+              href="/ambassador/facilitator/badges"
+              action="Open Badges"
+            />
+          </div>
+        </DashboardSection>
+
+        {/* COMMUNICATION */}
+
+        <DashboardSection
+          eyebrow="CONNECT"
+          title="Communication"
+          description="Reach students and authorized Future Ready™ program administrators."
+        >
+          <div style={toolGridStyle}>
+            <ToolLink
+              title="Messages"
+              description="Communicate directly with students and program administrators."
+              href="/ambassador/messages"
+              action="Open Messages"
+            />
+          </div>
+        </DashboardSection>
+
+        {/* ADVANCED */}
+
+        <DashboardSection
+          eyebrow="MORE"
+          title="Analytics & Advanced Tools"
+          description="Additional program information is here when you need it—not in the way when you don't."
+        >
+          <div style={toolGridStyle}>
+            <ToolLink
+              title="Analytics"
+              description="Review cohort and student program performance."
+              href="/ambassador/facilitator/analytics"
+              action="Open Analytics"
+            />
+
+            <ToolLink
+              title="Student Passports"
+              description="Access individual student evidence, readiness, reflections, progress, and Capstone work from the roster."
+              href="/ambassador/facilitator/students"
+              action="Choose Student"
+            />
+          </div>
+        </DashboardSection>
       </main>
     </FacilitatorShell>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string | number }) {
+const toolGridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+  gap: 12,
+};
+
+const smallStatusStyle = {
+  borderRadius: 999,
+  background: "white",
+  border: "1px solid #E3E8F0",
+  padding: "7px 11px",
+  color: "#667085",
+  fontSize: 11,
+  fontWeight: 800,
+};
+
+function DashboardSection({
+  eyebrow,
+  title,
+  description,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details
+      style={{
+        marginTop: 16,
+        border: "1px solid #E3E8F0",
+        borderRadius: 20,
+        background: "white",
+        overflow: "hidden",
+      }}
+    >
+      <summary
+        style={{
+          cursor: "pointer",
+          padding: 20,
+          listStylePosition: "inside",
+        }}
+      >
+        <span
+          style={{
+            color: "#4B2265",
+            fontSize: 10,
+            fontWeight: 900,
+            letterSpacing: 1.5,
+            marginRight: 10,
+          }}
+        >
+          {eyebrow}
+        </span>
+
+        <strong
+          style={{
+            color: "#0D1B3D",
+            fontSize: 17,
+          }}
+        >
+          {title}
+        </strong>
+
+        <div
+          style={{
+            marginTop: 5,
+            marginLeft: 23,
+            color: "#667085",
+            fontSize: 12,
+            lineHeight: 1.5,
+          }}
+        >
+          {description}
+        </div>
+      </summary>
+
+      <div
+        style={{
+          borderTop: "1px solid #EEF1F5",
+          padding: 18,
+        }}
+      >
+        {children}
+      </div>
+    </details>
+  );
+}
+
+function Metric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) {
   return (
     <div
       style={{
         border: "1px solid #E3E8F0",
-        borderRadius: 18,
+        borderRadius: 16,
         background: "white",
-        padding: 20,
+        padding: 16,
       }}
     >
       <div
         style={{
           color: "#667085",
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: 900,
           letterSpacing: 1,
         }}
@@ -573,9 +620,9 @@ function Metric({ label, value }: { label: string; value: string | number }) {
 
       <div
         style={{
-          marginTop: 8,
+          marginTop: 5,
           color: "#0D1B3D",
-          fontSize: 32,
+          fontSize: 25,
           fontWeight: 900,
         }}
       >
@@ -585,14 +632,12 @@ function Metric({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-function ActionCard({
-  eyebrow,
+function ToolLink({
   title,
   description,
   href,
   action,
 }: {
-  eyebrow: string;
   title: string;
   description: string;
   href: string;
@@ -602,37 +647,27 @@ function ActionCard({
     <article
       style={{
         border: "1px solid #E3E8F0",
-        borderRadius: 20,
-        background: "white",
-        padding: 22,
+        borderRadius: 16,
+        background: "#FCFCFD",
+        padding: 17,
       }}
     >
-      <div
+      <h3
         style={{
-          color: "#F2B705",
-          fontWeight: 900,
-          fontSize: 10,
-          letterSpacing: 1.5,
-        }}
-      >
-        {eyebrow}
-      </div>
-
-      <h2
-        style={{
-          margin: "8px 0 0",
+          margin: 0,
           color: "#0D1B3D",
-          fontSize: 20,
+          fontSize: 16,
         }}
       >
         {title}
-      </h2>
+      </h3>
 
       <p
         style={{
+          margin: "7px 0 0",
           color: "#667085",
-          fontSize: 12,
-          lineHeight: 1.6,
+          fontSize: 11,
+          lineHeight: 1.55,
         }}
       >
         {description}
@@ -642,7 +677,7 @@ function ActionCard({
         href={href}
         style={{
           display: "inline-block",
-          marginTop: 10,
+          marginTop: 11,
           color: "#0D1B3D",
           textDecoration: "none",
           fontWeight: 900,
