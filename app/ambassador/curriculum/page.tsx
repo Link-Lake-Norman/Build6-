@@ -173,6 +173,7 @@ export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedDay, setSelectedDay] = useState(1);
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
+  const [showFullTools, setShowFullTools] = useState(false);
 
   const [data, setData] = useState<TeachingHubResponse | null>(null);
 
@@ -1226,7 +1227,19 @@ export default function AmbassadorCurriculumPage() {
 
                   <button
                     type="button"
-                    onClick={() => setActiveTab("resources")}
+                    onClick={() => {
+                      setShowFullTools(true);
+                      setActiveTab("resources");
+
+                      window.setTimeout(() => {
+                        document
+                          .getElementById("future-ready-resource-hub")
+                          ?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                      }, 200);
+                    }}
                     className="mt-4 rounded-xl bg-[#0D1B3D] px-4 py-2 text-xs font-black text-white"
                   >
                     Browse Full Resource Hub
@@ -1291,7 +1304,19 @@ export default function AmbassadorCurriculumPage() {
 
                   <button
                     type="button"
-                    onClick={openAssignments}
+                    onClick={() => {
+                      setShowFullTools(true);
+                      setActiveTab("assignments");
+
+                      window.setTimeout(() => {
+                        document
+                          .getElementById("future-ready-assignments")
+                          ?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                      }, 200);
+                    }}
                     className="mt-4 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
                     Manage Assignments →
@@ -1375,17 +1400,54 @@ export default function AmbassadorCurriculumPage() {
         })()}
       </section>
 
-      <TeacherGuideSection
-        title="Weekly Delivery Map"
-        description="Open the full delivery rhythm, daily flow, and teaching sequence."
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
+              MORE TEACHING TOOLS
+            </p>
+
+            <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">
+              Need More Than the Daily Map?
+            </h2>
+
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              The Daily Map is the primary pilot teaching view. Open the full
+              system only when you need deeper lesson guidance, assignments,
+              resources, calendar tools, release controls, or customization.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowFullTools((current) => !current)}
+            className="w-fit rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white"
+          >
+            {showFullTools
+              ? "Hide Full Teaching Tools"
+              : "Open Full Teaching Tools"}
+          </button>
+        </div>
+      </section>
+
+      {showFullTools && (
+        <TeacherGuideSection
+          title="Weekly Delivery Map"
+          description="Open the full delivery rhythm, daily flow, and teaching sequence."
+        >
+          <AmbassadorWeekDeliveryConsole week={lesson.weekNumber} />
+        </TeacherGuideSection>
+      )}
+
+      {showFullTools && (
+        <AppliedLearningTeachingHub week={lesson.weekNumber} />
+      )}
+
+      <section
+        className={`${
+          showFullTools ? "" : "hidden"
+        } rounded-3xl border border-slate-200 bg-white p-6 shadow-sm`}
       >
-
-      <AmbassadorWeekDeliveryConsole week={lesson.weekNumber} />
-      </TeacherGuideSection>
-
-      <AppliedLearningTeachingHub week={lesson.weekNumber} />
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
@@ -1445,7 +1507,11 @@ export default function AmbassadorCurriculumPage() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <section
+        className={`${
+          showFullTools ? "" : "hidden"
+        } overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm`}
+      >
         <div className="border-b border-slate-200 bg-slate-50 p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
