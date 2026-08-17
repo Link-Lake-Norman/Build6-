@@ -174,9 +174,10 @@ model User {
   notifications Notification[]
   auditLogs     AuditLog[]         @relation("AuditActor")
 
-  messageThreadsCreated MessageThread[]      @relation("MessageThreadCreator")
-  messageParticipants   MessageParticipant[] @relation("MessageParticipantUser")
-  sentPlatformMessages  PlatformMessage[]    @relation("PlatformMessageSender")
+  messageThreadsCreated MessageThread[]       @relation("MessageThreadCreator")
+  messageParticipants   MessageParticipant[]  @relation("MessageParticipantUser")
+  sentPlatformMessages  PlatformMessage[]     @relation("PlatformMessageSender")
+  lessonDaysCompleted   LessonDayCompletion[] @relation("LessonDayCompletedBy")
 
   @@index([role, status])
 }
@@ -254,6 +255,7 @@ model Cohort {
   lessonResources        LessonResource[]
   lessonPlanTasks        LessonPlanTask[]
   experiences            CohortExperience[]
+  dayCompletions         LessonDayCompletion[]
 
   lifeAccounts      LifeAccount[]
   economySettings   EconomySettings?
@@ -397,6 +399,7 @@ model Lesson {
   customResources  LessonResource[]
   planTasks        LessonPlanTask[]
   experiences      CohortExperience[]
+  dayCompletions   LessonDayCompletion[]
 
   @@unique([moduleId, slug])
   @@unique([moduleId, position])
@@ -766,6 +769,27 @@ model AuditLog {
 
   @@index([organizationId, createdAt])
   @@index([actorId, createdAt])
+}
+
+model LessonDayCompletion {
+  id              String   @id @default(cuid())
+  cohortId        String
+  lessonId        String
+  dayNumber       Int
+  completedAt     DateTime @default(now())
+  completedById   String?
+  facilitatorNote String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  cohort      Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  lesson      Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedBy User?  @relation("LessonDayCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+
+  @@unique([cohortId, lessonId, dayNumber])
+  @@index([cohortId, dayNumber])
+  @@index([lessonId])
+  @@index([completedById])
 }
 
 model LessonDeliverySetting {

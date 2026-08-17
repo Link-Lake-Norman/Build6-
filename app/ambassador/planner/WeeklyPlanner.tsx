@@ -287,6 +287,18 @@ function createEmptyExperience(): ExperienceDraft {
   };
 }
 
+type DayCompletion = {
+  id: string;
+  dayNumber: number;
+  completedAt: string;
+  facilitatorNote: string | null;
+  completedBy: {
+    firstName: string;
+    lastName: string;
+    displayName: string | null;
+  } | null;
+};
+
 type PlannerData = {
   cohort: {
     id: string;
@@ -350,6 +362,17 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
   const [experiences, setExperiences] = useState<CohortExperience[]>([]);
 
+  const [dayCompletions, setDayCompletions] =
+    useState<DayCompletion[]>([]);
+
+  const [completionNote, setCompletionNote] =
+    useState("");
+
+  const [completionSaving, setCompletionSaving] =
+    useState(false);
+
+
+
   const [experienceDraft, setExperienceDraft] = useState<ExperienceDraft>(
     createEmptyExperience(),
   );
@@ -368,6 +391,41 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         response.ok
           ? "Future Ready™ received an unexpected server response. Please refresh and try again."
           : `Server request failed (${response.status}). Please sign in again or refresh the page.`
+      );
+    }
+  }
+
+
+  async function loadDayCompletions() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/day-completion?cohortCode=${encodeURIComponent(
+          cohortCode
+        )}&week=${week}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Unable to load day completion status."
+        );
+      }
+
+      setDayCompletions(
+        Array.isArray(result.completions)
+          ? result.completions
+          : []
+      );
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to load day completion status."
       );
     }
   }
@@ -437,6 +495,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
   useEffect(() => {
     loadPlanner();
     loadExperiences();
+    loadDayCompletions();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [week, cohortCode]);
@@ -454,6 +513,11 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       (experience) => experience.dayNumber === dayNumber,
     );
   }, [experiences, dayNumber]);
+
+  const currentDayCompletion =
+    dayCompletions.find(
+      (item) => item.dayNumber === dayNumber
+    ) ?? null;
 
   const totalMinutes = dayTasks.reduce(
     (sum, task) => sum + task.durationMinutes,
@@ -786,6 +850,99 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       );
     }
   }
+
+  async function markDayComplete() {
+    setCompletionSaving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        "/api/ambassador/day-completion",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cohortCode,
+            week,
+            dayNumber,
+            facilitatorNote: completionNote,
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Unable to mark day complete."
+        );
+      }
+
+      setCompletionNote("");
+      await loadDayCompletions();
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to mark day complete."
+      );
+    } finally {
+      setCompletionSaving(false);
+    }
+  }
+
+
+  async function reopenDay() {
+    if (
+      !window.confirm(
+        `Reopen ${dayLabels[dayNumber]}?`
+      )
+    ) {
+      return;
+    }
+
+    setCompletionSaving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        "/api/ambassador/day-completion",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cohortCode,
+            week,
+            dayNumber,
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "Unable to reopen day."
+        );
+      }
+
+      await loadDayCompletions();
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to reopen day."
+      );
+    } finally {
+      setCompletionSaving(false);
+    }
+  }
+
 
   async function removeTask(taskId: string) {
     if (!window.confirm("Remove this item from this week's agenda?")) {
@@ -1179,6 +1336,77 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                     </article>
                   ))}
                 </div>
+              </section>
+
+              <section className="rounded-3xl border-2 border-[#00A6A6] bg-[#EAFBFB] p-6 shadow-sm">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#007C7C]">
+                  End of Class
+                </p>
+
+                <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+                  {currentDayCompletion
+                    ? `${dayLabels[dayNumber]} Completed ✓`
+                    : `Finish ${dayLabels[dayNumber]}`}
+                </h2>
+
+                {currentDayCompletion ? (
+                  <div className="mt-4">
+                    <p className="text-sm font-bold text-slate-700">
+                      Completed{" "}
+                      {new Date(
+                        currentDayCompletion.completedAt
+                      ).toLocaleString()}
+                    </p>
+
+                    {currentDayCompletion.completedBy ? (
+                      <p className="mt-1 text-sm text-slate-600">
+                        Facilitator:{" "}
+                        {currentDayCompletion.completedBy.displayName ||
+                          `${currentDayCompletion.completedBy.firstName} ${currentDayCompletion.completedBy.lastName}`}
+                      </p>
+                    ) : null}
+
+                    {currentDayCompletion.facilitatorNote ? (
+                      <div className="mt-4 rounded-xl bg-white p-4 text-sm leading-6 text-slate-700">
+                        {currentDayCompletion.facilitatorNote}
+                      </div>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      disabled={completionSaving}
+                      onClick={reopenDay}
+                      className="mt-5 rounded-xl border border-[#0D1B3D] bg-white px-5 py-3 text-sm font-black text-[#0D1B3D] disabled:opacity-50"
+                    >
+                      Reopen Day
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <textarea
+                      value={completionNote}
+                      onChange={(event) =>
+                        setCompletionNote(
+                          event.target.value
+                        )
+                      }
+                      rows={3}
+                      placeholder="Optional facilitator note: what worked, what to revisit, student response, follow-up..."
+                      className="w-full rounded-xl border border-[#00A6A6]/40 bg-white px-4 py-3 text-sm text-[#0D1B3D]"
+                    />
+
+                    <button
+                      type="button"
+                      disabled={completionSaving}
+                      onClick={markDayComplete}
+                      className="mt-4 w-full rounded-xl bg-[#00A6A6] px-6 py-4 font-black text-white disabled:opacity-50"
+                    >
+                      {completionSaving
+                        ? "Saving..."
+                        : "✓ Mark Day Complete"}
+                    </button>
+                  </div>
+                )}
               </section>
 
               <div className="space-y-7">
