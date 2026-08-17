@@ -459,6 +459,74 @@ export default function AmbassadorCurriculumPage() {
     });
   }
 
+  async function assignPackagedAssetToStudents(
+    asset: {
+      label: string;
+      format: string;
+      openUrl: string;
+      portfolioEligible?: boolean;
+    },
+    mode: "ONLINE" | "PRINT" | "BOTH"
+  ) {
+    const assignmentKey = `packaged-${asset.label}-${asset.format}`;
+
+    try {
+      setAssigningResourceId(assignmentKey);
+      setError(null);
+      setSaveMessage(null);
+
+      if (!data?.lesson?.id || !data?.cohort?.id) {
+        throw new Error("Lesson information is unavailable.");
+      }
+
+      const response = await fetch(
+        "/api/ambassador/resource-assignment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            packagedAsset: {
+              lessonId: data.lesson.id,
+              cohortId: data.cohort.id,
+              title: asset.label,
+              resourceKind: asset.format,
+              resourceUrl: asset.openUrl,
+            },
+            mode,
+            dayNumber: selectedDay,
+            estimatedMinutes: 20,
+            portfolioEligible:
+              asset.portfolioEligible === true,
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "Unable to assign this asset."
+        );
+      }
+
+      await loadWeek(selectedWeek);
+
+      setSaveMessage(
+        `${asset.label} was assigned to students for Day ${selectedDay}.`
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to assign this asset."
+      );
+    } finally {
+      setAssigningResourceId(null);
+    }
+  }
+
   async function assignResourceToStudents(
     resource: Resource,
     mode: "ONLINE" | "PRINT" | "BOTH"
@@ -1244,66 +1312,88 @@ export default function AmbassadorCurriculumPage() {
                             file: "Student-Workbook.pdf",
                             format: "PDF",
                             use: "Student pages / printable workbook",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Student Workbook",
                             file: "Student-Workbook.docx",
                             format: "DOCX",
                             use: "Editable student workbook",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Slides",
                             file: "Slides.pptx",
                             format: "PPTX",
                             use: "Class presentation",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Activity Kit",
                             file: "Activity-Kit.pdf",
                             format: "PDF",
                             use: "Activities / role plays / classroom work",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Activity Kit",
                             file: "Activity-Kit.docx",
                             format: "DOCX",
                             use: "Editable activity materials",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Assessment Rubric",
                             file: "Assessment-Rubric.pdf",
                             format: "PDF",
                             use: "Assessment / facilitator reference",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Assessment Rubric",
                             file: "Assessment-Rubric.docx",
                             format: "DOCX",
                             use: "Editable assessment rubric",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Portfolio Artifact",
                             file: "Portfolio-Artifact.pdf",
                             format: "PDF",
                             use: "Portfolio / evidence printable",
+                            studentAssignable: true,
+                            portfolioEligible: true,
                           },
                           {
                             label: "Portfolio Artifact",
                             file: "Portfolio-Artifact.docx",
                             format: "DOCX",
                             use: "Editable portfolio evidence",
+                            studentAssignable: true,
+                            portfolioEligible: true,
                           },
                           {
                             label: "Facilitator Guide",
                             file: "Facilitator-Guide.pdf",
                             format: "PDF",
                             use: "Teacher guide / facilitation notes",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Facilitator Guide",
                             file: "Facilitator-Guide.docx",
                             format: "DOCX",
                             use: "Editable facilitator guide",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                         ].map((asset) => {
                           const weekCode = String(selectedWeek).padStart(2, "0");
@@ -1358,10 +1448,86 @@ export default function AmbassadorCurriculumPage() {
 
                                   <a
                                     href={downloadUrl}
-                                    className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white"
+                                    className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
                                   >
-                                    Download
+                                    Print / Download
                                   </a>
+
+                                  {asset.studentAssignable && (
+                                    <>
+                                      <button
+                                        type="button"
+                                        disabled={
+                                          assigningResourceId ===
+                                          `packaged-${asset.label}-${asset.format}`
+                                        }
+                                        onClick={() =>
+                                          assignPackagedAssetToStudents(
+                                            {
+                                              label: asset.label,
+                                              format: asset.format,
+                                              openUrl,
+                                              portfolioEligible:
+                                                asset.portfolioEligible,
+                                            },
+                                            "ONLINE"
+                                          )
+                                        }
+                                        className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                      >
+                                        {assigningResourceId ===
+                                        `packaged-${asset.label}-${asset.format}`
+                                          ? "Assigning..."
+                                          : "Assign Online"}
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        disabled={
+                                          assigningResourceId ===
+                                          `packaged-${asset.label}-${asset.format}`
+                                        }
+                                        onClick={() =>
+                                          assignPackagedAssetToStudents(
+                                            {
+                                              label: asset.label,
+                                              format: asset.format,
+                                              openUrl,
+                                              portfolioEligible:
+                                                asset.portfolioEligible,
+                                            },
+                                            "PRINT"
+                                          )
+                                        }
+                                        className="rounded-lg bg-[#F2B705] px-3 py-2 text-[11px] font-black text-[#0D1B3D] disabled:opacity-50"
+                                      >
+                                        Assign Printable
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        disabled={
+                                          assigningResourceId ===
+                                          `packaged-${asset.label}-${asset.format}`
+                                        }
+                                        onClick={() =>
+                                          assignPackagedAssetToStudents(
+                                            {
+                                              label: asset.label,
+                                              format: asset.format,
+                                              openUrl,
+                                              portfolioEligible:
+                                                asset.portfolioEligible,
+                                            },
+                                            "BOTH"
+                                          )
+                                        }
+                                        className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                      >
+                                        Assign Both
+                                      </button>
+                                    </>
+                                  )}
                                 </div>
                               </div>
                             </div>

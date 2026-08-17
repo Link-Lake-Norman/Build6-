@@ -65,6 +65,12 @@ export async function POST(request: NextRequest) {
         ? body.resourceId.trim()
         : "";
 
+    const packagedAsset =
+      body.packagedAsset &&
+      typeof body.packagedAsset === "object"
+        ? body.packagedAsset
+        : null;
+
     const mode =
       body.mode === "ONLINE" ||
       body.mode === "PRINT" ||
@@ -81,15 +87,117 @@ export async function POST(request: NextRequest) {
 
     const portfolioEligible = body.portfolioEligible === true;
 
-    if (!resourceId) {
+    if (!resourceId && !packagedAsset) {
       return NextResponse.json(
         {
-          error: "Resource ID is required.",
+          error: "Resource or packaged asset is required.",
         },
         {
           status: 400,
         }
       );
+    }
+
+    if (packagedAsset) {
+      const lessonId =
+        typeof packagedAsset.lessonId === "string"
+          ? packagedAsset.lessonId.trim()
+          : "";
+
+      const cohortId =
+        typeof packagedAsset.cohortId === "string"
+          ? packagedAsset.cohortId.trim()
+          : "";
+
+      const title =
+        typeof packagedAsset.title === "string"
+          ? packagedAsset.title.trim()
+          : "";
+
+      const resourceUrl =
+        typeof packagedAsset.resourceUrl === "string"
+          ? packagedAsset.resourceUrl.trim()
+          : "";
+
+      const resourceKind =
+        typeof packagedAsset.resourceKind === "string"
+          ? packagedAsset.resourceKind.trim()
+          : "OTHER";
+
+      if (!lessonId || !cohortId || !title || !resourceUrl) {
+        return NextResponse.json(
+          {
+            error: "Packaged asset information is incomplete.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      const allowed = await canManageCohort(
+        session.id,
+        session.role,
+        cohortId
+      );
+
+      if (!allowed) {
+        return NextResponse.json(
+          {
+            error: "You do not have permission to assign this asset.",
+          },
+          {
+            status: 403,
+          }
+        );
+      }
+
+      const allowOnline =
+        mode === "ONLINE" || mode === "BOTH";
+
+      const allowPrint =
+        mode === "PRINT" || mode === "BOTH";
+
+      const instructions =
+        typeof body.instructions === "string" &&
+        body.instructions.trim()
+          ? body.instructions.trim()
+          : `Complete the Future Ready™ resource: ${title}.`;
+
+      const assignment = await prisma.assignment.create({
+        data: {
+          lessonId,
+          cohortId,
+          title,
+          instructions,
+          estimatedMinutes:
+            Number.isInteger(body.estimatedMinutes) &&
+            body.estimatedMinutes > 0
+              ? body.estimatedMinutes
+              : 20,
+          requirement: "REQUIRED",
+          allowOnline,
+          allowPrint,
+          allowUpload: true,
+          portfolioEligible:
+            body.portfolioEligible === true,
+          dayNumber,
+          status: "ACTIVE",
+          createdById: session.id,
+          onlineContent: {
+            type: "PACKAGED_RESOURCE_ASSIGNMENT",
+            resourceTitle: title,
+            resourceKind,
+            resourceUrl,
+            deliveryMode: mode,
+          },
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        assignment,
+      });
     }
 
     const resource = await prisma.lessonResource.findUnique({
