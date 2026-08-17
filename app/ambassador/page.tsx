@@ -50,7 +50,13 @@ export default async function AmbassadorDashboardPage() {
     Math.min(16, Number(organization.currentWeek) || 1)
   );
 
-  const todayNumber = getTodayNumber();
+  // The facilitator dashboard follows actual teaching progress,
+  // not the computer's weekday.
+  //
+  // Day 1 completed -> Day 2 becomes Next Class.
+  // Day 2 completed -> Day 3 becomes Next Class.
+  // This keeps the pilot aligned even when the school schedule changes.
+  const calendarDayNumber = getTodayNumber();
 
   const cohort = await prisma.cohort.findFirst({
     where: {
@@ -139,6 +145,19 @@ export default async function AmbassadorDashboardPage() {
   const experiences = cohort?.experiences ?? [];
   const completions = cohort?.dayCompletions ?? [];
 
+  const completedDayNumbers = new Set(
+    completions.map((item) => item.dayNumber)
+  );
+
+  // Find the first unfinished teaching day.
+  // This becomes the facilitator's Next Class.
+  const nextIncompleteDay =
+    DAYS.find((day) => !completedDayNumbers.has(day.number))?.number ?? 5;
+
+  // If every day is complete, remain on Day 5 so the completed
+  // week can still be reviewed without jumping into another week.
+  const todayNumber = nextIncompleteDay;
+
   const todayTasks = tasks.filter(
     (task) => task.dayNumber === todayNumber
   );
@@ -190,7 +209,7 @@ export default async function AmbassadorDashboardPage() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#007C7C]">
-              Today · {DAYS[todayNumber - 1]?.label}
+              Next Class · Day {todayNumber} · {DAYS[todayNumber - 1]?.label}
             </p>
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
@@ -232,7 +251,7 @@ export default async function AmbassadorDashboardPage() {
         <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_auto]">
           <div className="rounded-2xl bg-white p-5">
             <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
-              Today's Plan
+              Next Class Plan
             </p>
 
             {todayTasks.length > 0 ? (
@@ -302,7 +321,7 @@ export default async function AmbassadorDashboardPage() {
               href={`/ambassador/curriculum/${currentWeek}`}
               className="rounded-xl bg-[#0D1B3D] px-6 py-4 text-center font-black text-white shadow-sm"
             >
-              Open Today's Lesson →
+              Open Day {todayNumber} Lesson →
             </Link>
 
             <Link
