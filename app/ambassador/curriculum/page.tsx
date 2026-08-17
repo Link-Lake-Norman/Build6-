@@ -1413,8 +1413,8 @@ export default function AmbassadorCurriculumPage() {
                               key={fileName}
                               className="rounded-xl border border-slate-200 bg-white p-3"
                             >
-                              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
+                              <div className="flex min-w-0 flex-col gap-3">
+                                <div className="min-w-0">
                                   <div className="flex flex-wrap items-center gap-2">
                                     <p className="text-sm font-black text-[#0D1B3D]">
                                       {asset.label}
@@ -1430,7 +1430,7 @@ export default function AmbassadorCurriculumPage() {
                                   </p>
                                 </div>
 
-                                <div className="flex shrink-0 flex-wrap gap-2">
+                                <div className="flex w-full flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
                                   <a
                                     href={`/ambassador/resource-preview?src=${encodeURIComponent(
                                       openUrl
@@ -1568,8 +1568,8 @@ export default function AmbassadorCurriculumPage() {
                             key={resource.id}
                             className="rounded-xl border border-slate-200 bg-white p-4"
                           >
-                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                              <div>
+                            <div className="flex min-w-0 flex-col gap-3">
+                              <div className="min-w-0">
                                 <p className="text-[10px] font-black uppercase text-[#4B2265]">
                                   {resource.kind}
                                 </p>
