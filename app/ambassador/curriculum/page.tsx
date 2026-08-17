@@ -221,6 +221,20 @@ export default function AmbassadorCurriculumPage() {
     [selectedWeek],
   );
 
+  async function readApiResponse(response: Response) {
+    const raw = await response.text();
+
+    try {
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      throw new Error(
+        response.ok
+          ? "Future Ready™ received an unexpected server response. Please refresh and try again."
+          : `Server request failed (${response.status}). Please sign in again or refresh the page.`
+      );
+    }
+  }
+
   async function loadWeek(week: number) {
     setLoading(true);
     setError(null);
@@ -235,7 +249,7 @@ export default function AmbassadorCurriculumPage() {
         },
       );
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to load this lesson.");
@@ -284,7 +298,7 @@ export default function AmbassadorCurriculumPage() {
         }),
       });
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to save this setting.");
@@ -335,7 +349,7 @@ export default function AmbassadorCurriculumPage() {
         }),
       });
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to save item.");
@@ -439,6 +453,32 @@ export default function AmbassadorCurriculumPage() {
       top: 0,
       behavior: "smooth",
     });
+  }
+
+  function openResourceHub() {
+    setActiveTab("resources");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-resource-hub")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 50);
+  }
+
+  function openAssignments() {
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-assignments")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 50);
   }
 
   function previousWeek() {
@@ -1251,10 +1291,10 @@ export default function AmbassadorCurriculumPage() {
 
                   <button
                     type="button"
-                    onClick={() => setActiveTab("assignments")}
+                    onClick={openAssignments}
                     className="mt-4 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
-                    Manage Assignments
+                    Manage Assignments →
                   </button>
                 </DailyPilotCard>
 
@@ -1673,7 +1713,10 @@ export default function AmbassadorCurriculumPage() {
           )}
 
           {activeTab === "assignments" && (
-            <div className="space-y-5">
+            <div
+              id="future-ready-assignments"
+              className="scroll-mt-6 space-y-5"
+            >
               <ContentCard title="Assignment / Evidence">
                 <p className="font-bold text-[#0D1B3D]">{portfolioEvidence}</p>
 
@@ -1917,7 +1960,10 @@ export default function AmbassadorCurriculumPage() {
           )}
 
           {activeTab === "resources" && (
-            <div className="space-y-5">
+            <div
+              id="future-ready-resource-hub"
+              className="scroll-mt-6 space-y-5"
+            >
               <ContentCard title="Lesson Materials">
                 <p>
                   Facilitator guides, student workbooks, slides, handouts,
