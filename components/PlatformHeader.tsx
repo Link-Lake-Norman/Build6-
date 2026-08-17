@@ -43,23 +43,23 @@ function getNavigationLinks(
     return [
       {
         href: `/ambassador/student-portal/${studentId}`,
-        label: "Dashboard",
+        label: "Home",
+      },
+      {
+        href: `/ambassador/student-portal/${studentId}/lesson/1`,
+        label: "My Week",
+      },
+      {
+        href: `/ambassador/student-portal/${studentId}/career-pathways`,
+        label: "Career",
       },
       {
         href: `/ambassador/student-passport/${studentId}`,
         label: "Passport",
       },
       {
-        href: `/ambassador/student-portal/${studentId}/profile`,
-        label: "Profile",
-      },
-      {
-        href: `/ambassador/student-passport/${studentId}/portfolio`,
-        label: "Portfolio",
-      },
-      {
-        href: `/ambassador/student-passport/${studentId}/reflections`,
-        label: "Reflections",
+        href: "/ambassador/messages",
+        label: "Messages",
       },
     ];
   }
@@ -67,24 +67,24 @@ function getNavigationLinks(
   if (role === "FACILITATOR") {
     return [
       {
-        href: "/ambassador/facilitator",
-        label: "Facilitator",
+        href: "/ambassador",
+        label: "Home",
       },
       {
         href: "/ambassador/curriculum",
         label: "Teaching Hub",
       },
       {
-        href: "/ambassador/lesson-builder",
-        label: "Lesson Builder",
-      },
-      {
-        href: "/ambassador/facilitator/attendance",
-        label: "Attendance",
+        href: "/ambassador/planner",
+        label: "Plan + Build",
       },
       {
         href: "/ambassador/facilitator/students",
         label: "Students",
+      },
+      {
+        href: "/ambassador/messages",
+        label: "Messages",
       },
     ];
   }
@@ -207,7 +207,7 @@ function getHomeHref(
   }
 
   if (session?.role === "FACILITATOR") {
-    return "/ambassador/facilitator";
+    return "/ambassador";
   }
 
   if (
