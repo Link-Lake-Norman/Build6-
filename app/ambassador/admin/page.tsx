@@ -51,11 +51,7 @@ export default async function AmbassadorAdminPage() {
     },
   });
 
-  const [
-    totalStudents,
-    totalFacilitators,
-    totalCohorts,
-  ] = await Promise.all([
+  const [totalStudents, totalFacilitators, totalCohorts] = await Promise.all([
     prisma.student.count({
       where: {
         deletedAt: null,
@@ -82,14 +78,11 @@ export default async function AmbassadorAdminPage() {
           Future Ready™ Administration
         </p>
 
-        <h1 className="mt-3 text-4xl font-black">
-          Welcome, {session.name}
-        </h1>
+        <h1 className="mt-3 text-4xl font-black">Welcome, {session.name}</h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Manage cohorts, facilitators, students,
-          curriculum delivery, and the Ambassador
-          Christian School pilot.
+          Manage cohorts, facilitators, students, curriculum delivery, and the
+          Ambassador Christian School pilot.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3">
@@ -116,11 +109,7 @@ export default async function AmbassadorAdminPage() {
           detail="Facilitator accounts"
         />
 
-        <Metric
-          label="Cohorts"
-          value={totalCohorts}
-          detail="Program cohorts"
-        />
+        <Metric label="Cohorts" value={totalCohorts} detail="Program cohorts" />
 
         <Metric
           label="Pilot Students"
@@ -145,9 +134,7 @@ export default async function AmbassadorAdminPage() {
                 {pilot.school?.name ?? "Ambassador Christian School"}
               </p>
 
-              <p className="mt-1 text-slate-600">
-                {pilot.program.name}
-              </p>
+              <p className="mt-1 text-slate-600">{pilot.program.name}</p>
             </div>
 
             <div className="rounded-2xl bg-[#FFF9DF] px-5 py-4">
@@ -162,10 +149,7 @@ export default async function AmbassadorAdminPage() {
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <SmallMetric
-              label="Students"
-              value={pilot._count.enrollments}
-            />
+            <SmallMetric label="Students" value={pilot._count.enrollments} />
 
             <SmallMetric
               label="Facilitators"
@@ -231,6 +215,13 @@ export default async function AmbassadorAdminPage() {
             href="/ambassador/admin/permissions"
             action="Manage Permissions"
           />
+
+          <AdminCard
+            title="Messages"
+            description="Communicate with students, facilitators, and authorized program administrators."
+            href="/ambassador/messages"
+            action="Open Messages"
+          />
         </div>
       </section>
     </main>
@@ -252,13 +243,9 @@ function Metric({
         {label}
       </p>
 
-      <p className="mt-2 text-4xl font-black text-[#0D1B3D]">
-        {value}
-      </p>
+      <p className="mt-2 text-4xl font-black text-[#0D1B3D]">{value}</p>
 
-      <p className="mt-2 text-sm text-slate-500">
-        {detail}
-      </p>
+      <p className="mt-2 text-sm text-slate-500">{detail}</p>
     </article>
   );
 }
@@ -272,13 +259,9 @@ function SmallMetric({
 }) {
   return (
     <div className="rounded-2xl bg-slate-50 p-5">
-      <p className="text-xs font-black uppercase text-slate-500">
-        {label}
-      </p>
+      <p className="text-xs font-black uppercase text-slate-500">{label}</p>
 
-      <p className="mt-2 text-3xl font-black text-[#0D1B3D]">
-        {value}
-      </p>
+      <p className="mt-2 text-3xl font-black text-[#0D1B3D]">{value}</p>
     </div>
   );
 }
@@ -296,13 +279,9 @@ function AdminCard({
 }) {
   return (
     <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-xl font-black text-[#0D1B3D]">
-        {title}
-      </h3>
+      <h3 className="text-xl font-black text-[#0D1B3D]">{title}</h3>
 
-      <p className="mt-3 min-h-16 leading-7 text-slate-600">
-        {description}
-      </p>
+      <p className="mt-3 min-h-16 leading-7 text-slate-600">{description}</p>
 
       <Link
         href={href}

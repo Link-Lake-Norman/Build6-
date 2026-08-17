@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import AppliedLearningTeachingHub from "@/components/ambassador/AppliedLearningTeachingHub";
+import AmbassadorWeekDeliveryConsole from "@/components/ambassador/AmbassadorWeekDeliveryConsole";
 import { curriculum as richCurriculum } from "@/content/curriculum";
+import { ambassadorWeeklyRhythm } from "@/content/ambassador";
 
 type HubTab =
   | "overview"
@@ -13,10 +16,7 @@ type HubTab =
   | "calendar"
   | "release";
 
-type RequirementValue =
-  | "HIDDEN"
-  | "OPTIONAL"
-  | "REQUIRED";
+type RequirementValue = "HIDDEN" | "OPTIONAL" | "REQUIRED";
 
 type RequirementField =
   | "attendance"
@@ -169,21 +169,16 @@ const requirementOptions: RequirementValue[] = [
 
 export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  const [activeTab, setActiveTab] =
-    useState<HubTab>("overview");
+  const [activeTab, setActiveTab] = useState<HubTab>("overview");
 
-  const [data, setData] =
-    useState<TeachingHubResponse | null>(null);
+  const [data, setData] = useState<TeachingHubResponse | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] =
-    useState<string | null>(null);
-  const [saveMessage, setSaveMessage] =
-    useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
-  const [facilitatorNotes, setFacilitatorNotes] =
-    useState("");
+  const [facilitatorNotes, setFacilitatorNotes] = useState("");
 
   const [assignmentForm, setAssignmentForm] = useState({
     title: "",
@@ -217,11 +212,8 @@ export default function AmbassadorCurriculumPage() {
   });
 
   const richLesson = useMemo(
-    () =>
-      richCurriculum.find(
-        (item) => item.week === selectedWeek
-      ),
-    [selectedWeek]
+    () => richCurriculum.find((item) => item.week === selectedWeek),
+    [selectedWeek],
   );
 
   async function loadWeek(week: number) {
@@ -235,32 +227,26 @@ export default function AmbassadorCurriculumPage() {
         {
           method: "GET",
           cache: "no-store",
-        }
+        },
       );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ??
-            "Unable to load this lesson."
-        );
+        throw new Error(result.error ?? "Unable to load this lesson.");
       }
 
-      const typedResult =
-        result as TeachingHubResponse;
+      const typedResult = result as TeachingHubResponse;
 
       setData(typedResult);
-      setFacilitatorNotes(
-        typedResult.delivery?.facilitatorNotes ?? ""
-      );
+      setFacilitatorNotes(typedResult.delivery?.facilitatorNotes ?? "");
     } catch (caughtError) {
       setData(null);
 
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Unable to load this lesson."
+          : "Unable to load this lesson.",
       );
     } finally {
       setLoading(false);
@@ -273,7 +259,7 @@ export default function AmbassadorCurriculumPage() {
 
   async function patchDelivery(
     update: Record<string, unknown>,
-    successMessage: string
+    successMessage: string,
   ) {
     if (!data?.lesson?.id) return;
 
@@ -282,27 +268,21 @@ export default function AmbassadorCurriculumPage() {
     setSaveMessage(null);
 
     try {
-      const response = await fetch(
-        "/api/ambassador/teaching-hub",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            lessonId: data.lesson.id,
-            ...update,
-          }),
-        }
-      );
+      const response = await fetch("/api/ambassador/teaching-hub", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lessonId: data.lesson.id,
+          ...update,
+        }),
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ??
-            "Unable to save this setting."
-        );
+        throw new Error(result.error ?? "Unable to save this setting.");
       }
 
       setData((current) => {
@@ -314,16 +294,14 @@ export default function AmbassadorCurriculumPage() {
         };
       });
 
-      setFacilitatorNotes(
-        result.delivery?.facilitatorNotes ?? ""
-      );
+      setFacilitatorNotes(result.delivery?.facilitatorNotes ?? "");
 
       setSaveMessage(successMessage);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Unable to save this setting."
+          : "Unable to save this setting.",
       );
     } finally {
       setSaving(false);
@@ -332,7 +310,7 @@ export default function AmbassadorCurriculumPage() {
 
   async function createHubItem(
     payload: Record<string, unknown>,
-    successMessage: string
+    successMessage: string,
   ) {
     if (!data?.lesson?.id) return false;
 
@@ -341,26 +319,21 @@ export default function AmbassadorCurriculumPage() {
     setSaveMessage(null);
 
     try {
-      const response = await fetch(
-        "/api/ambassador/teaching-hub",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            lessonId: data.lesson.id,
-            ...payload,
-          }),
-        }
-      );
+      const response = await fetch("/api/ambassador/teaching-hub", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lessonId: data.lesson.id,
+          ...payload,
+        }),
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ?? "Unable to save item."
-        );
+        throw new Error(result.error ?? "Unable to save item.");
       }
 
       await loadWeek(selectedWeek);
@@ -371,7 +344,7 @@ export default function AmbassadorCurriculumPage() {
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Unable to save item."
+          : "Unable to save item.",
       );
 
       return false;
@@ -387,7 +360,7 @@ export default function AmbassadorCurriculumPage() {
         ...assignmentForm,
         dueAt: assignmentForm.dueAt || null,
       },
-      "Assignment saved to this lesson."
+      "Assignment saved to this lesson.",
     );
 
     if (saved) {
@@ -411,7 +384,7 @@ export default function AmbassadorCurriculumPage() {
         action: "createResource",
         ...resourceForm,
       },
-      "Resource saved to this lesson."
+      "Resource saved to this lesson.",
     );
 
     if (saved) {
@@ -432,7 +405,7 @@ export default function AmbassadorCurriculumPage() {
         action: "createTask",
         ...taskForm,
       },
-      "Calendar task saved to this lesson."
+      "Calendar task saved to this lesson.",
     );
 
     if (saved) {
@@ -484,8 +457,7 @@ export default function AmbassadorCurriculumPage() {
         </h1>
 
         <p className="mt-2 text-slate-600">
-          Connecting to the Ambassador 2026
-          production curriculum.
+          Connecting to the Ambassador 2026 production curriculum.
         </p>
       </main>
     );
@@ -499,8 +471,7 @@ export default function AmbassadorCurriculumPage() {
         </h1>
 
         <p className="mt-3 text-red-700">
-          {error ??
-            "The lesson could not be loaded."}
+          {error ?? "The lesson could not be loaded."}
         </p>
 
         <button
@@ -518,47 +489,32 @@ export default function AmbassadorCurriculumPage() {
   const delivery = data.delivery;
   const sourceContent = lesson.content;
 
-  const phase =
-    richLesson?.phase ??
-    lesson.module.phase ??
-    "Launch Ready";
+  const phase = richLesson?.phase ?? lesson.module.phase ?? "Launch Ready";
 
   const objective =
-    richLesson?.objective ??
-    sourceContent?.focus ??
-    lesson.summary ??
-    "";
+    richLesson?.objective ?? sourceContent?.focus ?? lesson.summary ?? "";
 
   const studentActivity =
-    richLesson?.studentActivity ??
-    sourceContent?.activity ??
-    "";
+    richLesson?.studentActivity ?? sourceContent?.activity ?? "";
 
-  const reflection =
-    sourceContent?.reflection ??
-    "";
+  const reflection = sourceContent?.reflection ?? "";
 
   const workplaceConnection =
     richLesson?.workplaceConnection ??
     "Connect this lesson to professional expectations, career readiness, and real workplace experiences.";
 
-  const skillsEarned =
-    richLesson?.skillsEarned ?? [];
+  const skillsEarned = richLesson?.skillsEarned ?? [];
 
   const portfolioEvidence =
-    richLesson?.portfolioEvidence ??
-    "Future Ready™ Portfolio Evidence";
+    richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
 
-  const badgeEarned =
-    richLesson?.badgeEarned ??
-    "Future Ready™ Skill Badge";
+  const badgeEarned = richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
 
   const facilitatorGuide =
     richLesson?.facilitatorGuide ??
     "Use the lesson focus, core activity, discussion, reflection, and available resources to facilitate this session. Add cohort-specific notes below as needed.";
 
-  const discussionQuestions =
-    richLesson?.discussionQuestions ?? [];
+  const discussionQuestions = richLesson?.discussionQuestions ?? [];
 
   const dailyLessons: {
     day: string;
@@ -584,10 +540,9 @@ export default function AmbassadorCurriculumPage() {
             </h1>
 
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">
-              One teaching workspace for curriculum,
-              classroom planning, activities,
-              assignments, resources, scheduling, and
-              student release controls.
+              One teaching workspace for curriculum, classroom planning,
+              activities, assignments, resources, scheduling, and student
+              release controls.
             </p>
           </div>
 
@@ -596,13 +551,9 @@ export default function AmbassadorCurriculumPage() {
               Current Implementation
             </p>
 
-            <p className="mt-2 font-black">
-              Ambassador Christian School
-            </p>
+            <p className="mt-2 font-black">Ambassador Christian School</p>
 
-            <p className="mt-1 text-sm text-slate-300">
-              {data.cohort.name}
-            </p>
+            <p className="mt-1 text-sm text-slate-300">{data.cohort.name}</p>
           </div>
         </div>
       </section>
@@ -625,23 +576,13 @@ export default function AmbassadorCurriculumPage() {
           value={`${data.program.totalWeeks} Week`}
         />
 
-        <SummaryCard
-          label="Current Week"
-          value={`Week ${selectedWeek}`}
-        />
+        <SummaryCard label="Current Week" value={`Week ${selectedWeek}`} />
 
-        <SummaryCard
-          label="Phase"
-          value={phase}
-        />
+        <SummaryCard label="Phase" value={phase} />
 
         <SummaryCard
           label="Student Release"
-          value={
-            delivery?.releasedToStudents
-              ? "Released"
-              : "Not Released"
-          }
+          value={delivery?.releasedToStudents ? "Released" : "Not Released"}
         />
       </section>
 
@@ -661,9 +602,7 @@ export default function AmbassadorCurriculumPage() {
             <button
               type="button"
               onClick={previousWeek}
-              disabled={
-                selectedWeek === 1 || loading
-              }
+              disabled={selectedWeek === 1 || loading}
               className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-black text-[#0D1B3D] disabled:cursor-not-allowed disabled:opacity-40"
             >
               ← Previous Week
@@ -672,9 +611,7 @@ export default function AmbassadorCurriculumPage() {
             <button
               type="button"
               onClick={nextWeek}
-              disabled={
-                selectedWeek === 16 || loading
-              }
+              disabled={selectedWeek === 16 || loading}
               className="rounded-xl bg-[#0D1B3D] px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
             >
               Next Week →
@@ -683,10 +620,7 @@ export default function AmbassadorCurriculumPage() {
         </div>
 
         <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
-          {Array.from(
-            { length: 16 },
-            (_, index) => index + 1
-          ).map((week) => (
+          {Array.from({ length: 16 }, (_, index) => index + 1).map((week) => (
             <button
               key={week}
               type="button"
@@ -700,6 +634,70 @@ export default function AmbassadorCurriculumPage() {
             >
               Week {week}
             </button>
+          ))}
+        </div>
+      </section>
+
+      <AmbassadorWeekDeliveryConsole week={lesson.weekNumber} />
+
+      <AppliedLearningTeachingHub week={lesson.weekNumber} />
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+              Ambassador Weekly Rhythm
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+              Week {lesson.weekNumber} Delivery Map
+            </h2>
+
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              The lesson is the curriculum spine. Each day gives students a
+              different way to reflect, practice, communicate, experience and
+              apply what they are learning.
+            </p>
+          </div>
+
+          <span className="w-fit rounded-full bg-[#FFF7D6] px-4 py-2 text-xs font-black text-[#725500]">
+            MONDAY → FRIDAY
+          </span>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {ambassadorWeeklyRhythm.map((day) => (
+            <article
+              key={day.day}
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+            >
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+                {day.day}
+              </p>
+
+              <h3 className="mt-2 text-lg font-black text-[#0D1B3D]">
+                {day.title}
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {day.purpose}
+              </p>
+
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+                  What Happens
+                </p>
+
+                <ul className="mt-2 space-y-2 text-sm text-slate-600">
+                  {day.activities.map((activity) => (
+                    <li key={activity} className="flex gap-2">
+                      <span className="font-black text-[#F2B705]">•</span>
+                      <span>{activity}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -724,9 +722,7 @@ export default function AmbassadorCurriculumPage() {
                       : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  {delivery?.releasedToStudents
-                    ? "RELEASED"
-                    : "NOT RELEASED"}
+                  {delivery?.releasedToStudents ? "RELEASED" : "NOT RELEASED"}
                 </span>
               </div>
 
@@ -753,9 +749,7 @@ export default function AmbassadorCurriculumPage() {
               </p>
 
               <p className="mt-2 text-sm font-bold text-[#0D1B3D]">
-                {delivery?.badgeEnabled
-                  ? badgeEarned
-                  : "Badge Disabled"}
+                {delivery?.badgeEnabled ? badgeEarned : "Badge Disabled"}
               </p>
             </div>
           </div>
@@ -767,9 +761,7 @@ export default function AmbassadorCurriculumPage() {
               <button
                 key={tab.key}
                 type="button"
-                onClick={() =>
-                  setActiveTab(tab.key)
-                }
+                onClick={() => setActiveTab(tab.key)}
                 className={`whitespace-nowrap rounded-t-xl px-4 py-3 text-sm font-black ${
                   activeTab === tab.key
                     ? "bg-[#0D1B3D] text-white"
@@ -811,9 +803,8 @@ export default function AmbassadorCurriculumPage() {
                   </div>
                 ) : (
                   <p>
-                    Skills will be connected to this
-                    lesson through the Future Ready™
-                    skills framework.
+                    Skills will be connected to this lesson through the Future
+                    Ready™ skills framework.
                   </p>
                 )}
               </ContentCard>
@@ -841,13 +832,9 @@ export default function AmbassadorCurriculumPage() {
               {discussionQuestions.length > 0 && (
                 <ContentCard title="Discussion Prompts">
                   <ul className="list-disc space-y-2 pl-5">
-                    {discussionQuestions.map(
-                      (question) => (
-                        <li key={question}>
-                          {question}
-                        </li>
-                      )
-                    )}
+                    {discussionQuestions.map((question) => (
+                      <li key={question}>{question}</li>
+                    ))}
                   </ul>
                 </ContentCard>
               )}
@@ -869,24 +856,15 @@ export default function AmbassadorCurriculumPage() {
                         </h4>
 
                         <p className="mt-2 text-sm text-slate-600">
-                          <strong>
-                            Objective:
-                          </strong>{" "}
-                          {day.objective}
+                          <strong>Objective:</strong> {day.objective}
                         </p>
 
                         <p className="mt-2 text-sm text-slate-600">
-                          <strong>
-                            Activity:
-                          </strong>{" "}
-                          {day.activity}
+                          <strong>Activity:</strong> {day.activity}
                         </p>
 
                         <p className="mt-2 text-sm text-slate-600">
-                          <strong>
-                            Reflection:
-                          </strong>{" "}
-                          {day.reflection}
+                          <strong>Reflection:</strong> {day.reflection}
                         </p>
                       </div>
                     ))}
@@ -895,21 +873,16 @@ export default function AmbassadorCurriculumPage() {
               ) : (
                 <ContentCard title="Core Session">
                   <p>
-                    <strong>Focus:</strong>{" "}
-                    {objective}
+                    <strong>Focus:</strong> {objective}
                   </p>
 
                   <p className="mt-3">
-                    <strong>Activity:</strong>{" "}
-                    {studentActivity}
+                    <strong>Activity:</strong> {studentActivity}
                   </p>
 
                   {reflection && (
                     <p className="mt-3">
-                      <strong>
-                        Reflection:
-                      </strong>{" "}
-                      {reflection}
+                      <strong>Reflection:</strong> {reflection}
                     </p>
                   )}
                 </ContentCard>
@@ -918,11 +891,7 @@ export default function AmbassadorCurriculumPage() {
               <ContentCard title="Facilitator Notes">
                 <textarea
                   value={facilitatorNotes}
-                  onChange={(event) =>
-                    setFacilitatorNotes(
-                      event.target.value
-                    )
-                  }
+                  onChange={(event) => setFacilitatorNotes(event.target.value)}
                   rows={6}
                   placeholder="Add notes for this cohort, lesson adjustments, reminders, speaker notes, classroom observations, or follow-up items..."
                   className="w-full rounded-xl border border-slate-200 p-4 text-sm text-[#0D1B3D] outline-none focus:border-[#4B2265]"
@@ -936,14 +905,12 @@ export default function AmbassadorCurriculumPage() {
                       {
                         facilitatorNotes,
                       },
-                      "Facilitator notes saved."
+                      "Facilitator notes saved.",
                     )
                   }
                   className="mt-4 rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-50"
                 >
-                  {saving
-                    ? "Saving..."
-                    : "Save Facilitator Notes"}
+                  {saving ? "Saving..." : "Save Facilitator Notes"}
                 </button>
               </ContentCard>
             </div>
@@ -961,15 +928,13 @@ export default function AmbassadorCurriculumPage() {
                 </p>
 
                 <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
-                  Build Supplemental Classroom
-                  Activities
+                  Build Supplemental Classroom Activities
                 </h3>
 
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                  Generate lesson-specific role plays,
-                  case scenarios, improv, team building,
-                  quizzes, facilitator prompts, scripts,
-                  and printable classroom materials.
+                  Generate lesson-specific role plays, case scenarios, improv,
+                  team building, quizzes, facilitator prompts, scripts, and
+                  printable classroom materials.
                 </p>
 
                 <Link
@@ -985,15 +950,12 @@ export default function AmbassadorCurriculumPage() {
           {activeTab === "assignments" && (
             <div className="space-y-5">
               <ContentCard title="Assignment / Evidence">
-                <p className="font-bold text-[#0D1B3D]">
-                  {portfolioEvidence}
-                </p>
+                <p className="font-bold text-[#0D1B3D]">{portfolioEvidence}</p>
 
                 <p className="mt-2">
-                  Student work connected to this lesson
-                  is managed by cohort with due dates,
-                  submission requirements, facilitator
-                  review, and portfolio eligibility.
+                  Student work connected to this lesson is managed by cohort
+                  with due dates, submission requirements, facilitator review,
+                  and portfolio eligibility.
                 </p>
               </ContentCard>
 
@@ -1003,7 +965,8 @@ export default function AmbassadorCurriculumPage() {
                     + Add Assignment
                   </h3>
                   <p className="text-sm text-slate-600">
-                    Create the assignment students will complete for this lesson.
+                    Create the assignment students will complete for this
+                    lesson.
                   </p>
                 </div>
 
@@ -1071,8 +1034,7 @@ export default function AmbassadorCurriculumPage() {
                       onChange={(event) =>
                         setAssignmentForm((current) => ({
                           ...current,
-                          requirement:
-                            event.target.value as RequirementValue,
+                          requirement: event.target.value as RequirementValue,
                         }))
                       }
                       className="w-full rounded-xl border border-slate-300 px-4 py-3"
@@ -1094,8 +1056,7 @@ export default function AmbassadorCurriculumPage() {
                       onChange={(event) =>
                         setAssignmentForm((current) => ({
                           ...current,
-                          estimatedMinutes:
-                            Number(event.target.value) || 20,
+                          estimatedMinutes: Number(event.target.value) || 20,
                         }))
                       }
                       className="w-full rounded-xl border border-slate-300 px-4 py-3"
@@ -1110,10 +1071,7 @@ export default function AmbassadorCurriculumPage() {
                     ["allowUpload", "File Upload"],
                     ["portfolioEligible", "Portfolio Eligible"],
                   ].map(([key, label]) => (
-                    <label
-                      key={key}
-                      className="flex items-center gap-2"
-                    >
+                    <label key={key} className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         checked={
@@ -1149,58 +1107,43 @@ export default function AmbassadorCurriculumPage() {
 
               {data.assignments.length > 0 ? (
                 <div className="space-y-3">
-                  {data.assignments.map(
-                    (assignment) => (
-                      <div
-                        key={assignment.id}
-                        className="rounded-2xl border border-slate-200 p-5"
-                      >
-                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                          <div>
-                            <h3 className="font-black text-[#0D1B3D]">
-                              {assignment.title}
-                            </h3>
+                  {data.assignments.map((assignment) => (
+                    <div
+                      key={assignment.id}
+                      className="rounded-2xl border border-slate-200 p-5"
+                    >
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div>
+                          <h3 className="font-black text-[#0D1B3D]">
+                            {assignment.title}
+                          </h3>
 
-                            <p className="mt-2 text-sm leading-6 text-slate-600">
-                              {
-                                assignment.instructions
-                              }
-                            </p>
-                          </div>
-
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                            {
-                              assignment.requirement
-                            }
-                          </span>
+                          <p className="mt-2 text-sm leading-6 text-slate-600">
+                            {assignment.instructions}
+                          </p>
                         </div>
 
-                        <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
-                          <span>
-                            {
-                              assignment.estimatedMinutes
-                            }{" "}
-                            min
-                          </span>
-
-                          {assignment.dueAt && (
-                            <span>
-                              • Due{" "}
-                              {new Date(
-                                assignment.dueAt
-                              ).toLocaleDateString()}
-                            </span>
-                          )}
-
-                          {assignment.portfolioEligible && (
-                            <span>
-                              • Portfolio Eligible
-                            </span>
-                          )}
-                        </div>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                          {assignment.requirement}
+                        </span>
                       </div>
-                    )
-                  )}
+
+                      <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
+                        <span>{assignment.estimatedMinutes} min</span>
+
+                        {assignment.dueAt && (
+                          <span>
+                            • Due{" "}
+                            {new Date(assignment.dueAt).toLocaleDateString()}
+                          </span>
+                        )}
+
+                        {assignment.portfolioEligible && (
+                          <span>• Portfolio Eligible</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <EmptyState text="No database assignments have been added to this lesson yet." />
@@ -1212,11 +1155,9 @@ export default function AmbassadorCurriculumPage() {
             <div className="space-y-5">
               <ContentCard title="Lesson Materials">
                 <p>
-                  Facilitator guides, student workbooks,
-                  slides, handouts, activities, role-play
-                  cards, case scenarios, videos, links,
-                  and printable materials live with this
-                  lesson and cohort.
+                  Facilitator guides, student workbooks, slides, handouts,
+                  activities, role-play cards, case scenarios, videos, links,
+                  and printable materials live with this lesson and cohort.
                 </p>
               </ContentCard>
 
@@ -1226,7 +1167,8 @@ export default function AmbassadorCurriculumPage() {
                 </h3>
 
                 <p className="mt-1 text-sm text-slate-600">
-                  Add a workbook, slide deck, handout, video, link, image, or other lesson material.
+                  Add a workbook, slide deck, handout, video, link, image, or
+                  other lesson material.
                 </p>
 
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -1405,7 +1347,9 @@ export default function AmbassadorCurriculumPage() {
                 </h3>
 
                 <p className="mt-1 text-sm text-slate-600">
-                  Build the teaching week with class activities, due dates, check-ins, guest speakers, field experiences, and follow-up tasks.
+                  Build the teaching week with class activities, due dates,
+                  check-ins, guest speakers, field experiences, and follow-up
+                  tasks.
                 </p>
 
                 <div className="mt-5 grid gap-4 md:grid-cols-3">
@@ -1469,8 +1413,7 @@ export default function AmbassadorCurriculumPage() {
                       onChange={(event) =>
                         setTaskForm((current) => ({
                           ...current,
-                          durationMinutes:
-                            Number(event.target.value) || 10,
+                          durationMinutes: Number(event.target.value) || 10,
                         }))
                       }
                       className="w-full rounded-xl border border-slate-300 px-4 py-3"
@@ -1523,8 +1466,7 @@ export default function AmbassadorCurriculumPage() {
                       onChange={(event) =>
                         setTaskForm((current) => ({
                           ...current,
-                          requirement:
-                            event.target.value as RequirementValue,
+                          requirement: event.target.value as RequirementValue,
                         }))
                       }
                       className="w-full rounded-xl border border-slate-300 px-4 py-3"
@@ -1575,8 +1517,7 @@ export default function AmbassadorCurriculumPage() {
                         className="rounded-xl border border-slate-200 p-4"
                       >
                         <p className="text-xs font-black uppercase text-[#4B2265]">
-                          Day {task.dayNumber} •{" "}
-                          {task.taskType}
+                          Day {task.dayNumber} • {task.taskType}
                         </p>
 
                         <p className="mt-2 font-black text-[#0D1B3D]">
@@ -1588,8 +1529,7 @@ export default function AmbassadorCurriculumPage() {
                         </p>
 
                         <p className="mt-3 text-xs font-bold text-slate-500">
-                          {task.durationMinutes} minutes •{" "}
-                          {task.requirement}
+                          {task.durationMinutes} minutes • {task.requirement}
                         </p>
                       </div>
                     ))}
@@ -1617,8 +1557,7 @@ export default function AmbassadorCurriculumPage() {
                   </div>
                 ) : (
                   <p>
-                    No scheduled cohort tasks have been
-                    added for this week yet.
+                    No scheduled cohort tasks have been added for this week yet.
                   </p>
                 )}
               </ContentCard>
@@ -1635,15 +1574,12 @@ export default function AmbassadorCurriculumPage() {
                     </p>
 
                     <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
-                      Week {lesson.weekNumber}:{" "}
-                      {lesson.title}
+                      Week {lesson.weekNumber}: {lesson.title}
                     </h3>
 
                     <p className="mt-2 max-w-2xl text-sm text-slate-600">
-                      Facilitators and administrators
-                      control when this lesson and its
-                      individual components become
-                      visible to students.
+                      Facilitators and administrators control when this lesson
+                      and its individual components become visible to students.
                     </p>
                   </div>
 
@@ -1654,19 +1590,16 @@ export default function AmbassadorCurriculumPage() {
                         : "bg-amber-100 text-amber-800"
                     }`}
                   >
-                    {delivery?.releasedToStudents
-                      ? "Released"
-                      : "Not Released"}
+                    {delivery?.releasedToStudents ? "Released" : "Not Released"}
                   </span>
                 </div>
               </div>
 
               {!delivery ? (
                 <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-800">
-                  This lesson does not have a delivery
-                  setting for Ambassador 2026. Release
-                  controls are unavailable until that
-                  record exists.
+                  This lesson does not have a delivery setting for Ambassador
+                  2026. Release controls are unavailable until that record
+                  exists.
                 </div>
               ) : (
                 <>
@@ -1678,8 +1611,8 @@ export default function AmbassadorCurriculumPage() {
                         </h3>
 
                         <p className="mt-1 text-sm text-slate-600">
-                          This controls whether the
-                          lesson can appear to students.
+                          This controls whether the lesson can appear to
+                          students.
                         </p>
                       </div>
 
@@ -1689,12 +1622,11 @@ export default function AmbassadorCurriculumPage() {
                         onClick={() =>
                           patchDelivery(
                             {
-                              releasedToStudents:
-                                !delivery.releasedToStudents,
+                              releasedToStudents: !delivery.releasedToStudents,
                             },
                             delivery.releasedToStudents
                               ? `Week ${lesson.weekNumber} removed from student release.`
-                              : `Week ${lesson.weekNumber} released to students.`
+                              : `Week ${lesson.weekNumber} released to students.`,
                           )
                         }
                         className={`rounded-xl px-5 py-3 text-sm font-black ${
@@ -1713,67 +1645,56 @@ export default function AmbassadorCurriculumPage() {
                   </div>
 
                   <div className="space-y-3">
-                    {requirementControls.map(
-                      ({ field, label }) => (
-                        <div
-                          key={field}
-                          className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 md:flex-row md:items-center md:justify-between"
-                        >
-                          <div>
-                            <span className="font-bold text-[#0D1B3D]">
-                              {label}
-                            </span>
+                    {requirementControls.map(({ field, label }) => (
+                      <div
+                        key={field}
+                        className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 md:flex-row md:items-center md:justify-between"
+                      >
+                        <div>
+                          <span className="font-bold text-[#0D1B3D]">
+                            {label}
+                          </span>
 
-                            <p className="mt-1 text-xs text-slate-500">
-                              Student-facing requirement
-                              for this cohort.
-                            </p>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            {requirementOptions.map(
-                              (option) => (
-                                <button
-                                  key={option}
-                                  type="button"
-                                  disabled={saving}
-                                  onClick={() =>
-                                    patchDelivery(
-                                      {
-                                        requirementField:
-                                          field,
-                                        requirementValue:
-                                          option,
-                                      },
-                                      `${label} set to ${option.toLowerCase()}.`
-                                    )
-                                  }
-                                  className={`rounded-lg border px-3 py-2 text-xs font-black ${
-                                    delivery[field] ===
-                                    option
-                                      ? "border-[#F2B705] bg-[#FFF7D6] text-[#0D1B3D]"
-                                      : "border-slate-200 bg-white text-slate-500"
-                                  } disabled:opacity-50`}
-                                >
-                                  {option}
-                                </button>
-                              )
-                            )}
-                          </div>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Student-facing requirement for this cohort.
+                          </p>
                         </div>
-                      )
-                    )}
+
+                        <div className="flex flex-wrap gap-2">
+                          {requirementOptions.map((option) => (
+                            <button
+                              key={option}
+                              type="button"
+                              disabled={saving}
+                              onClick={() =>
+                                patchDelivery(
+                                  {
+                                    requirementField: field,
+                                    requirementValue: option,
+                                  },
+                                  `${label} set to ${option.toLowerCase()}.`,
+                                )
+                              }
+                              className={`rounded-lg border px-3 py-2 text-xs font-black ${
+                                delivery[field] === option
+                                  ? "border-[#F2B705] bg-[#FFF7D6] text-[#0D1B3D]"
+                                  : "border-slate-200 bg-white text-slate-500"
+                              } disabled:opacity-50`}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   <div className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <span className="font-bold text-[#0D1B3D]">
-                        Badge
-                      </span>
+                      <span className="font-bold text-[#0D1B3D]">Badge</span>
 
                       <p className="mt-1 text-xs text-slate-500">
-                        Controls whether the lesson badge
-                        is enabled.
+                        Controls whether the lesson badge is enabled.
                       </p>
                     </div>
 
@@ -1783,12 +1704,11 @@ export default function AmbassadorCurriculumPage() {
                       onClick={() =>
                         patchDelivery(
                           {
-                            badgeEnabled:
-                              !delivery.badgeEnabled,
+                            badgeEnabled: !delivery.badgeEnabled,
                           },
                           delivery.badgeEnabled
                             ? "Lesson badge disabled."
-                            : "Lesson badge enabled."
+                            : "Lesson badge enabled.",
                         )
                       }
                       className={`rounded-xl px-4 py-2 text-sm font-black ${
@@ -1797,18 +1717,13 @@ export default function AmbassadorCurriculumPage() {
                           : "bg-slate-100 text-slate-600"
                       } disabled:opacity-50`}
                     >
-                      {delivery.badgeEnabled
-                        ? "ON"
-                        : "OFF"}
+                      {delivery.badgeEnabled ? "ON" : "OFF"}
                     </button>
                   </div>
 
                   <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
-                    <strong>
-                      Release safeguard:
-                    </strong>{" "}
-                    Keep lessons unreleased while we are
-                    testing the production student-view
+                    <strong>Release safeguard:</strong> Keep lessons unreleased
+                    while we are testing the production student-view
                     permissions.
                   </div>
                 </>
@@ -1835,9 +1750,7 @@ export default function AmbassadorCurriculumPage() {
         <button
           type="button"
           onClick={nextWeek}
-          disabled={
-            selectedWeek === 16 || loading
-          }
+          disabled={selectedWeek === 16 || loading}
           className="rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-40"
         >
           Next Week →
@@ -1847,22 +1760,14 @@ export default function AmbassadorCurriculumPage() {
   );
 }
 
-function SummaryCard({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-xs font-black uppercase tracking-wider text-slate-500">
         {label}
       </p>
 
-      <p className="mt-2 text-lg font-black text-[#0D1B3D]">
-        {value}
-      </p>
+      <p className="mt-2 text-lg font-black text-[#0D1B3D]">{value}</p>
     </div>
   );
 }
@@ -1876,22 +1781,14 @@ function ContentCard({
 }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h3 className="text-lg font-black text-[#0D1B3D]">
-        {title}
-      </h3>
+      <h3 className="text-lg font-black text-[#0D1B3D]">{title}</h3>
 
-      <div className="mt-3 leading-7 text-slate-600">
-        {children}
-      </div>
+      <div className="mt-3 leading-7 text-slate-600">{children}</div>
     </div>
   );
 }
 
-function EmptyState({
-  text,
-}: {
-  text: string;
-}) {
+function EmptyState({ text }: { text: string }) {
   return (
     <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
       {text}

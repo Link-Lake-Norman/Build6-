@@ -1,7 +1,4 @@
-import type {
-  AIGeneratedActivity,
-  AIActivityType,
-} from "./ai-activity-types";
+import type { AIGeneratedActivity, AIActivityType } from "./ai-activity-types";
 
 import { curriculum } from "./curriculum";
 
@@ -13,6 +10,10 @@ export type AILessonRequest = {
   activityType: AIActivityType;
   audience: string;
   variation?: number;
+
+  existingTaskTitles?: string[];
+  availableMinutes?: number;
+  classSize?: number;
 };
 
 export const AI_ACTIVITY_OPTIONS: AIActivityType[] = [
@@ -29,11 +30,9 @@ export const AI_ACTIVITY_OPTIONS: AIActivityType[] = [
 ];
 
 export function generateActivityOptions(
-  request: AILessonRequest
+  request: AILessonRequest,
 ): AIGeneratedActivity[] {
-  const lesson = curriculum.find(
-    (item) => item.week === request.week
-  );
+  const lesson = curriculum.find((item) => item.week === request.week);
 
   const title = lesson?.title ?? request.topic;
   const objective = lesson?.objective ?? request.objective;
@@ -42,10 +41,11 @@ export function generateActivityOptions(
     "Students connect this Future Ready skill to real workplace expectations.";
 
   const skills = lesson?.skillsEarned ?? [];
-  const discussionQuestions =
-    lesson?.discussionQuestions ?? [];
+  const discussionQuestions = lesson?.discussionQuestions ?? [];
 
-  const activity = buildActivity(
+  const existingTaskTitles = request.existingTaskTitles ?? [];
+
+  let activity = buildActivity(
     request.activityType,
     title,
     objective,
@@ -54,8 +54,50 @@ export function generateActivityOptions(
     discussionQuestions,
     lesson?.studentActivity ?? "",
     lesson?.portfolioEvidence ?? "",
-    request.variation ?? 1
+    request.variation ?? 1,
+    request.day,
+    request.availableMinutes ?? 20,
+    request.classSize ?? 20,
   );
+
+  for (let attempt = 1; attempt <= 12; attempt += 1) {
+    const normalizedTitle = activity.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+
+    const duplicate = existingTaskTitles.some((existing) => {
+      const normalizedExisting = existing
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+
+      return (
+        normalizedExisting === normalizedTitle ||
+        normalizedExisting.includes(normalizedTitle) ||
+        normalizedTitle.includes(normalizedExisting)
+      );
+    });
+
+    if (!duplicate) {
+      break;
+    }
+
+    activity = buildActivity(
+      request.activityType,
+      title,
+      objective,
+      workplaceConnection,
+      skills,
+      discussionQuestions,
+      lesson?.studentActivity ?? "",
+      lesson?.portfolioEvidence ?? "",
+      (request.variation ?? 1) + attempt,
+      request.day,
+      request.availableMinutes ?? 20,
+      request.classSize ?? 20,
+    );
+  }
 
   return [activity];
 }
@@ -69,20 +111,55 @@ function buildActivity(
   discussionQuestions: string[],
   studentActivity: string,
   portfolioEvidence: string,
-  variation: number
+  variation: number,
+  day: string,
+  availableMinutes: number,
+  classSize: number,
 ): AIGeneratedActivity {
-  const variant = ((variation - 1) % 3 + 3) % 3;
+  /*
+   * The previous engine only had three variants and then repeated.
+   * We now use a much larger deterministic variation space that also
+   * changes by day, class time, and class size.
+   */
+  const variant =
+    Math.abs(
+      variation * 7 + day.length * 11 + availableMinutes * 3 + classSize,
+    ) % 18;
+
+  const scenarioVariant = variant % 6;
+  const deliveryVariant = Math.floor(variant / 3) % 6;
+
+  const challengeModifiers = [
+    "with a 90-second decision deadline",
+    "after receiving incomplete information",
+    "while another stakeholder disagrees",
+    "after an unexpected change is introduced",
+    "with a customer or supervisor waiting for an answer",
+    "while balancing professionalism, speed, and quality",
+  ];
+
+  const deliveryFormats = [
+    "first attempt, coaching, and immediate replay",
+    "individual decision followed by team negotiation",
+    "pairs followed by a live hot-seat demonstration",
+    "small-group challenge followed by a 60-second executive report",
+    "rotating roles with peer observation",
+    "silent individual preparation followed by rapid-response rounds",
+  ];
+
+  const challengeModifier = challengeModifiers[scenarioVariant];
+
+  const deliveryFormat = deliveryFormats[deliveryVariant];
   switch (activityType) {
     case "Role Play":
       return {
-        title: `${lessonTitle}: The "Tell Me About Yourself" Challenge`,
+        title: `${lessonTitle}: ${day} Professional Response Challenge ${variation}`,
         activityType: "Role Play",
 
         lessonConnection: lessonTitle,
         learningObjective: objective,
 
-        whyThisMatters:
-          `${workplaceConnection} Students practice translating who they are into language they could actually use with an employer, mentor, teacher, or professional connection.`,
+        whyThisMatters: `${workplaceConnection} Students practice translating who they are into language they could actually use with an employer, mentor, teacher, or professional connection.`,
 
         facilitatorBackground:
           "Students often know more about themselves than they know how to communicate. This exercise helps them turn everyday experiences from school, sports, jobs, family responsibilities, volunteering, and personal challenges into evidence of transferable skills.",
@@ -162,6 +239,8 @@ function buildActivity(
         ],
 
         stepByStepInstructions: [
+          `Today's delivery format: ${deliveryFormat}.`,
+          `Add the workplace pressure: ${challengeModifier}.`,
           "Individually, students write down three experiences that have shaped them.",
           "Beside each experience, students identify at least one skill it helped them develop.",
           "Student Candidate begins with a 30-second answer to: 'Tell me about yourself beyond your name, grade, or position.'",
@@ -211,8 +290,7 @@ function buildActivity(
         lessonConnection: lessonTitle,
         learningObjective: objective,
 
-        whyThisMatters:
-          `${workplaceConnection} Students learn that employers evaluate behaviors and evidence—not simply titles, grades, or whether someone has previously held a formal job.`,
+        whyThisMatters: `${workplaceConnection} Students learn that employers evaluate behaviors and evidence—not simply titles, grades, or whether someone has previously held a formal job.`,
 
         facilitatorBackground:
           "This scenario asks students to evaluate several fictional candidates whose experiences demonstrate different transferable skills. Students must defend a hiring recommendation using evidence.",
@@ -288,6 +366,8 @@ function buildActivity(
         ],
 
         stepByStepInstructions: [
+          `Today's delivery format: ${deliveryFormat}.`,
+          `Add the workplace pressure: ${challengeModifier}.`,
           "Candidate A has excellent grades and several school awards but gives vague examples of teamwork and admits frequently missing commitments.",
           "Candidate B has average grades, plays a team sport, helps care for younger siblings, and describes how those responsibilities taught organization, patience, and accountability.",
           "Candidate C has previous part-time work experience but describes repeated conflicts with coworkers and says they prefer working only when someone tells them exactly what to do.",
@@ -336,7 +416,12 @@ function buildActivity(
         workplaceConnection,
         skills,
         discussionQuestions,
-        portfolioEvidence
+        portfolioEvidence,
+        day,
+        deliveryFormat,
+        challengeModifier,
+        classSize,
+        availableMinutes,
       );
 
     case "Team Building":
@@ -346,7 +431,12 @@ function buildActivity(
         workplaceConnection,
         skills,
         discussionQuestions,
-        portfolioEvidence
+        portfolioEvidence,
+        day,
+        deliveryFormat,
+        challengeModifier,
+        classSize,
+        availableMinutes,
       );
 
     case "Pop Quiz":
@@ -356,7 +446,12 @@ function buildActivity(
         workplaceConnection,
         skills,
         discussionQuestions,
-        portfolioEvidence
+        portfolioEvidence,
+        day,
+        deliveryFormat,
+        challengeModifier,
+        classSize,
+        availableMinutes,
       );
 
     default:
@@ -366,7 +461,12 @@ function buildActivity(
         workplaceConnection,
         skills,
         discussionQuestions,
-        portfolioEvidence
+        portfolioEvidence,
+        day,
+        deliveryFormat,
+        challengeModifier,
+        classSize,
+        availableMinutes,
       );
   }
 }
@@ -377,7 +477,12 @@ function createImprov(
   workplaceConnection: string,
   skills: string[],
   discussionQuestions: string[],
-  portfolioEvidence: string
+  portfolioEvidence: string,
+  day: string,
+  deliveryFormat: string,
+  challengeModifier: string,
+  classSize: number,
+  availableMinutes: number,
 ): AIGeneratedActivity {
   return {
     title: `${lessonTitle}: 30-Second Story Switch`,
@@ -387,13 +492,8 @@ function createImprov(
     whyThisMatters: workplaceConnection,
     facilitatorBackground:
       "Students practice thinking on their feet while connecting real experiences to transferable skills.",
-    classroomSetup:
-      "Students stand or sit in a circle. One student responds at a time to a randomly selected experience prompt.",
-    materials: [
-      "Experience prompts",
-      "Timer",
-      "Paper or reflection journal",
-    ],
+    classroomSetup: `${day}: ${deliveryFormat}. Class size: ${classSize}. ${availableMinutes} minutes available. Students stand or sit in a circle. One student responds at a time to a randomly selected experience prompt.`,
+    materials: ["Experience prompts", "Timer", "Paper or reflection journal"],
     teachingPoints: [
       ...skills,
       "Confidence improves through practice.",
@@ -436,6 +536,8 @@ function createImprov(
       "Continue rapidly so students practice communicating without overthinking.",
     ],
     stepByStepInstructions: [
+      `Today's delivery format: ${deliveryFormat}.`,
+      `Add the workplace pressure: ${challengeModifier}.`,
       "Choose a student to begin.",
       "Give the student one prompt: a challenge you overcame, a time you helped someone, a mistake you learned from, a time your team needed you, or something you taught yourself.",
       "Student has five seconds to think.",
@@ -472,7 +574,12 @@ function createTeamBuilding(
   workplaceConnection: string,
   skills: string[],
   discussionQuestions: string[],
-  portfolioEvidence: string
+  portfolioEvidence: string,
+  day: string,
+  deliveryFormat: string,
+  challengeModifier: string,
+  classSize: number,
+  availableMinutes: number,
 ): AIGeneratedActivity {
   return {
     title: `${lessonTitle}: Hidden Strengths Team Challenge`,
@@ -482,8 +589,7 @@ function createTeamBuilding(
     whyThisMatters: workplaceConnection,
     facilitatorBackground:
       "Students often recognize strengths in peers more easily than in themselves. This activity uses peer evidence to strengthen self-awareness.",
-    classroomSetup:
-      "Create teams of four to five students.",
+    classroomSetup: `${day}: ${deliveryFormat}. Class size: ${classSize}. ${availableMinutes} minutes available. Create teams of four to five students.`,
     materials: [
       "Index cards or paper",
       "Pens",
@@ -523,6 +629,8 @@ function createTeamBuilding(
       "Keep feedback focused on strengths, behaviors, and contributions.",
     ],
     stepByStepInstructions: [
+      `Today's delivery format: ${deliveryFormat}.`,
+      `Add the workplace pressure: ${challengeModifier}.`,
       "Each student writes their name at the top of a sheet.",
       "Pass each sheet around the team.",
       "Every teammate writes one strength they have observed in that student.",
@@ -548,8 +656,7 @@ function createTeamBuilding(
       "Constructive Feedback",
       "Communication",
     ],
-    portfolioEvidence:
-      portfolioEvidence || "Peer strengths evidence sheet.",
+    portfolioEvidence: portfolioEvidence || "Peer strengths evidence sheet.",
     capstoneConnection:
       "Students preserve verified strengths and supporting examples as evidence of their developing professional identity.",
   };
@@ -561,7 +668,12 @@ function createPopQuiz(
   workplaceConnection: string,
   skills: string[],
   discussionQuestions: string[],
-  portfolioEvidence: string
+  portfolioEvidence: string,
+  day: string,
+  deliveryFormat: string,
+  challengeModifier: string,
+  classSize: number,
+  availableMinutes: number,
 ): AIGeneratedActivity {
   return {
     title: `${lessonTitle}: Skill or Just a Task?`,
@@ -571,12 +683,8 @@ function createPopQuiz(
     whyThisMatters: workplaceConnection,
     facilitatorBackground:
       "This quick assessment checks whether students can identify transferable skills hidden inside ordinary experiences.",
-    classroomSetup:
-      "Students answer individually before reviewing responses as a class.",
-    materials: [
-      "Paper or Future Ready journal",
-      "Pen or pencil",
-    ],
+    classroomSetup: `${day}: ${deliveryFormat}. Class size: ${classSize}. ${availableMinutes} minutes available. Students answer individually before reviewing responses as a class.`,
+    materials: ["Paper or Future Ready journal", "Pen or pencil"],
     teachingPoints: [
       ...skills,
       "Tasks describe what you did; skills explain what you demonstrated.",
@@ -606,6 +714,8 @@ function createPopQuiz(
       "After each question, ask students to defend their answer with evidence.",
     ],
     stepByStepInstructions: [
+      `Today's delivery format: ${deliveryFormat}.`,
+      `Add the workplace pressure: ${challengeModifier}.`,
       "1. A student balances athletics, school, and a weekend job. What skills might this demonstrate?",
       "2. A teammate notices conflict and helps two people reach a solution. What skill is being demonstrated?",
       "3. A student receives critical feedback and changes their approach. What skill is being demonstrated?",

@@ -3,32 +3,16 @@ export type FacilitatorNavigationItem = {
   href: string;
 };
 
-export type StudentStatus =
-  | "On Track"
-  | "Needs Attention"
-  | "Internship Ready";
+export type StudentStatus = "On Track" | "Needs Attention" | "Internship Ready";
 
-export type PortfolioStatus =
-  | "On Track"
-  | "In Progress"
-  | "Needs Attention";
+export type PortfolioStatus = "On Track" | "In Progress" | "Needs Attention";
 
 export type ReflectionStatus =
-  | "Approved"
-  | "Submitted"
-  | "Needs Revision"
-  | "Not Submitted";
+  "Approved" | "Submitted" | "Needs Revision" | "Not Submitted";
 
-export type ReviewStatus =
-  | "Pending"
-  | "Approved"
-  | "Needs Revision";
+export type ReviewStatus = "Pending" | "Approved" | "Needs Revision";
 
-export type AttendanceStatus =
-  | "Present"
-  | "Late"
-  | "Absent"
-  | "Excused";
+export type AttendanceStatus = "Present" | "Late" | "Absent" | "Excused";
 
 export type FacilitatorStudent = {
   id: string;
@@ -156,6 +140,10 @@ export const facilitatorNavigation: FacilitatorNavigationItem[] = [
   {
     label: "Attendance",
     href: "/ambassador/facilitator/attendance",
+  },
+  {
+    label: "Friday Command Center",
+    href: "/ambassador/facilitator/friday",
   },
   {
     label: "Reflections",
@@ -291,26 +279,20 @@ export const facilitatorStudents: FacilitatorStudent[] = [
   },
 ];
 
-export const attendanceStudents = facilitatorStudents.map(
-  (student, index) => ({
-    ...student,
-    status:
-      index === 2
-        ? ("Late" as AttendanceStatus)
-        : index === 4
-          ? ("Absent" as AttendanceStatus)
-          : ("Present" as AttendanceStatus),
-  }),
-);
+export const attendanceStudents = facilitatorStudents.map((student, index) => ({
+  ...student,
+  status:
+    index === 2
+      ? ("Late" as AttendanceStatus)
+      : index === 4
+        ? ("Absent" as AttendanceStatus)
+        : ("Present" as AttendanceStatus),
+}));
 
-export const attendanceRecords: AttendanceRecord[] =
-  facilitatorStudents.map((student, index) => {
+export const attendanceRecords: AttendanceRecord[] = facilitatorStudents.map(
+  (student, index) => {
     const status: AttendanceStatus =
-      index === 2
-        ? "Late"
-        : index === 4
-          ? "Absent"
-          : "Present";
+      index === 2 ? "Late" : index === 4 ? "Absent" : "Present";
 
     return {
       id: `attendance-${student.id}`,
@@ -328,7 +310,8 @@ export const attendanceRecords: AttendanceRecord[] =
             ? "Follow-up required."
             : "",
     };
-  });
+  },
+);
 
 export const reflectionSubmissions: ReflectionSubmission[] = [
   {
@@ -343,7 +326,8 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     submittedAt: "Today",
     submittedDate: "Today",
     prompt: "How did you apply Future Ready skills this week?",
-    response: "I learned how adaptability and communication work together when a team is solving a problem.",
+    response:
+      "I learned how adaptability and communication work together when a team is solving a problem.",
     status: "Pending",
     excerpt:
       "I learned how adaptability and communication work together when a team is solving a problem.",
@@ -360,7 +344,8 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     submittedAt: "Yesterday",
     submittedDate: "Yesterday",
     prompt: "What contribution did you make to your team?",
-    response: "My strongest contribution was helping the group organize our ideas and decide what to present.",
+    response:
+      "My strongest contribution was helping the group organize our ideas and decide what to present.",
     status: "Pending",
     excerpt:
       "My strongest contribution was helping the group organize our ideas and decide what to present.",
@@ -377,7 +362,8 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     submittedAt: "Monday",
     submittedDate: "Monday",
     prompt: "Describe a time you had to adapt.",
-    response: "I need to add a clearer example of how I adjusted when our original plan changed.",
+    response:
+      "I need to add a clearer example of how I adjusted when our original plan changed.",
     status: "Needs Revision",
     excerpt:
       "I need to add a clearer example of how I adjusted when our original plan changed.",
@@ -394,7 +380,8 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     submittedAt: "Last week",
     submittedDate: "Last week",
     prompt: "How did you respond when the plan changed?",
-    response: "I stayed calm, listened to my teammates, and helped create a new plan.",
+    response:
+      "I stayed calm, listened to my teammates, and helped create a new plan.",
     status: "Approved",
     excerpt:
       "I stayed calm, listened to my teammates, and helped create a new plan.",

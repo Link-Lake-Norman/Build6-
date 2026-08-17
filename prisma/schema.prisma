@@ -174,6 +174,10 @@ model User {
   notifications Notification[]
   auditLogs     AuditLog[]         @relation("AuditActor")
 
+  messageThreadsCreated MessageThread[]      @relation("MessageThreadCreator")
+  messageParticipants   MessageParticipant[] @relation("MessageParticipantUser")
+  sentPlatformMessages  PlatformMessage[]    @relation("PlatformMessageSender")
+
   @@index([role, status])
 }
 
@@ -249,6 +253,16 @@ model Cohort {
   lessonDeliverySettings LessonDeliverySetting[]
   lessonResources        LessonResource[]
   lessonPlanTasks        LessonPlanTask[]
+  experiences            CohortExperience[]
+
+  lifeAccounts      LifeAccount[]
+  economySettings   EconomySettings?
+  economyBills      EconomyBill[]
+  economyEvents     EconomyLifeEvent[]
+  communityFunds    CommunityFund[]
+  peerLoans         PeerLoan[]
+  fridayMoneyChecks FridayMoneyCheck[]
+  economyClaims     EconomyClaim[]
 
   @@unique([organizationId, code])
   @@index([programId, status])
@@ -268,22 +282,30 @@ model Student {
   updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
 
-  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  school          School?                 @relation(fields: [schoolId], references: [id], onDelete: SetNull)
-  enrollments     Enrollment[]
-  lessonProgress  LessonProgress[]
-  reflections     Reflection[]
-  portfolio       Portfolio?
-  badgeAwards     BadgeAward[]
-  studentSkills   StudentSkill[]
-  careerInterests CareerInterest[]
-  applications    InternshipApplication[]
-  placements      Placement[]
-  goals           Goal[]
-  attendance      AttendanceRecord[]
-  readinessProfile StudentReadinessProfile?
+  user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school             School?                  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  enrollments        Enrollment[]
+  lessonProgress     LessonProgress[]
+  reflections        Reflection[]
+  portfolio          Portfolio?
+  badgeAwards        BadgeAward[]
+  studentSkills      StudentSkill[]
+  careerInterests    CareerInterest[]
+  applications       InternshipApplication[]
+  placements         Placement[]
+  goals              Goal[]
+  attendance         AttendanceRecord[]
+  readinessProfile   StudentReadinessProfile?
   readinessResponses ReadinessResponse[]
-  profile         StudentProfile?
+  profile            StudentProfile?
+
+  lifeAccounts      LifeAccount[]
+  lifeGoals         LifeGoal[]
+  fridayMoneyChecks FridayMoneyCheck[]
+  economyClaims     EconomyClaim[]
+  loansBorrowed     PeerLoan[]                  @relation("PeerLoanBorrower")
+  loansFunded       PeerLoan[]                  @relation("PeerLoanLender")
+  fundContributions CommunityFundContribution[]
 
   @@index([schoolId, graduationYear])
 }
@@ -374,6 +396,7 @@ model Lesson {
   deliverySettings LessonDeliverySetting[]
   customResources  LessonResource[]
   planTasks        LessonPlanTask[]
+  experiences      CohortExperience[]
 
   @@unique([moduleId, slug])
   @@unique([moduleId, position])
@@ -824,6 +847,74 @@ model LessonPlanTask {
   @@index([lessonId, cohortId, dayNumber, sortOrder])
 }
 
+model CohortExperience {
+  id         String  @id @default(cuid())
+  cohortId   String
+  lessonId   String?
+  weekNumber Int
+  dayNumber  Int     @default(1)
+
+  experienceType String  @default("FIELD_TRIP")
+  title          String
+  description    String?
+
+  eventDate     DateTime?
+  startTime     String?
+  endTime       String?
+  departureTime String?
+  returnTime    String?
+
+  siteName   String?
+  address1   String?
+  address2   String?
+  city       String?
+  state      String?
+  postalCode String?
+
+  contactName  String?
+  contactTitle String?
+  contactEmail String?
+  contactPhone String?
+
+  transportationNotes String?
+  parkingNotes        String?
+
+  requiredAttire String?
+  accommodations String?
+  foodNotes      String?
+
+  waiverRequired Boolean @default(false)
+  waiverNotes    String?
+
+  capacity       Int?
+  chaperoneNotes String?
+
+  learningObjective String?
+  careerConnection  String?
+
+  preTripPreparation String?
+  studentQuestions   String?
+  postTripReflection String?
+
+  studentVisibleNotes String?
+  facilitatorNotes    String?
+
+  visibleToStudent Boolean @default(true)
+  status           String  @default("PLANNED")
+
+  createdById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cohort Cohort  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+
+  @@index([cohortId, weekNumber, dayNumber])
+  @@index([lessonId])
+  @@index([eventDate])
+  @@index([experienceType, status])
+}
+
 model LessonPlanTaskResource {
   id         String   @id @default(cuid())
   taskId     String
@@ -917,7 +1008,6 @@ model AssignmentSubmissionFile {
   @@index([submissionId, createdAt])
 }
 
-
 // ======================================================
 // FUTURE READY™ READINESS ASSESSMENT ENGINE
 // ======================================================
@@ -944,7 +1034,7 @@ model ReadinessQuestion {
   createdAt    DateTime @default(now())
 
   assessment ReadinessAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  responses ReadinessResponse[]
+  responses  ReadinessResponse[]
 
   @@index([assessmentId])
 }
@@ -959,15 +1049,15 @@ model ReadinessResponse {
   createdAt    DateTime @default(now())
 
   assessment ReadinessAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  question ReadinessQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  question   ReadinessQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  student    Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
 }
 
 model StudentProfile {
-  id              String   @id @default(cuid())
-  studentId       String   @unique
+  id        String @id @default(cuid())
+  studentId String @unique
 
   aboutMe         String?
   strengths       String?
@@ -976,24 +1066,23 @@ model StudentProfile {
   futureGoals     String?
   skillsToBuild   String?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-
 model StudentReadinessProfile {
-  id                   String   @id @default(cuid())
-  studentId            String   @unique
+  id        String @id @default(cuid())
+  studentId String @unique
 
-  selfAwareness        Decimal @default(0) @db.Decimal(5,2)
-  communication        Decimal @default(0) @db.Decimal(5,2)
-  leadership           Decimal @default(0) @db.Decimal(5,2)
-  professionalPresence Decimal @default(0) @db.Decimal(5,2)
-  careerReadiness      Decimal @default(0) @db.Decimal(5,2)
-  adaptability         Decimal @default(0) @db.Decimal(5,2)
-  aiReadiness          Decimal @default(0) @db.Decimal(5,2)
+  selfAwareness        Decimal @default(0) @db.Decimal(5, 2)
+  communication        Decimal @default(0) @db.Decimal(5, 2)
+  leadership           Decimal @default(0) @db.Decimal(5, 2)
+  professionalPresence Decimal @default(0) @db.Decimal(5, 2)
+  careerReadiness      Decimal @default(0) @db.Decimal(5, 2)
+  adaptability         Decimal @default(0) @db.Decimal(5, 2)
+  aiReadiness          Decimal @default(0) @db.Decimal(5, 2)
 
   completedAt DateTime?
 
@@ -1001,4 +1090,594 @@ model StudentReadinessProfile {
   updatedAt DateTime @updatedAt
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// ======================================================
+// FUTURE READY™ LIFE ECONOMY ENGINE
+// Students begin with a simulated $100 first account.
+// All money values are stored in integer cents.
+// ======================================================
+
+enum LifeAccountStatus {
+  ACTIVE
+  FROZEN
+  RECOVERY
+  CLOSED
+}
+
+enum LifeTransactionType {
+  OPENING_BALANCE
+  PAYDAY
+  ATTENDANCE_PAY
+  ASSIGNMENT_PAY
+  REFLECTION_PAY
+  LESSON_COMPLETION_PAY
+  PORTFOLIO_PAY
+  FRIDAY_CHECK_BONUS
+  STREAK_BONUS
+  SKILL_BONUS
+  LEADERSHIP_BONUS
+  INITIATIVE_BONUS
+  FACILITATOR_BONUS
+  SIDE_HUSTLE
+  CUSTOM_EARNING
+
+  PURCHASE
+  BILL_PAYMENT
+  GAS
+  FOOD
+  INSURANCE
+  SUBSCRIPTION
+  ENTERTAINMENT
+  CONCERT
+  CLOTHING
+  BEAUTY
+  TECHNOLOGY
+  TRANSPORTATION
+  DONATION
+  COMMUNITY_FUND
+  PEER_GIFT
+  PEER_LOAN_OUT
+  PEER_LOAN_IN
+  PEER_REPAYMENT
+  SAVINGS_TRANSFER
+  SAVINGS_WITHDRAWAL
+
+  LATE_FEE
+  OVERDRAFT_FEE
+  ACCOUNT_NEGLECT_FEE
+  MISSED_OBLIGATION
+  CUSTOM_CHARGE
+
+  REFUND
+  INTEREST
+  EMPLOYER_MATCH
+  LIFE_EVENT
+  ADJUSTMENT
+}
+
+enum EconomyTransactionDirection {
+  CREDIT
+  DEBIT
+}
+
+enum EconomyGoalCategory {
+  CAR
+  FIRST_HOME
+  VACATION
+  TRAVEL
+  FASHION
+  LUXURY
+  SHOES
+  TECHNOLOGY
+  EDUCATION
+  BUSINESS
+  EMERGENCY_FUND
+  INVESTING
+  WEALTH
+  FINANCIAL_FREEDOM
+  FAMILY
+  OTHER
+}
+
+enum EconomyBillCategory {
+  CAR_PAYMENT
+  GAS
+  AUTO_INSURANCE
+  FOOD
+  PHONE
+  RENT
+  UTILITIES
+  SUBSCRIPTION
+  ENTERTAINMENT
+  BEAUTY
+  CLOTHING
+  TRANSPORTATION
+  CREDIT
+  LOAN
+  OTHER
+}
+
+enum EconomyBillFrequency {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+  ONE_TIME
+}
+
+enum EconomyClaimStatus {
+  PENDING
+  APPROVED
+  ADJUSTED
+  DECLINED
+}
+
+enum PeerLoanStatus {
+  REQUESTED
+  ACTIVE
+  REPAID
+  LATE
+  DEFAULTED
+  DECLINED
+  CANCELLED
+}
+
+enum CommunityFundStatus {
+  DRAFT
+  ACTIVE
+  FUNDED
+  CLOSED
+  CANCELLED
+}
+
+enum EconomyLifeEventStatus {
+  SCHEDULED
+  ACTIVE
+  CLOSED
+}
+
+enum FridayCheckStatus {
+  OPEN
+  COMPLETED
+  MISSED
+}
+
+model LifeAccount {
+  id        String            @id @default(cuid())
+  studentId String
+  cohortId  String
+  status    LifeAccountStatus @default(ACTIVE)
+
+  // $100.00 first simulated account.
+  openingBalanceCents Int @default(10000)
+
+  checkingCents   Int @default(10000)
+  savingsCents    Int @default(0)
+  emergencyCents  Int @default(0)
+  investmentCents Int @default(0)
+  retirementCents Int @default(0)
+
+  totalEarnedCents Int @default(0)
+  totalSpentCents  Int @default(0)
+  totalSavedCents  Int @default(0)
+  totalGivenCents  Int @default(0)
+
+  trustScore Int @default(70)
+
+  fridayStreak        Int @default(0)
+  longestFridayStreak Int @default(0)
+
+  firstPaycheckUnlocked Boolean @default(false)
+  creditUnlocked        Boolean @default(false)
+  investingUnlocked     Boolean @default(false)
+  retirementUnlocked    Boolean @default(false)
+
+  leaderboardVisible Boolean @default(true)
+  milestoneAlerts    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  cohort  Cohort  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  transactions LifeTransaction[]
+
+  @@unique([studentId, cohortId])
+  @@index([cohortId, status])
+  @@index([studentId])
+}
+
+model LifeTransaction {
+  id        String @id @default(cuid())
+  accountId String
+
+  type      LifeTransactionType
+  direction EconomyTransactionDirection
+
+  amountCents Int
+
+  title       String
+  description String?
+
+  balanceAfterCents Int?
+
+  // Prevents attendance / reflection / assignment events
+  // from paying the same student twice.
+  idempotencyKey String? @unique
+
+  sourceType String?
+  sourceId   String?
+
+  counterpartyStudentId String?
+
+  weekNumber Int?
+  dayNumber  Int?
+
+  createdById String?
+  automated   Boolean @default(false)
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  account LifeAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId, createdAt])
+  @@index([type, createdAt])
+  @@index([sourceType, sourceId])
+}
+
+model LifeGoal {
+  id        String @id @default(cuid())
+  studentId String
+  cohortId  String
+
+  category     EconomyGoalCategory
+  title        String
+  whyItMatters String?
+
+  targetCents Int
+  savedCents  Int @default(0)
+
+  targetDate  DateTime?
+  active      Boolean   @default(true)
+  completedAt DateTime?
+
+  publicMilestone Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, active])
+  @@index([cohortId, active])
+}
+
+model EconomySettings {
+  id       String @id @default(cuid())
+  cohortId String @unique
+
+  // ======================================================
+  // FUTURE READY™ LIFE ECONOMY FEATURE CONTROLS
+  // Allows each school/cohort to turn the experience on/off.
+  // Ambassador Christian School pilot uses these features.
+  // ======================================================
+
+  enabled                    Boolean @default(false)
+  studentPortalEnabled       Boolean @default(true)
+  facilitatorControlsEnabled Boolean @default(true)
+
+  attendancePayEnabled       Boolean @default(true)
+  assignmentPayEnabled       Boolean @default(true)
+  reflectionPayEnabled       Boolean @default(true)
+  lessonCompletionPayEnabled Boolean @default(true)
+  portfolioPayEnabled        Boolean @default(true)
+
+  fridayCheckEnabled Boolean @default(true)
+  autoAddFridayCheck Boolean @default(true)
+  billsEnabled       Boolean @default(true)
+
+  lifeDropsEnabled        Boolean @default(true)
+  randomLifeEventsEnabled Boolean @default(true)
+
+  automatedEarningsEnabled Boolean @default(true)
+  automatedFeesEnabled     Boolean @default(true)
+
+  peerGivingEnabled     Boolean @default(true)
+  peerLendingEnabled    Boolean @default(true)
+  communityFundsEnabled Boolean @default(true)
+
+  savingsEnabled       Boolean @default(true)
+  emergencyFundEnabled Boolean @default(true)
+  investingEnabled     Boolean @default(true)
+  retirementEnabled    Boolean @default(true)
+
+  leaderboardEnabled      Boolean @default(true)
+  publicMilestonesEnabled Boolean @default(true)
+
+  openingBalanceCents Int @default(10000)
+  firstPaycheckCents  Int @default(50000)
+
+  attendancePayCents       Int @default(500)
+  assignmentPayCents       Int @default(1000)
+  reflectionPayCents       Int @default(500)
+  lessonCompletionPayCents Int @default(1000)
+  portfolioPayCents        Int @default(1000)
+  fridayCheckBonusCents    Int @default(500)
+
+  missedFridayFeeCents Int @default(1000)
+  overdraftFeeCents    Int @default(1500)
+  lateBillFeeCents     Int @default(500)
+
+  maxPeerLoanCents Int @default(5000)
+
+  randomLifeDropsPerWeek Int @default(2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+}
+
+model EconomyBill {
+  id        String  @id @default(cuid())
+  cohortId  String
+  studentId String?
+
+  category    EconomyBillCategory
+  title       String
+  description String?
+
+  amountCents Int
+  frequency   EconomyBillFrequency
+
+  nextDueAt DateTime?
+  active    Boolean   @default(true)
+
+  autoPay Boolean @default(false)
+
+  facilitatorCreated Boolean @default(false)
+  createdById        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@index([cohortId, active])
+  @@index([studentId, active])
+  @@index([nextDueAt, active])
+}
+
+model FridayMoneyCheck {
+  id        String @id @default(cuid())
+  studentId String
+  cohortId  String
+
+  weekNumber Int
+  status     FridayCheckStatus @default(OPEN)
+
+  reviewedChecking Boolean @default(false)
+  reviewedSavings  Boolean @default(false)
+  reviewedBills    Boolean @default(false)
+  reviewedLoans    Boolean @default(false)
+  reviewedGoal     Boolean @default(false)
+
+  movedToSavingsCents Int @default(0)
+  donatedCents        Int @default(0)
+
+  smartestDecision String?
+  biggestSurprise  String?
+  nextMoneyMove    String?
+
+  completedAt  DateTime?
+  feeAppliedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  cohort  Cohort  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, cohortId, weekNumber])
+  @@index([cohortId, weekNumber, status])
+}
+
+model EconomyClaim {
+  id         String @id @default(cuid())
+  studentId  String
+  cohortId   String
+  weekNumber Int
+
+  claimType   String
+  title       String
+  explanation String?
+
+  requestedCents Int
+  approvedCents  Int?
+
+  skill String?
+
+  status EconomyClaimStatus @default(PENDING)
+
+  reviewedById String?
+  reviewedAt   DateTime?
+  reviewNote   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  cohort  Cohort  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@index([cohortId, weekNumber, status])
+  @@index([studentId, status])
+}
+
+model PeerLoan {
+  id       String @id @default(cuid())
+  cohortId String
+
+  lenderStudentId   String
+  borrowerStudentId String
+
+  principalCents Int
+  repaymentCents Int
+
+  amountRepaidCents Int @default(0)
+
+  dueAt DateTime?
+
+  status PeerLoanStatus @default(REQUESTED)
+
+  borrowerNote String?
+  lenderNote   String?
+
+  createdAt  DateTime  @default(now())
+  acceptedAt DateTime?
+  repaidAt   DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  lender   Student @relation("PeerLoanLender", fields: [lenderStudentId], references: [id], onDelete: Cascade)
+  borrower Student @relation("PeerLoanBorrower", fields: [borrowerStudentId], references: [id], onDelete: Cascade)
+
+  @@index([cohortId, status])
+  @@index([lenderStudentId, status])
+  @@index([borrowerStudentId, status])
+}
+
+model CommunityFund {
+  id       String @id @default(cuid())
+  cohortId String
+
+  title String
+  story String
+
+  goalCents   Int
+  raisedCents Int @default(0)
+
+  matchingEnabled Boolean @default(false)
+  matchLimitCents Int?
+  matchedCents    Int     @default(0)
+
+  status CommunityFundStatus @default(DRAFT)
+
+  createdById String?
+
+  closesAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cohort        Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  contributions CommunityFundContribution[]
+
+  @@index([cohortId, status])
+}
+
+model CommunityFundContribution {
+  id        String @id @default(cuid())
+  fundId    String
+  studentId String
+
+  amountCents Int
+
+  anonymous Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  fund    CommunityFund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  student Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([fundId, createdAt])
+  @@index([studentId])
+}
+
+model EconomyLifeEvent {
+  id       String @id @default(cuid())
+  cohortId String
+
+  title String
+  emoji String?
+  story String
+
+  category String
+
+  choices Json
+
+  weekNumber   Int?
+  scheduledFor DateTime?
+
+  status EconomyLifeEventStatus @default(SCHEDULED)
+
+  appliesToEveryone Boolean @default(true)
+
+  createdById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@index([cohortId, status])
+  @@index([scheduledFor, status])
+}
+
+// ======================================================
+// FUTURE READY™ COMMUNICATION ENGINE
+// Private platform communication between authorized users.
+// ======================================================
+
+model MessageThread {
+  id             String   @id @default(cuid())
+  organizationId String?
+  cohortId       String?
+  subject        String?
+  threadType     String   @default("DIRECT")
+  createdById    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdBy    User                 @relation("MessageThreadCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  participants MessageParticipant[]
+  messages     PlatformMessage[]
+
+  @@index([organizationId, updatedAt])
+  @@index([cohortId, updatedAt])
+  @@index([createdById, updatedAt])
+}
+
+model MessageParticipant {
+  id         String    @id @default(cuid())
+  threadId   String
+  userId     String
+  joinedAt   DateTime  @default(now())
+  lastReadAt DateTime?
+
+  thread MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User          @relation("MessageParticipantUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, userId])
+  @@index([userId, threadId])
+  @@index([userId, lastReadAt])
+}
+
+model PlatformMessage {
+  id        String    @id @default(cuid())
+  threadId  String
+  senderId  String
+  body      String
+  createdAt DateTime  @default(now())
+  editedAt  DateTime?
+
+  thread MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User          @relation("PlatformMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+  @@index([senderId, createdAt])
 }

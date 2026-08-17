@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import FacilitatorShell from "@/components/facilitator/FacilitatorShell";
+import RemoveStudentButton from "./RemoveStudentButton";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth/session";
 
@@ -561,21 +562,35 @@ export default async function Page() {
                         </strong>
                       </div>
 
-                      <Link
-                        href={`/ambassador/student-passport/${student.id}`}
+                      <div
                         style={{
-                          display:
-                            "inline-block",
                           marginTop: 18,
-                          color: "#0D1B3D",
-                          fontSize: 11,
-                          fontWeight: 900,
-                          textDecoration:
-                            "none",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 10,
+                          alignItems: "center",
                         }}
                       >
-                        Open Student Passport →
-                      </Link>
+                        <Link
+                          href={`/ambassador/student-passport/${student.id}`}
+                          style={{
+                            display: "inline-block",
+                            color: "#0D1B3D",
+                            fontSize: 11,
+                            fontWeight: 900,
+                            textDecoration: "none",
+                          }}
+                        >
+                          Open Student Passport →
+                        </Link>
+
+                        <RemoveStudentButton
+                          enrollmentId={enrollment.id}
+                          studentName={name}
+                        />
+                      </div>
+
+
                     </article>
                   );
                 }

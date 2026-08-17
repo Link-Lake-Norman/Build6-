@@ -3,6 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletion";
+import StudentAppliedLearningLab from "@/components/student/StudentAppliedLearningLab";
+import type { StudentAppliedLearningAsset } from "@/components/student/StudentAppliedLearningLab";
+import { getAppliedLearningForWeek } from "@/content/applied-learning";
 
 type PageProps = {
   params: Promise<{
@@ -20,22 +23,16 @@ type LessonContent = {
   reflection?: string;
 };
 
-export default async function StudentLessonPage({
-  params,
-}: PageProps) {
+export default async function StudentLessonPage({ params }: PageProps) {
   const { id, week } = await params;
 
   const weekNumber = Number(week);
 
-  if (
-    !Number.isInteger(weekNumber) ||
-    weekNumber < 1
-  ) {
+  if (!Number.isInteger(weekNumber) || weekNumber < 1) {
     notFound();
   }
 
-  const access =
-    await authorizeStudentAccess(id);
+  const access = await authorizeStudentAccess(id);
 
   if (!access.allowed) {
     if (access.status === 401) {
@@ -49,72 +46,67 @@ export default async function StudentLessonPage({
     redirect("/ambassador");
   }
 
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        id,
+  const student = await prisma.student.findUnique({
+    where: {
+      id,
+    },
+
+    select: {
+      id: true,
+
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
       },
 
-      select: {
-        id: true,
-
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
+      enrollments: {
+        where: {
+          status: "ACTIVE",
         },
 
-        enrollments: {
-          where: {
-            status: "ACTIVE",
-          },
+        select: {
+          cohort: {
+            select: {
+              id: true,
+              name: true,
 
-          select: {
-            cohort: {
-              select: {
-                id: true,
-                name: true,
+              program: {
+                select: {
+                  id: true,
+                  name: true,
+                  totalWeeks: true,
 
-                program: {
-                  select: {
-                    id: true,
-                    name: true,
-                    totalWeeks: true,
+                  modules: {
+                    select: {
+                      lessons: {
+                        where: {
+                          weekNumber,
+                          status: "ACTIVE",
+                        },
 
-                    modules: {
-                      select: {
-                        lessons: {
-                          where: {
-                            weekNumber,
-                            status: "ACTIVE",
-                          },
+                        select: {
+                          id: true,
+                          title: true,
+                          summary: true,
+                          content: true,
+                          weekNumber: true,
+                          estimatedMinutes: true,
 
-                          select: {
-                            id: true,
-                            title: true,
-                            summary: true,
-                            content: true,
-                            weekNumber: true,
-                            estimatedMinutes: true,
+                          deliverySettings: {
+                            where: {
+                              cohortId: access.cohortIds[0],
+                              releasedToStudents: true,
+                            },
 
-                            deliverySettings: {
-                              where: {
-                                cohortId:
-                                  access.cohortIds[0],
-                                releasedToStudents:
-                                  true,
-                              },
-
-                              select: {
-                                releasedToStudents:
-                                  true,
-                                activity: true,
-                                assessment: true,
-                                homework: true,
-                                workbook: true,
-                                badgeEnabled: true,
-                              },
+                            select: {
+                              releasedToStudents: true,
+                              activity: true,
+                              assessment: true,
+                              homework: true,
+                              workbook: true,
+                              badgeEnabled: true,
                             },
                           },
                         },
@@ -125,45 +117,36 @@ export default async function StudentLessonPage({
               },
             },
           },
-
-          take: 1,
         },
+
+        take: 1,
       },
-    });
+    },
+  });
 
   if (!student) {
     notFound();
   }
 
-  const enrollment =
-    student.enrollments[0];
+  const enrollment = student.enrollments[0];
 
   if (!enrollment) {
     notFound();
   }
 
-  const program =
-    enrollment.cohort.program;
+  const program = enrollment.cohort.program;
 
-  if (
-    weekNumber > program.totalWeeks
-  ) {
+  if (weekNumber > program.totalWeeks) {
     notFound();
   }
 
-  const lesson =
-    program.modules
-      .flatMap(
-        (module) => module.lessons
-      )
-      .find(
-        (item) =>
-          item.weekNumber === weekNumber &&
-          item.deliverySettings.some(
-            (setting) =>
-              setting.releasedToStudents
-          )
-      );
+  const lesson = program.modules
+    .flatMap((module) => module.lessons)
+    .find(
+      (item) =>
+        item.weekNumber === weekNumber &&
+        item.deliverySettings.some((setting) => setting.releasedToStudents),
+    );
 
   if (!lesson) {
     return (
@@ -173,9 +156,7 @@ export default async function StudentLessonPage({
             Future Ready™ Student Experience
           </p>
 
-          <h1 className="mt-3 text-4xl font-black">
-            Week {weekNumber}
-          </h1>
+          <h1 className="mt-3 text-4xl font-black">Week {weekNumber}</h1>
 
           <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-200">
             This lesson has not been released yet.
@@ -199,8 +180,7 @@ export default async function StudentLessonPage({
       ? (lesson.content as LessonContent)
       : {};
 
-  const delivery =
-    lesson.deliverySettings[0];
+  const delivery = lesson.deliverySettings[0];
 
   const activity =
     content.activity ||
@@ -210,19 +190,64 @@ export default async function StudentLessonPage({
     content.reflection ||
     "What did you learn about yourself during this lesson?";
 
-  const focus =
-    content.focus ||
-    lesson.summary ||
-    "";
+  const focus = content.focus || lesson.summary || "";
 
-  const badgeEarned =
-    delivery?.badgeEnabled
-      ? `Week ${weekNumber} Future Ready™ Milestone`
-      : "Lesson Completion";
+  const badgeEarned = delivery?.badgeEnabled
+    ? `Week ${weekNumber} Future Ready™ Milestone`
+    : "Lesson Completion";
 
   const portfolioEvidence =
-    content.activity ||
-    `Week ${weekNumber} learning evidence`;
+    content.activity || `Week ${weekNumber} learning evidence`;
+
+  /*
+   * STUDENT-SAFE APPLIED LEARNING DATA
+   *
+   * Important:
+   * Facilitator answer guides, reasoning,
+   * coaching points and consequence reveals
+   * are intentionally NOT passed to the
+   * client-side student component.
+   */
+  const studentAppliedLearningAssets: StudentAppliedLearningAsset[] =
+    getAppliedLearningForWeek(weekNumber).map((asset) => ({
+      id: asset.id,
+      title: asset.title,
+      format: asset.format,
+      audience: asset.audience,
+      skills: asset.skills,
+      whyItMatters: asset.whyItMatters,
+      scenario: asset.scenario,
+      studentChallenge: asset.studentChallenge,
+
+      roles: asset.roles?.map((role) => ({
+        role: role.role,
+        responsibility: role.responsibility,
+      })),
+
+      professionalLanguage: asset.professionalLanguage?.map((language) => ({
+        situation: language.situation,
+        insteadOf: language.insteadOf,
+        tryThis: language.tryThis,
+      })),
+
+      curveballs: asset.curveballs ? [...asset.curveballs] : undefined,
+
+      retryPrompt: asset.retryPrompt,
+
+      discussionQuestions: [...asset.discussionQuestions],
+
+      reflectionPrompts: [...asset.reflectionPrompts],
+
+      portfolioEvidence: asset.portfolioEvidence,
+
+      athleteExtension: asset.athleteExtension
+        ? {
+            title: asset.athleteExtension.title,
+            scenario: asset.athleteExtension.scenario,
+            considerations: [...asset.athleteExtension.considerations],
+          }
+        : undefined,
+    }));
 
   return (
     <main className="space-y-8">
@@ -236,8 +261,7 @@ export default async function StudentLessonPage({
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
-          Week {lesson.weekNumber}:{" "}
-          {lesson.title}
+          Week {lesson.weekNumber}: {lesson.title}
         </h1>
 
         {focus ? (
@@ -252,8 +276,7 @@ export default async function StudentLessonPage({
           </span>
 
           <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
-            Week {lesson.weekNumber} of{" "}
-            {program.totalWeeks}
+            Week {lesson.weekNumber} of {program.totalWeeks}
           </span>
         </div>
       </section>
@@ -268,12 +291,9 @@ export default async function StudentLessonPage({
             What I'm Doing
           </h2>
 
-          <p className="mt-5 text-lg leading-8 text-slate-700">
-            {activity}
-          </p>
+          <p className="mt-5 text-lg leading-8 text-slate-700">{activity}</p>
 
-          {delivery?.activity ===
-          "REQUIRED" ? (
+          {delivery?.activity === "REQUIRED" ? (
             <div className="mt-6 inline-flex rounded-full bg-[#FFF3C4] px-4 py-2 text-sm font-black text-[#0D1B3D]">
               Required
             </div>
@@ -289,9 +309,7 @@ export default async function StudentLessonPage({
             Think About It
           </h2>
 
-          <p className="mt-5 text-lg leading-8 text-slate-700">
-            {reflection}
-          </p>
+          <p className="mt-5 text-lg leading-8 text-slate-700">{reflection}</p>
 
           <Link
             href={`/ambassador/student-passport/${id}/reflections`}
@@ -312,8 +330,7 @@ export default async function StudentLessonPage({
         </h2>
 
         <p className="mt-4 text-lg leading-8 text-slate-700">
-          Save evidence from this week's work in your
-          Digital Portfolio.
+          Save evidence from this week's work in your Digital Portfolio.
         </p>
 
         <Link
@@ -324,13 +341,19 @@ export default async function StudentLessonPage({
         </Link>
       </article>
 
+      {studentAppliedLearningAssets.length > 0 ? (
+        <StudentAppliedLearningLab
+          week={lesson.weekNumber}
+          studentId={student.id}
+          assets={studentAppliedLearningAssets}
+        />
+      ) : null}
+
       <LessonCompletion
         week={lesson.weekNumber}
         title={lesson.title}
         badgeEarned={badgeEarned}
-        portfolioEvidence={
-          portfolioEvidence
-        }
+        portfolioEvidence={portfolioEvidence}
       />
 
       <nav className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-7">
