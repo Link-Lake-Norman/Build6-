@@ -2128,6 +2128,27 @@ export default function AmbassadorCurriculumPage() {
             </div>
           );
         })()}
+
+        {/* EXISTING APPLIED LEARNING — SURFACED IN THE DAILY TEACHING VIEW */}
+        {(selectedDay === 3 || selectedDay === 4) && (
+          <div className="mt-7">
+            <div className="mb-4 rounded-2xl border border-[#00A6A6]/30 bg-[#EAFBFB] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#007C7C]">
+                {selectedDay === 3
+                  ? "WEDNESDAY · APPLIED LEARNING LAB"
+                  : "THURSDAY · EXPERIENCE + FLEX"}
+              </p>
+
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#0D1B3D]">
+                {selectedDay === 3
+                  ? "Run the existing Future Ready™ applied-learning experience for this week — scenario, public speaking, panel, role play, decision lab, or other assigned practice."
+                  : "Use the scheduled experience when one is planned. The existing classroom applied-learning experience remains available as the flex-day option."}
+              </p>
+            </div>
+
+            <AppliedLearningTeachingHub week={lesson.weekNumber} />
+          </div>
+        )}
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -2167,10 +2188,6 @@ export default function AmbassadorCurriculumPage() {
         >
           <AmbassadorWeekDeliveryConsole week={lesson.weekNumber} />
         </TeacherGuideSection>
-      )}
-
-      {showFullTools && (
-        <AppliedLearningTeachingHub week={lesson.weekNumber} />
       )}
 
       <section
