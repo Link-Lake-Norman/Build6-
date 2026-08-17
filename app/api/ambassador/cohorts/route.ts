@@ -49,6 +49,7 @@ export async function GET() {
 
   let where: Record<string, unknown> = {
     deletedAt: null,
+    status: "ACTIVE",
   };
 
   if (
