@@ -1289,12 +1289,18 @@ export default function AmbassadorCurriculumPage() {
 
                                 <div className="flex shrink-0 flex-wrap gap-2">
                                   <a
-                                    href={openUrl}
+                                    href={`/ambassador/resource-preview?src=${encodeURIComponent(
+                                      openUrl
+                                    )}&name=${encodeURIComponent(
+                                      asset.label
+                                    )}&type=${encodeURIComponent(
+                                      asset.format.toLowerCase()
+                                    )}`}
                                     target="_blank"
                                     rel="noreferrer"
                                     className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
                                   >
-                                    Open
+                                    Preview
                                   </a>
 
                                   <a
