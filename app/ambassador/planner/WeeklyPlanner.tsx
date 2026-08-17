@@ -358,6 +358,21 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
   const [showExperienceForm, setShowExperienceForm] = useState(false);
 
+  async function readApiResponse(response: Response) {
+    const raw = await response.text();
+
+    try {
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      throw new Error(
+        response.ok
+          ? "Future Ready™ received an unexpected server response. Please refresh and try again."
+          : `Server request failed (${response.status}). Please sign in again or refresh the page.`
+      );
+    }
+  }
+
+
   async function loadExperiences() {
     try {
       const response = await fetch(
@@ -369,7 +384,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         },
       );
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to load experiences.");
@@ -401,7 +416,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         },
       );
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to load planner.");
@@ -494,7 +509,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       }),
     });
 
-    const result = await response.json();
+    const result = await readApiResponse(response);
 
     if (!response.ok) {
       throw new Error(result.error ?? "Unable to add task.");
@@ -713,7 +728,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         }),
       });
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to save experience.");
@@ -756,7 +771,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         }),
       });
 
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       if (!response.ok) {
         throw new Error(result.error ?? "Unable to remove experience.");
@@ -788,7 +803,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       }),
     });
 
-    const result = await response.json();
+    const result = await readApiResponse(response);
 
     if (!response.ok) {
       setError(result.error ?? "Unable to remove task.");
@@ -826,7 +841,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
     });
 
     if (!response.ok) {
-      const result = await response.json();
+      const result = await readApiResponse(response);
 
       setError(result.error ?? "Unable to reorder agenda.");
 
