@@ -81,6 +81,7 @@ type Resource = {
   kind: string;
   url: string | null;
   fileName: string | null;
+  filePath: string | null;
   dayNumber: number | null;
   enabled: boolean;
   required: boolean;
@@ -174,6 +175,8 @@ export default function AmbassadorCurriculumPage() {
   const [selectedDay, setSelectedDay] = useState(1);
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
   const [showFullTools, setShowFullTools] = useState(false);
+  const [assigningResourceId, setAssigningResourceId] =
+    useState<string | null>(null);
 
   const [data, setData] = useState<TeachingHubResponse | null>(null);
 
@@ -454,6 +457,56 @@ export default function AmbassadorCurriculumPage() {
       top: 0,
       behavior: "smooth",
     });
+  }
+
+  async function assignResourceToStudents(
+    resource: Resource,
+    mode: "ONLINE" | "PRINT" | "BOTH"
+  ) {
+    try {
+      setAssigningResourceId(resource.id);
+      setError(null);
+      setSaveMessage(null);
+
+      const response = await fetch(
+        "/api/ambassador/resource-assignment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            resourceId: resource.id,
+            mode,
+            dayNumber: resource.dayNumber ?? selectedDay,
+            estimatedMinutes: 20,
+            portfolioEligible: false,
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "Unable to assign this resource."
+        );
+      }
+
+      await loadWeek(selectedWeek);
+
+      setSaveMessage(
+        `${resource.title} was added to student assignments.`
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to assign this resource."
+      );
+    } finally {
+      setAssigningResourceId(null);
+    }
   }
 
   function openResourceHub() {
@@ -1347,42 +1400,132 @@ export default function AmbassadorCurriculumPage() {
                         .map((resource) => (
                           <div
                             key={resource.id}
-                            className="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3"
+                            className="rounded-xl border border-slate-200 bg-white p-4"
                           >
-                            <div>
-                              <p className="text-[10px] font-black uppercase text-[#4B2265]">
-                                {resource.kind}
-                              </p>
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="text-[10px] font-black uppercase text-[#4B2265]">
+                                  {resource.kind}
+                                </p>
 
-                              <p className="mt-1 font-black text-[#0D1B3D]">
-                                {resource.title}
-                              </p>
+                                <p className="mt-1 font-black text-[#0D1B3D]">
+                                  {resource.title}
+                                </p>
 
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[10px] font-black text-[#007C7C]">
-                                  {resource.dayNumber
-                                    ? `DAY ${resource.dayNumber}`
-                                    : "SHARED"}
-                                </span>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[10px] font-black text-[#007C7C]">
+                                    {resource.dayNumber
+                                      ? `DAY ${resource.dayNumber}`
+                                      : "SHARED"}
+                                  </span>
 
-                              {resource.required && (
-                                <span className="mt-2 inline-flex rounded-full bg-amber-100 px-2 py-1 text-[10px] font-black text-amber-800">
-                                  REQUIRED
-                                </span>
-                              )}
+                                  {resource.required && (
+                                    <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-black text-amber-800">
+                                      REQUIRED
+                                    </span>
+                                  )}
+
+                                  {resource.visibleToStudent && (
+                                    <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-black text-emerald-700">
+                                      STUDENT VISIBLE
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            {resource.url && (
-                              <a
-                                href={resource.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="shrink-0 text-xs font-black text-[#24569B]"
-                              >
-                                OPEN →
-                              </a>
-                            )}
+                            <div className="mt-4 border-t border-slate-100 pt-4">
+                              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
+                                USE THIS RESOURCE
+                              </p>
+
+                              <div className="flex flex-wrap gap-2">
+                                {resource.filePath ? (
+                                  <>
+                                    <a
+                                      href={`/ambassador/resource-preview?src=${encodeURIComponent(
+                                        `/api/ambassador/resources/file?id=${resource.id}`
+                                      )}&name=${encodeURIComponent(
+                                        resource.title
+                                      )}&type=${encodeURIComponent(
+                                        resource.kind.toLowerCase()
+                                      )}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                    >
+                                      Preview
+                                    </a>
+
+                                    <a
+                                      href={`/api/ambassador/resources/file?id=${resource.id}&download=1`}
+                                      className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
+                                    >
+                                      Print / Download
+                                    </a>
+                                  </>
+                                ) : resource.url ? (
+                                  <a
+                                    href={resource.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                  >
+                                    Open Resource
+                                  </a>
+                                ) : null}
+
+                                <button
+                                  type="button"
+                                  disabled={
+                                    assigningResourceId === resource.id
+                                  }
+                                  onClick={() =>
+                                    assignResourceToStudents(
+                                      resource,
+                                      "ONLINE"
+                                    )
+                                  }
+                                  className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                >
+                                  {assigningResourceId === resource.id
+                                    ? "Assigning..."
+                                    : "Assign Online"}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  disabled={
+                                    assigningResourceId === resource.id
+                                  }
+                                  onClick={() =>
+                                    assignResourceToStudents(
+                                      resource,
+                                      "PRINT"
+                                    )
+                                  }
+                                  className="rounded-lg bg-[#F2B705] px-3 py-2 text-[11px] font-black text-[#0D1B3D] disabled:opacity-50"
+                                >
+                                  Assign Printable
+                                </button>
+
+                                <button
+                                  type="button"
+                                  disabled={
+                                    assigningResourceId === resource.id
+                                  }
+                                  onClick={() =>
+                                    assignResourceToStudents(
+                                      resource,
+                                      "BOTH"
+                                    )
+                                  }
+                                  className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                >
+                                  Assign Both
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         ))}
                     </div>
