@@ -141,13 +141,13 @@ type TeachingHubResponse = {
 };
 
 const tabs: { key: HubTab; label: string }[] = [
-  { key: "overview", label: "Overview" },
-  { key: "lesson", label: "Lesson Plan" },
-  { key: "activities", label: "Activities + AI" },
-  { key: "assignments", label: "Assignments" },
-  { key: "resources", label: "Resources" },
-  { key: "calendar", label: "Calendar" },
-  { key: "release", label: "Release" },
+  { key: "overview", label: "Week Overview" },
+  { key: "lesson", label: "Facilitator Notes" },
+  { key: "activities", label: "Generate Activity" },
+  { key: "assignments", label: "Student Work" },
+  { key: "resources", label: "Asset Library" },
+  { key: "calendar", label: "Schedule" },
+  { key: "release", label: "Student Release" },
 ];
 
 const requirementControls: {
@@ -179,7 +179,10 @@ const requirementOptions: RequirementValue[] = [
 
 export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(() => {
+    const weekday = new Date().getDay();
+    return weekday >= 1 && weekday <= 5 ? weekday : 1;
+  });
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
   const [showFullTools, setShowFullTools] = useState(false);
   const [assigningResourceId, setAssigningResourceId] =
@@ -721,6 +724,7 @@ export default function AmbassadorCurriculumPage() {
   }
 
   function openResourceHub() {
+    setShowFullTools(true);
     setActiveTab("resources");
 
     window.setTimeout(() => {
@@ -734,6 +738,7 @@ export default function AmbassadorCurriculumPage() {
   }
 
   function openAssignments() {
+    setShowFullTools(true);
     setActiveTab("assignments");
 
     window.setTimeout(() => {
@@ -841,33 +846,71 @@ export default function AmbassadorCurriculumPage() {
 
   return (
     <main className="space-y-6">
-      <section className="rounded-3xl bg-[#0D1B3D] p-7 text-white shadow-sm">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-              Future Ready™ Curriculum & Teaching Hub
-            </p>
+      <section className="overflow-hidden rounded-3xl border border-[#0D1B3D] bg-white shadow-sm">
+        <div className="bg-[#0D1B3D] px-6 py-6 text-white md:px-8">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+                FACILITATOR TEACHING WORKSPACE
+              </p>
 
-            <h1 className="mt-3 text-3xl font-black md:text-4xl">
-              Plan. Teach. Release. Track.
-            </h1>
+              <h1 className="mt-2 text-3xl font-black md:text-4xl">
+                Week {selectedWeek}: {lesson.title}
+              </h1>
 
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">
-              One teaching workspace for curriculum, classroom planning,
-              activities, assignments, resources, scheduling, and student
-              release controls.
-            </p>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">
+                Start with the class day below. Teach the plan, use only the assets you need,
+                assign student work, capture notes, and open deeper tools only when you need them.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-full bg-[#F2B705] px-4 py-2 text-xs font-black text-[#0D1B3D]">
+                DAY {selectedDay}
+              </span>
+              <span className="rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white">
+                {phase}
+              </span>
+              <span
+                className={`rounded-full px-4 py-2 text-xs font-black ${
+                  delivery?.releasedToStudents
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-amber-100 text-amber-800"
+                }`}
+              >
+                {delivery?.releasedToStudents ? "STUDENTS RELEASED" : "NOT YET RELEASED"}
+              </span>
+            </div>
           </div>
+        </div>
 
-          <div className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F2B705]">
-              Current Implementation
-            </p>
-
-            <p className="mt-2 font-black">Ambassador Christian School</p>
-
-            <p className="mt-1 text-sm text-slate-300">{data.cohort.name}</p>
-          </div>
+        <div className="grid gap-3 bg-[#F8FAFC] p-4 sm:grid-cols-2 lg:grid-cols-4 md:px-8">
+          <Link
+            href="/ambassador/planner"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-[#0D1B3D]"
+          >
+            Plan + Build →
+          </Link>
+          <button
+            type="button"
+            onClick={openAssignments}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black text-[#0D1B3D]"
+          >
+            Student Work →
+          </button>
+          <button
+            type="button"
+            onClick={openResourceHub}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black text-[#0D1B3D]"
+          >
+            Asset Library →
+          </button>
+          <Link
+            href="/ambassador/messages"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-[#0D1B3D]"
+          >
+            Messages →
+          </Link>
         </div>
       </section>
 
@@ -883,206 +926,103 @@ export default function AmbassadorCurriculumPage() {
         </div>
       )}
 
-      <section className="grid gap-4 md:grid-cols-4">
-        <SummaryCard
-          label="Program Format"
-          value={`${data.program.totalWeeks} Week`}
-        />
-
-        <SummaryCard label="Current Week" value={`Week ${selectedWeek}`} />
-
-        <SummaryCard label="Phase" value={phase} />
-
-        <SummaryCard
-          label="Student Release"
-          value={delivery?.releasedToStudents ? "Released" : "Not Released"}
-        />
-      </section>
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+      <details className="group rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-              Curriculum Navigator
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+              WEEK NAVIGATOR
             </p>
-
-            <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-              Choose a Week
-            </h2>
+            <p className="mt-1 font-black text-[#0D1B3D]">
+              Week {selectedWeek} selected · Change week only when needed
+            </p>
           </div>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-[#0D1B3D] transition group-open:rotate-180">↓</span>
+        </summary>
 
-          <div className="flex items-center gap-3">
+        <div className="border-t border-slate-200 p-5">
+          <div className="flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={previousWeek}
               disabled={selectedWeek === 1 || loading}
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-black text-[#0D1B3D] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-black text-[#0D1B3D] disabled:opacity-40"
             >
               ← Previous Week
             </button>
-
             <button
               type="button"
               onClick={nextWeek}
               disabled={selectedWeek === 16 || loading}
-              className="rounded-xl bg-[#0D1B3D] px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl bg-[#0D1B3D] px-4 py-2 text-sm font-black text-white disabled:opacity-40"
             >
               Next Week →
             </button>
           </div>
-        </div>
 
-        <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
-          {Array.from({ length: 16 }, (_, index) => index + 1).map((week) => (
-            <button
-              key={week}
-              type="button"
-              disabled={loading}
-              onClick={() => changeWeek(week)}
-              className={`min-w-[82px] rounded-xl border px-4 py-3 text-sm font-black transition ${
-                selectedWeek === week
-                  ? "border-[#F2B705] bg-[#FFF7D6] text-[#0D1B3D]"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-[#F2B705]"
-              }`}
-            >
-              Week {week}
-            </button>
-          ))}
-        </div>
-      </section>
-
-
-      <section className="overflow-hidden rounded-[28px] border-2 border-[#0D1B3D] bg-white shadow-sm">
-        <div className="bg-[#0D1B3D] px-6 py-6 text-white md:px-8">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-            THIS WEEK
-          </p>
-
-          <div className="mt-2 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-2xl font-black md:text-3xl">
-                Week {lesson.weekNumber}: {lesson.title}
-              </h2>
-
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-200">
-                Your teaching essentials first. Open the deeper sections only
-                when you need additional guidance, activities, resources, or
-                customization.
-              </p>
-            </div>
-
-            <span className="w-fit rounded-full bg-[#F2B705] px-4 py-2 text-xs font-black text-[#0D1B3D]">
-              TEACHING VIEW
-            </span>
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+            {Array.from({ length: 16 }, (_, index) => index + 1).map((week) => (
+              <button
+                key={week}
+                type="button"
+                disabled={loading}
+                onClick={() => changeWeek(week)}
+                className={`min-w-[82px] rounded-xl border px-4 py-3 text-sm font-black transition ${
+                  selectedWeek === week
+                    ? "border-[#F2B705] bg-[#FFF7D6] text-[#0D1B3D]"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-[#F2B705]"
+                }`}
+              >
+                Week {week}
+              </button>
+            ))}
           </div>
         </div>
+      </details>
 
-        <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-3 md:p-8">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
             <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
-              TEACH
+              WEEK {lesson.weekNumber} AT A GLANCE
             </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
+            <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">
               {lesson.title}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {workplaceConnection ||
-                "Use this week's lesson objective and facilitator guidance to lead the session."}
-            </p>
+            </h2>
           </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#007C7C]">
-              DO
-            </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
-              Primary Student Activity
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {studentActivity || "Open the lesson plan for this week's activity."}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#725500]">
-              COMPLETE
-            </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
-              Assessment / Student Evidence
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {lesson.weekNumber === 1
-                ? "Day 1 Future Ready™ Assessment"
-                : "Complete the assessment, reflection, or evidence connected to this week's lesson."}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
-              HOMEWORK / CAPSTONE
-            </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
-              {lesson.weekNumber === 1
-                ? "Capstone Brainstorm — My Story Brain Map"
-                : "Weekly Follow-Up"}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {lesson.weekNumber === 1
-                ? "Students begin Chapter Zero by brainstorming the story they want their Future Ready™ Capstone to tell."
-                : homework || "Use the lesson follow-up or Capstone connection assigned for this week."}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#007C7C]">
-              EVIDENCE
-            </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
-              Student Record / Portfolio
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {portfolioEvidence}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#725500]">
-              MATERIALS
-            </p>
-            <h3 className="mt-2 font-black text-[#0D1B3D]">
-              Prepare Before Class
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Open Resources for slides, workbook pages, handouts, videos,
-              downloads, and supplemental materials connected to this week.
-            </p>
-          </div>
-        </div>
-
-        <div className="border-t border-slate-200 bg-[#F8FAFC] px-6 py-4 md:px-8">
-          <p className="text-sm font-bold text-[#0D1B3D]">
-            Need more? Your complete Future Ready™ teaching system is preserved
-            below. Expand only the section you need.
+          <p className="max-w-2xl text-sm leading-6 text-slate-600">
+            Keep the objective, student action, and evidence visible. Everything else is support.
           </p>
         </div>
-      </section>
 
+        <div className="mt-5 grid gap-3 lg:grid-cols-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#4B2265]">GOAL</p>
+            <p className="mt-2 text-sm leading-6 text-[#0D1B3D]">{objective}</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#007C7C]">STUDENT ACTION</p>
+            <p className="mt-2 text-sm leading-6 text-[#0D1B3D]">{studentActivity}</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#725500]">EVIDENCE</p>
+            <p className="mt-2 text-sm leading-6 text-[#0D1B3D]">{portfolioEvidence}</p>
+          </div>
+        </div>
+      </section>
 
       <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-              PILOT DAILY WORKSPACE
+              TEACH THIS CLASS
             </p>
 
             <h2 className="mt-2 text-2xl font-black text-[#0D1B3D] md:text-3xl">
-              Daily Map
+              Daily Teaching Plan
             </h2>
 
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              Choose the class day. Future Ready™ pulls the lesson flow,
-              discussion, student work, follow-up, Capstone connection, and
-              available resources into one teaching view.
+              Select the class day, then teach from this one view. The plan keeps the goal, execution, student work, evidence, materials, and optional enhancements together.
             </p>
           </div>
 
@@ -1090,7 +1030,7 @@ export default function AmbassadorCurriculumPage() {
             href="/ambassador/planner"
             className="w-fit rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white"
           >
-            Customize Daily Plan →
+            Plan + Build →
           </Link>
         </div>
 
@@ -1206,8 +1146,8 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* AGENDA */}
                 <DailyPilotCard
-                  eyebrow="1 · AGENDA"
-                  title="Today's Flow"
+                  eyebrow="1 · TEACHING FLOW"
+                  title="Run the Class"
                 >
                   {dayTasks.length > 0 ? (
                     <div className="space-y-3">
@@ -1342,8 +1282,8 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* DISCUSSION */}
                 <DailyPilotCard
-                  eyebrow="2 · DISCUSS"
-                  title="Questions & Conversation"
+                  eyebrow="2 · FACILITATE"
+                  title="Prompt + Coach"
                 >
                   {discussions.length > 0 ? (
                     <div className="space-y-4">
@@ -1385,8 +1325,8 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* STUDENT ACTION */}
                 <DailyPilotCard
-                  eyebrow="3 · STUDENT ACTION"
-                  title="What Students Do"
+                  eyebrow="3 · STUDENT WORK"
+                  title="What Students Do + Produce"
                 >
                   <p>
                     {dailyLesson?.activity || studentActivity}
@@ -1408,8 +1348,8 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* FOLLOW UP */}
                 <DailyPilotCard
-                  eyebrow="4 · FOLLOW-UP"
-                  title="Reflection / Homework"
+                  eyebrow="4 · REFLECTION + EVIDENCE"
+                  title="Capture Learning"
                 >
                   {reflections.length > 0 || followUps.length > 0 ? (
                     <div className="space-y-4">
@@ -1458,7 +1398,7 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* CAPSTONE */}
                 <DailyPilotCard
-                  eyebrow="5 · CAPSTONE"
+                  eyebrow="5 · CARRY FORWARD"
                   title="What Carries Forward?"
                 >
                   {selectedWeek === 1 && selectedDay === 1 ? (
@@ -1495,7 +1435,7 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* MATERIALS */}
                 <DailyPilotCard
-                  eyebrow="6 · MATERIALS"
+                  eyebrow="6 · MATERIALS + ASSETS"
                   title="Worksheets, Printables & Media"
                 >
 
@@ -2056,7 +1996,7 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* ASSIGNMENTS */}
                 <DailyPilotCard
-                  eyebrow="7 · ASSIGNMENTS"
+                  eyebrow="7 · ASSIGN / TURN IN"
                   title="Assignments & Evidence"
                 >
                   {data.assignments.filter(
@@ -2133,7 +2073,7 @@ export default function AmbassadorCurriculumPage() {
 
                 {/* SPEAKER/TRIP */}
                 <DailyPilotCard
-                  eyebrow="8 · REAL WORLD"
+                  eyebrow="8 · EXPERIENCE"
                   title="Speaker / Trip / Experience"
                 >
                   {experiences.length > 0 ? (
@@ -2164,6 +2104,39 @@ export default function AmbassadorCurriculumPage() {
                     Add / Manage Experience →
                   </Link>
                 </DailyPilotCard>
+              </div>
+
+              <div className="border-t border-slate-200 bg-[#FFFDF5] p-6 md:p-8">
+                <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#725500]">
+                      FACILITATOR NOTES
+                    </p>
+                    <h4 className="mt-1 text-lg font-black text-[#0D1B3D]">
+                      Capture what happened in class
+                    </h4>
+                    <textarea
+                      value={facilitatorNotes}
+                      onChange={(event) => setFacilitatorNotes(event.target.value)}
+                      rows={3}
+                      placeholder="What worked, what students needed, what to revisit, speaker notes, classroom observations, or follow-up..."
+                      className="mt-3 w-full rounded-xl border border-slate-300 bg-white p-4 text-sm text-[#0D1B3D] outline-none focus:border-[#F2B705]"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      patchDelivery(
+                        { facilitatorNotes },
+                        "Facilitator notes saved.",
+                      )
+                    }
+                    className="rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-50"
+                  >
+                    {saving ? "Saving..." : "Save Notes"}
+                  </button>
+                </div>
               </div>
 
               {/* CUSTOMIZE FOOTER */}
@@ -2233,17 +2206,15 @@ export default function AmbassadorCurriculumPage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-              MORE TEACHING TOOLS
+              SUPPORTING TOOLS + LIBRARY
             </p>
 
             <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">
-              Need More Than the Daily Map?
+              Need to go deeper?
             </h2>
 
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              The Daily Map is the primary pilot teaching view. Open the full
-              system only when you need deeper lesson guidance, assignments,
-              resources, calendar tools, release controls, or customization.
+              The Daily Teaching Plan is the primary facilitator view. Open supporting tools only for deeper guidance, student work setup, asset management, scheduling, or release controls.
             </p>
           </div>
 
@@ -2253,8 +2224,8 @@ export default function AmbassadorCurriculumPage() {
             className="w-fit rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white"
           >
             {showFullTools
-              ? "Hide Full Teaching Tools"
-              : "Open Full Teaching Tools"}
+              ? "Hide Supporting Tools"
+              : "Open Supporting Tools"}
           </button>
         </div>
       </section>
@@ -2276,7 +2247,7 @@ export default function AmbassadorCurriculumPage() {
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-              Ambassador Weekly Rhythm
+              Optional Weekly Rhythm
             </p>
 
             <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
@@ -3501,18 +3472,6 @@ export default function AmbassadorCurriculumPage() {
         </button>
       </section>
     </main>
-  );
-}
-
-function SummaryCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">
-        {label}
-      </p>
-
-      <p className="mt-2 text-lg font-black text-[#0D1B3D]">{value}</p>
-    </div>
   );
 }
 
