@@ -690,17 +690,23 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       "TEACHING POINTS",
       bullets(generatedActivity.teachingPoints),
       "",
+      "EXAMPLES TO SHARE",
+      bullets(generatedActivity.examplesToShare),
+      "",
       "OPENING CONVERSATION",
       bullets(generatedActivity.openingConversation),
       "",
       "FACILITATOR SCRIPT",
       list(generatedActivity.facilitatorScript),
       "",
-      "STEP-BY-STEP ACTIVITY",
+      "STUDENT ACTIVITY DIRECTIONS",
       list(generatedActivity.stepByStepInstructions),
       "",
-      "QUESTIONS TO ASK",
+      "FACILITATOR QUESTIONS",
       bullets(generatedActivity.facilitatorQuestions),
+      "",
+      "DISCUSSION QUESTIONS",
+      bullets(generatedActivity.discussionQuestions),
       "",
       "WHAT TO WATCH FOR",
       bullets(generatedActivity.observationGuide),
@@ -724,7 +730,12 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
         taskType: `AI:${generatedActivity.activityType}`,
         title: generatedActivity.title,
         instructions,
-        durationMinutes: 15,
+        durationMinutes:
+          generatedActivity.durationMinutes ??
+          Math.max(
+            15,
+            Math.min(35, 50 - totalMinutes)
+          ),
         requirement: "OPTIONAL",
       });
 
@@ -2370,50 +2381,341 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
               </button>
 
               {generatedActivity ? (
-                <article className="mt-6 rounded-3xl border-2 border-[#4B2265] p-6">
-                  <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
-                    Generated for Week {week} • {dayLabels[dayNumber]}
-                  </p>
+                <article className="mt-6 overflow-hidden rounded-3xl border-2 border-[#4B2265] bg-white">
+                  <div className="bg-[#4B2265] p-6 text-white">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wider text-[#F2B705]">
+                          Facilitator-Ready Activity · Week {week} · {dayLabels[dayNumber]}
+                        </p>
 
-                  <h3 className="mt-3 text-2xl font-black text-[#0D1B3D]">
-                    {generatedActivity.title}
-                  </h3>
+                        <h3 className="mt-2 text-2xl font-black">
+                          {generatedActivity.title}
+                        </h3>
 
-                  <p className="mt-3 leading-7 text-slate-700">
-                    {generatedActivity.learningObjective}
-                  </p>
+                        <p className="mt-3 max-w-3xl text-sm leading-6 text-purple-100">
+                          {generatedActivity.learningObjective}
+                        </p>
+                      </div>
 
-                  <div className="mt-5 rounded-2xl bg-slate-50 p-5">
-                    <p className="font-black text-[#0D1B3D]">
-                      Why this matters
-                    </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="rounded-full bg-white/10 px-3 py-2 text-xs font-black">
+                          {generatedActivity.activityType}
+                        </span>
 
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {generatedActivity.whyThisMatters}
-                    </p>
+                        <span className="rounded-full bg-[#F2B705] px-3 py-2 text-xs font-black text-[#0D1B3D]">
+                          {generatedActivity.durationMinutes ?? 20} min
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-5">
-                    <p className="font-black text-[#0D1B3D]">
-                      Skills / teaching points
-                    </p>
+                  <div className="p-6">
+                    <div className="rounded-2xl border border-[#F2B705]/40 bg-[#FFF9DF] p-5">
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#725500]">
+                        Why This Matters
+                      </p>
 
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
-                      {generatedActivity.teachingPoints
-                        .slice(0, 6)
-                        .map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                    </ul>
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        {generatedActivity.whyThisMatters}
+                      </p>
+                    </div>
+
+                    <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                      <details
+                        open
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>1 · Before Class</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Facilitator Background
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-slate-700">
+                              {generatedActivity.facilitatorBackground}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Classroom Setup
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-slate-700">
+                              {generatedActivity.classroomSetup}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Materials to Prepare
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.materials.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        open
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>2 · Launch the Activity</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Opening Conversation
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.openingConversation.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Examples You Can Share
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.examplesToShare.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Facilitator Script
+                            </p>
+                            <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.facilitatorScript.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ol>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        open
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>3 · Student Roles + Directions</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Student Roles
+                            </p>
+
+                            <div className="mt-3 space-y-2">
+                              {generatedActivity.studentRoles.map((role) => (
+                                <div
+                                  key={`${role.role}-${role.responsibility}`}
+                                  className="rounded-xl border border-slate-200 bg-slate-50 p-3"
+                                >
+                                  <p className="font-black text-[#0D1B3D]">
+                                    {role.role}
+                                  </p>
+                                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                                    {role.responsibility}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Step-by-Step Activity
+                            </p>
+
+                            <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.stepByStepInstructions.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ol>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>4 · Coach While They Work</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Teaching Points
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.teachingPoints.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Questions to Ask
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.facilitatorQuestions.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              What to Watch For
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.observationGuide.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>5 · Debrief + Discussion</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Debrief Guide
+                            </p>
+                            <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.debriefGuide.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ol>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Discussion Questions
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.discussionQuestions.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </details>
+
+                      <details
+                        className="group rounded-2xl border border-slate-200 bg-slate-50"
+                      >
+                        <summary className="cursor-pointer list-none p-5 font-black text-[#0D1B3D]">
+                          <div className="flex items-center justify-between gap-3">
+                            <span>6 · Reflection + Evidence</span>
+                            <span className="text-[#4B2265]">⌄</span>
+                          </div>
+                        </summary>
+
+                        <div className="space-y-5 border-t border-slate-200 bg-white p-5">
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Student Reflection
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.reflectionPrompts.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Assessment / Rubric
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                              {generatedActivity.assessmentRubric.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div className="rounded-xl bg-[#EAFBFB] p-4">
+                            <p className="text-xs font-black uppercase tracking-wider text-[#007C7C]">
+                              Portfolio Evidence
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-[#0D1B3D]">
+                              {generatedActivity.portfolioEvidence}
+                            </p>
+                          </div>
+
+                          <div className="rounded-xl bg-[#F4F3FF] p-4">
+                            <p className="text-xs font-black uppercase tracking-wider text-[#4B2265]">
+                              Capstone Connection
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-[#0D1B3D]">
+                              {generatedActivity.capstoneConnection}
+                            </p>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
+
+                    <div className="mt-6 rounded-2xl border-2 border-[#00A6A6] bg-[#EAFBFB] p-5">
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#007C7C]">
+                        Ready to Use
+                      </p>
+
+                      <p className="mt-2 text-sm font-semibold leading-6 text-[#0D1B3D]">
+                        Adding this activity preserves the facilitator directions,
+                        student roles, materials, teaching points, discussion,
+                        reflection, assessment, portfolio evidence, and Capstone
+                        connection inside the selected day's lesson plan.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={addAIToPlan}
+                        className="mt-4 w-full rounded-xl bg-[#0D1B3D] px-6 py-4 font-black text-white"
+                      >
+                        + Add Complete Activity to {dayLabels[dayNumber]} Lesson →
+                      </button>
+                    </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={addAIToPlan}
-                    className="mt-6 rounded-xl bg-[#0D1B3D] px-6 py-4 font-black text-white"
-                  >
-                    + Add This to the Lesson Plan →
-                  </button>
                 </article>
               ) : null}
             </section>

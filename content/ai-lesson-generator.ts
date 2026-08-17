@@ -99,6 +99,17 @@ export function generateActivityOptions(
     );
   }
 
+  activity = {
+    ...activity,
+    durationMinutes: Math.max(
+      15,
+      Math.min(
+        35,
+        request.availableMinutes ?? 20
+      )
+    ),
+  };
+
   return [activity];
 }
 

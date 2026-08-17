@@ -13,6 +13,7 @@ export type AIActivityType =
 export type AIGeneratedActivity = {
   title: string;
   activityType: AIActivityType;
+  durationMinutes?: number;
 
   lessonConnection: string;
   learningObjective: string;
