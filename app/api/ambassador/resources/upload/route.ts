@@ -154,6 +154,15 @@ export async function POST(request: NextRequest) {
     const visibleToStudent =
       String(form.get("visibleToStudent") ?? "false") === "true";
 
+    const rawDayNumber = Number(form.get("dayNumber"));
+
+    const dayNumber =
+      Number.isInteger(rawDayNumber) &&
+      rawDayNumber >= 1 &&
+      rawDayNumber <= 5
+        ? rawDayNumber
+        : null;
+
     if (!cohortCode || !Number.isInteger(week) || week < 1) {
       return NextResponse.json(
         {
@@ -261,6 +270,7 @@ export async function POST(request: NextRequest) {
         required: false,
         visibleToStudent,
         visibleToFacilitator: true,
+        dayNumber,
         sortOrder: count,
         uploadedById: session.id,
       },

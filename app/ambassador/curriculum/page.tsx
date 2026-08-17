@@ -1159,6 +1159,168 @@ export default function AmbassadorCurriculumPage() {
                   eyebrow="6 · MATERIALS"
                   title="Worksheets, Printables & Media"
                 >
+
+                  {selectedWeek <= 4 && (
+                    <div className="mb-5 rounded-2xl border-2 border-[#F2B705] bg-[#FFFDF5] p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#725500]">
+                            CORE FUTURE READY™ DOWNLOADS
+                          </p>
+
+                          <p className="mt-1 text-sm font-black text-[#0D1B3D]">
+                            Week {selectedWeek} Teaching & Student Materials
+                          </p>
+
+                          <p className="mt-1 text-xs leading-5 text-slate-600">
+                            These are the protected Future Ready™ materials already
+                            built for this week. Open, print, or download only what
+                            you need for today.
+                          </p>
+                        </div>
+
+                        <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-[#725500] shadow-sm">
+                          SHARED WEEK ASSETS
+                        </span>
+                      </div>
+
+                      <div className="mt-4 space-y-3">
+                        {[
+                          {
+                            label: "Student Workbook",
+                            file: "Student-Workbook.pdf",
+                            format: "PDF",
+                            use: "Student pages / printable workbook",
+                          },
+                          {
+                            label: "Student Workbook",
+                            file: "Student-Workbook.docx",
+                            format: "DOCX",
+                            use: "Editable student workbook",
+                          },
+                          {
+                            label: "Slides",
+                            file: "Slides.pptx",
+                            format: "PPTX",
+                            use: "Class presentation",
+                          },
+                          {
+                            label: "Activity Kit",
+                            file: "Activity-Kit.pdf",
+                            format: "PDF",
+                            use: "Activities / role plays / classroom work",
+                          },
+                          {
+                            label: "Activity Kit",
+                            file: "Activity-Kit.docx",
+                            format: "DOCX",
+                            use: "Editable activity materials",
+                          },
+                          {
+                            label: "Assessment Rubric",
+                            file: "Assessment-Rubric.pdf",
+                            format: "PDF",
+                            use: "Assessment / facilitator reference",
+                          },
+                          {
+                            label: "Assessment Rubric",
+                            file: "Assessment-Rubric.docx",
+                            format: "DOCX",
+                            use: "Editable assessment rubric",
+                          },
+                          {
+                            label: "Portfolio Artifact",
+                            file: "Portfolio-Artifact.pdf",
+                            format: "PDF",
+                            use: "Portfolio / evidence printable",
+                          },
+                          {
+                            label: "Portfolio Artifact",
+                            file: "Portfolio-Artifact.docx",
+                            format: "DOCX",
+                            use: "Editable portfolio evidence",
+                          },
+                          {
+                            label: "Facilitator Guide",
+                            file: "Facilitator-Guide.pdf",
+                            format: "PDF",
+                            use: "Teacher guide / facilitation notes",
+                          },
+                          {
+                            label: "Facilitator Guide",
+                            file: "Facilitator-Guide.docx",
+                            format: "DOCX",
+                            use: "Editable facilitator guide",
+                          },
+                        ].map((asset) => {
+                          const weekCode = String(selectedWeek).padStart(2, "0");
+
+                          const fileName =
+                            `Future-Ready-Week-${weekCode}-${asset.file}`;
+
+                          const openUrl =
+                            `/api/ambassador/download/${weekCode}/${encodeURIComponent(
+                              fileName
+                            )}`;
+
+                          const downloadUrl = `${openUrl}?download=1`;
+
+                          return (
+                            <div
+                              key={fileName}
+                              className="rounded-xl border border-slate-200 bg-white p-3"
+                            >
+                              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <p className="text-sm font-black text-[#0D1B3D]">
+                                      {asset.label}
+                                    </p>
+
+                                    <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[9px] font-black text-[#007C7C]">
+                                      {asset.format}
+                                    </span>
+                                  </div>
+
+                                  <p className="mt-1 text-xs text-slate-500">
+                                    {asset.use}
+                                  </p>
+                                </div>
+
+                                <div className="flex shrink-0 flex-wrap gap-2">
+                                  <a
+                                    href={openUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                  >
+                                    Open
+                                  </a>
+
+                                  <a
+                                    href={downloadUrl}
+                                    className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white"
+                                  >
+                                    Download
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedWeek > 4 && (
+                    <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                      <p className="text-sm font-black text-amber-900">
+                        Core packaged downloads for Week {selectedWeek} have not
+                        been added to the protected resource library yet.
+                      </p>
+                    </div>
+                  )}
+
                   {data.resources.filter(
                     (resource) =>
                       resource.enabled &&
