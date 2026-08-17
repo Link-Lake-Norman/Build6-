@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth/session";
 
 const AMBASSADOR_PROGRAM_ID = "cms7m13y300024ur4rb49uzlw";
-const AMBASSADOR_COHORT_ID = "cms7m13yh00034ur4259ihhkw";
+const AMBASSADOR_COHORT_ID = "cmsqx1f8i0000s9r49ecnj27s";
 const AMBASSADOR_ORGANIZATION_ID = "cms7m12ga00004ur4spre0hex";
 
 async function authorizeTeachingHub() {
