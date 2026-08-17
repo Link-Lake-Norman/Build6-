@@ -89,6 +89,12 @@ type Resource = {
   visibleToFacilitator: boolean;
 };
 
+type PlanTaskResource = {
+  id: string;
+  sortOrder: number;
+  resource: Resource;
+};
+
 type PlanTask = {
   id: string;
   taskType: string;
@@ -99,6 +105,7 @@ type PlanTask = {
   requirement: RequirementValue;
   visibleToStudent: boolean;
   visibleToFacilitator: boolean;
+  resources: PlanTaskResource[];
 };
 
 type Assignment = {
@@ -176,6 +183,9 @@ export default function AmbassadorCurriculumPage() {
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
   const [showFullTools, setShowFullTools] = useState(false);
   const [assigningResourceId, setAssigningResourceId] =
+    useState<string | null>(null);
+
+  const [addingLessonResourceId, setAddingLessonResourceId] =
     useState<string | null>(null);
 
   const [data, setData] = useState<TeachingHubResponse | null>(null);
@@ -458,6 +468,139 @@ export default function AmbassadorCurriculumPage() {
       behavior: "smooth",
     });
   }
+
+  async function addResourceToTodaysLesson(
+    resource: Resource
+  ) {
+    try {
+      setAddingLessonResourceId(resource.id);
+      setError(null);
+      setSaveMessage(null);
+
+      if (!data?.lesson?.id) {
+        throw new Error("Lesson information is unavailable.");
+      }
+
+      const response = await fetch(
+        "/api/ambassador/teaching-hub",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "attachResourceToLesson",
+            lessonId: data.lesson.id,
+            resourceId: resource.id,
+            dayNumber: selectedDay,
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Unable to add resource to today's lesson."
+        );
+      }
+
+      await loadWeek(selectedWeek);
+
+      setSaveMessage(
+        `${resource.title} is now in Day ${selectedDay}'s lesson.`
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to add resource to today's lesson."
+      );
+    } finally {
+      setAddingLessonResourceId(null);
+    }
+  }
+
+
+  async function addPackagedAssetToTodaysLesson(
+    asset: {
+      label: string;
+      fileName: string;
+      openUrl: string;
+    }
+  ) {
+    const key = `lesson-${asset.fileName}`;
+
+    try {
+      setAddingLessonResourceId(key);
+      setError(null);
+      setSaveMessage(null);
+
+      if (!data?.lesson?.id) {
+        throw new Error("Lesson information is unavailable.");
+      }
+
+      const response = await fetch(
+        "/api/ambassador/teaching-hub",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "attachResourceToLesson",
+            lessonId: data.lesson.id,
+            dayNumber: selectedDay,
+            packagedAsset: {
+              title: asset.label,
+              fileName: asset.fileName,
+              url: asset.openUrl,
+            },
+          }),
+        }
+      );
+
+      const result = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Unable to add asset to today's lesson."
+        );
+      }
+
+      await loadWeek(selectedWeek);
+
+      setSaveMessage(
+        `${asset.label} is now in Day ${selectedDay}'s lesson.`
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to add asset to today's lesson."
+      );
+    } finally {
+      setAddingLessonResourceId(null);
+    }
+  }
+
+
+  function resourcePreviewType(resource: Resource) {
+    const name = (
+      resource.fileName ??
+      resource.url ??
+      resource.title
+    ).toLowerCase();
+
+    if (name.includes(".pdf")) return "pdf";
+    if (name.includes(".docx")) return "docx";
+    if (name.includes(".pptx")) return "pptx";
+
+    return resource.kind.toLowerCase();
+  }
+
 
   async function assignPackagedAssetToStudents(
     asset: {
@@ -1092,6 +1235,81 @@ export default function AmbassadorCurriculumPage() {
                           <p className="mt-2 text-sm leading-6 text-slate-600">
                             {task.instructions}
                           </p>
+
+                          {task.resources?.length > 0 && (
+                            <div className="mt-4 border-t border-slate-100 pt-4">
+                              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-[#007C7C]">
+                                TODAY'S LESSON RESOURCES
+                              </p>
+
+                              <div className="space-y-2">
+                                {task.resources.map(
+                                  ({ id, resource }) => {
+                                    const sourceUrl =
+                                      resource.filePath
+                                        ? `/api/ambassador/resources/file?id=${resource.id}`
+                                        : resource.url;
+
+                                    if (!sourceUrl) return null;
+
+                                    const previewType =
+                                      resourcePreviewType(resource);
+
+                                    return (
+                                      <div
+                                        key={id}
+                                        className="rounded-xl border border-slate-200 bg-slate-50 p-3"
+                                      >
+                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                          <div className="min-w-0">
+                                            <p className="font-black text-[#0D1B3D]">
+                                              {resource.title}
+                                            </p>
+
+                                            <p className="mt-1 text-xs text-slate-500">
+                                              Ready to present, preview, or print during class.
+                                            </p>
+                                          </div>
+
+                                          <div className="flex flex-wrap gap-2">
+                                            <a
+                                              href={`/ambassador/resource-preview?src=${encodeURIComponent(
+                                                sourceUrl
+                                              )}&name=${encodeURIComponent(
+                                                resource.title
+                                              )}&type=${encodeURIComponent(
+                                                previewType
+                                              )}`}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white"
+                                            >
+                                              Present / Preview
+                                            </a>
+
+                                            <a
+                                              href={
+                                                resource.filePath
+                                                  ? `/api/ambassador/resources/file?id=${resource.id}&download=1`
+                                                  : `${sourceUrl}${
+                                                      sourceUrl.includes("?")
+                                                        ? "&"
+                                                        : "?"
+                                                    }download=1`
+                                              }
+                                              className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                            >
+                                              Print / Download
+                                            </a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1453,6 +1671,27 @@ export default function AmbassadorCurriculumPage() {
                                     Print / Download
                                   </a>
 
+                                  <button
+                                    type="button"
+                                    disabled={
+                                      addingLessonResourceId ===
+                                      `lesson-${fileName}`
+                                    }
+                                    onClick={() =>
+                                      addPackagedAssetToTodaysLesson({
+                                        label: asset.label,
+                                        fileName,
+                                        openUrl,
+                                      })
+                                    }
+                                    className="rounded-lg bg-[#4B2265] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                  >
+                                    {addingLessonResourceId ===
+                                    `lesson-${fileName}`
+                                      ? "Adding..."
+                                      : `Add to Day ${selectedDay} Lesson`}
+                                  </button>
+
                                   {asset.studentAssignable && (
                                     <>
                                       <button
@@ -1606,6 +1845,20 @@ export default function AmbassadorCurriculumPage() {
                               </p>
 
                               <div className="flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  disabled={
+                                    addingLessonResourceId === resource.id
+                                  }
+                                  onClick={() =>
+                                    addResourceToTodaysLesson(resource)
+                                  }
+                                  className="rounded-lg bg-[#4B2265] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                >
+                                  {addingLessonResourceId === resource.id
+                                    ? "Adding..."
+                                    : `Add to Day ${selectedDay} Lesson`}
+                                </button>
                                 {resource.filePath ? (
                                   <>
                                     <a

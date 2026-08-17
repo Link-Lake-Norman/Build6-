@@ -182,6 +182,16 @@ async function getAmbassadorLesson(week: number) {
         where: {
           cohortId: AMBASSADOR_COHORT_ID,
         },
+        include: {
+          resources: {
+            include: {
+              resource: true,
+            },
+            orderBy: {
+              sortOrder: "asc",
+            },
+          },
+        },
         orderBy: [
           {
             dayNumber: "asc",
@@ -694,6 +704,234 @@ export async function POST(
           status: 201,
         }
       );
+    }
+
+    if (action === "attachResourceToLesson") {
+      const dayNumber =
+        Number.isInteger(body.dayNumber) &&
+        body.dayNumber >= 1 &&
+        body.dayNumber <= 5
+          ? body.dayNumber
+          : 1;
+
+      const requestedResourceId =
+        typeof body.resourceId === "string"
+          ? body.resourceId.trim()
+          : "";
+
+      const packagedAsset =
+        body.packagedAsset &&
+        typeof body.packagedAsset === "object"
+          ? body.packagedAsset
+          : null;
+
+      let resourceId = requestedResourceId;
+
+      // Protected packaged assets are NOT copied.
+      // We create/reuse only a LessonResource reference to the
+      // already-existing protected Future Ready™ file.
+      if (!resourceId && packagedAsset) {
+        const assetTitle =
+          typeof packagedAsset.title === "string"
+            ? packagedAsset.title.trim()
+            : "";
+
+        const assetUrl =
+          typeof packagedAsset.url === "string"
+            ? packagedAsset.url.trim()
+            : "";
+
+        const assetFileName =
+          typeof packagedAsset.fileName === "string"
+            ? packagedAsset.fileName.trim()
+            : null;
+
+        if (!assetTitle || !assetUrl) {
+          return NextResponse.json(
+            {
+              error: "Packaged asset title and URL are required.",
+            },
+            {
+              status: 400,
+            }
+          );
+        }
+
+        const existingResource =
+          await prisma.lessonResource.findFirst({
+            where: {
+              lessonId,
+              cohortId: AMBASSADOR_COHORT_ID,
+              url: assetUrl,
+            },
+            select: {
+              id: true,
+            },
+          });
+
+        if (existingResource) {
+          resourceId = existingResource.id;
+        } else {
+          const resourceCount =
+            await prisma.lessonResource.count({
+              where: {
+                lessonId,
+                cohortId: AMBASSADOR_COHORT_ID,
+              },
+            });
+
+          const createdReference =
+            await prisma.lessonResource.create({
+              data: {
+                lessonId,
+                cohortId: AMBASSADOR_COHORT_ID,
+                title: assetTitle,
+                description:
+                  "Protected Future Ready™ curriculum asset.",
+                kind: "LINK",
+                url: assetUrl,
+                fileName: assetFileName,
+                filePath: null,
+                enabled: true,
+                required: false,
+                visibleToStudent: false,
+                visibleToFacilitator: true,
+                dayNumber,
+                sortOrder: resourceCount,
+                uploadedById: authorization.session.id,
+              },
+              select: {
+                id: true,
+              },
+            });
+
+          resourceId = createdReference.id;
+        }
+      }
+
+      if (!resourceId) {
+        return NextResponse.json(
+          {
+            error: "Resource is required.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      const resource =
+        await prisma.lessonResource.findFirst({
+          where: {
+            id: resourceId,
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            enabled: true,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+      if (!resource) {
+        return NextResponse.json(
+          {
+            error: "Resource was not found for this lesson.",
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+
+      // Use the first existing agenda/task for this day.
+      // If the day has no database task yet, make one lightweight
+      // Lesson Resources task so the asset still appears in the
+      // actual Daily Map rather than disappearing into the Hub.
+      let task =
+        await prisma.lessonPlanTask.findFirst({
+          where: {
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            dayNumber,
+          },
+          orderBy: {
+            sortOrder: "asc",
+          },
+          select: {
+            id: true,
+          },
+        });
+
+      if (!task) {
+        const taskCount =
+          await prisma.lessonPlanTask.count({
+            where: {
+              lessonId,
+              cohortId: AMBASSADOR_COHORT_ID,
+              dayNumber,
+            },
+          });
+
+        task =
+          await prisma.lessonPlanTask.create({
+            data: {
+              lessonId,
+              cohortId: AMBASSADOR_COHORT_ID,
+              taskType: "Lesson Resources",
+              title: "Lesson Resources",
+              instructions:
+                "Resources selected for today's Future Ready™ lesson.",
+              dayNumber,
+              durationMinutes: 0,
+              requirement: "OPTIONAL",
+              visibleToStudent: false,
+              visibleToFacilitator: true,
+              sortOrder: taskCount,
+              createdById: authorization.session.id,
+            },
+            select: {
+              id: true,
+            },
+          });
+      }
+
+      const existingLink =
+        await prisma.lessonPlanTaskResource.findUnique({
+          where: {
+            taskId_resourceId: {
+              taskId: task.id,
+              resourceId,
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+      if (!existingLink) {
+        const attachedCount =
+          await prisma.lessonPlanTaskResource.count({
+            where: {
+              taskId: task.id,
+            },
+          });
+
+        await prisma.lessonPlanTaskResource.create({
+          data: {
+            taskId: task.id,
+            resourceId,
+            sortOrder: attachedCount,
+          },
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        taskId: task.id,
+        resourceId,
+        alreadyAttached: Boolean(existingLink),
+      });
     }
 
     if (action === "createResource") {
