@@ -130,6 +130,14 @@ function isActive(pathname: string, href: string) {
     return pathname === href;
   }
 
+  if (href === "/ambassador/facilitator/assessments") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  if (href === "/ambassador/facilitator/analytics") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   if (href === "/ambassador/resources") {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
