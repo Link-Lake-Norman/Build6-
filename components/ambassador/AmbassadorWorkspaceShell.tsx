@@ -71,6 +71,11 @@ const studentNavigation: NavItem[] = [
     label: "Messages",
     description: "Student and program communication",
   },
+  {
+    href: "/ambassador/facilitator/analytics",
+    label: "Analytics",
+    description: "Cohort progress, readiness and evidence",
+  },
 ];
 
 const insightNavigation: NavItem[] = [];
