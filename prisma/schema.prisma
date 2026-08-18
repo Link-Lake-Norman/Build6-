@@ -585,7 +585,9 @@ model BadgeAward {
   badge   Badge   @relation(fields: [badgeId], references: [id], onDelete: Cascade)
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@unique([badgeId, studentId])
+  @@index([badgeId, studentId])
+  @@index([studentId, awardedAt])
+  @@index([awardedAt])
 }
 
 model Employer {
