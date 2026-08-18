@@ -196,6 +196,13 @@ export default async function AmbassadorAdminPage() {
           />
 
           <AdminCard
+            title="Month Ahead"
+            description="View, add, and edit upcoming topics, speakers, field experiences, and preparation."
+            href="/ambassador/calendar"
+            action="Open Calendar"
+          />
+
+          <AdminCard
             title="Curriculum"
             description="Manage the 16-week Launch Ready™ classroom experience."
             href="/ambassador/curriculum"

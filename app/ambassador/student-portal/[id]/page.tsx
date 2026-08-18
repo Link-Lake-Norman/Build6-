@@ -420,6 +420,13 @@ export default async function AmbassadorStudentPortalPage({
         />
 
         <StudentActionCard
+          title="Month Ahead"
+          description="See upcoming class topics, speakers, experiences, and important program dates."
+          href="/ambassador/calendar"
+          action="View Calendar"
+        />
+
+        <StudentActionCard
           title="Reflection Journal"
           description="Capture what you are learning and how you are growing throughout the program."
           href={`/ambassador/student-passport/${student.id}/reflections`}

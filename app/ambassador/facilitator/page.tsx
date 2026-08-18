@@ -493,6 +493,12 @@ export default async function FacilitatorPage() {
               action="Open Friday"
             />
             <ToolLink
+              title="Month Ahead"
+              description="Look ahead at class topics, speakers, field experiences, and preparation."
+              href="/ambassador/calendar"
+              action="Open Calendar"
+            />
+            <ToolLink
               title="Experiences"
               description="Add or manage speakers, employer connections, field trips, and applied-learning experiences from the planner."
               href="/ambassador/planner"
