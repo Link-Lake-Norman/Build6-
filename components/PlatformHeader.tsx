@@ -233,12 +233,67 @@ export default function PlatformHeader({
   const pathname = usePathname();
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const links = getNavigationLinks(
+  let links = getNavigationLinks(
     session?.role ?? null,
     session?.studentId
   );
 
-  const homeHref = getHomeHref(session);
+  // Workspace context controls navigation presentation.
+  // Permissions still come from the signed-in role.
+  const isFacilitatorWorkspace =
+    pathname === "/ambassador/facilitator" ||
+    pathname.startsWith("/ambassador/facilitator/") ||
+    pathname === "/ambassador/curriculum" ||
+    pathname.startsWith("/ambassador/curriculum/") ||
+    pathname === "/ambassador/planner" ||
+    pathname.startsWith("/ambassador/planner/") ||
+    pathname === "/ambassador/lesson-builder" ||
+    pathname.startsWith("/ambassador/lesson-builder/") ||
+    pathname === "/ambassador/messages" ||
+    pathname.startsWith("/ambassador/messages/");
+
+  const canAccessAdmin =
+    session?.role === "SCHOOL_ADMIN" ||
+    session?.role === "ORGANIZATION_ADMIN" ||
+    session?.role === "SUPER_ADMIN";
+
+  const isFacilitatorRole =
+    session?.role === "FACILITATOR" ||
+    canAccessAdmin;
+
+  if (isFacilitatorWorkspace && isFacilitatorRole) {
+    links = [
+      {
+        href: "/ambassador/facilitator",
+        label: "Dashboard",
+      },
+      {
+        href: "/ambassador/curriculum",
+        label: "Teach",
+      },
+      {
+        href: "/ambassador/facilitator/students",
+        label: "Students",
+      },
+      {
+        href: "/ambassador/messages",
+        label: "Messages",
+      },
+      ...(canAccessAdmin
+        ? [
+            {
+              href: "/ambassador/admin",
+              label: "Admin",
+            },
+          ]
+        : []),
+    ];
+  }
+
+  const homeHref =
+    isFacilitatorWorkspace && isFacilitatorRole
+      ? "/ambassador/facilitator"
+      : getHomeHref(session);
 
   async function logout() {
     setLoggingOut(true);
