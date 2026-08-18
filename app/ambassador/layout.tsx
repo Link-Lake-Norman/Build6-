@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import PlatformHeader from "@/components/PlatformHeader";
-import PageHistoryControls from "@/components/navigation/PageHistoryControls";
+
+import AmbassadorWorkspaceShell from "@/components/ambassador/AmbassadorWorkspaceShell";
 import { getSessionUser } from "@/lib/auth/session";
 
 export default async function AmbassadorLayout({
@@ -11,14 +11,8 @@ export default async function AmbassadorLayout({
   const session = await getSessionUser();
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
-      <PlatformHeader session={session} />
-
-      <PageHistoryControls />
-
-      <div className="mx-auto w-full max-w-7xl px-6 py-8">
-        {children}
-      </div>
-    </div>
+    <AmbassadorWorkspaceShell session={session}>
+      {children}
+    </AmbassadorWorkspaceShell>
   );
 }
