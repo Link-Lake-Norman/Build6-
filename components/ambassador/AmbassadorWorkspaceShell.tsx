@@ -44,6 +44,11 @@ const classNavigation: NavItem[] = [
     description: "Preview, download and add lesson assets",
   },
   {
+    href: "/ambassador/calendar",
+    label: "Calendar",
+    description: "Month-ahead topics, speakers and preparation",
+  },
+  {
     href: "/ambassador/experiences",
     label: "Experiences",
     description: "Speakers, field trips and employer experiences",
@@ -92,6 +97,8 @@ function isWorkspacePath(pathname: string) {
     pathname.startsWith("/ambassador/lesson-builder/") ||
     pathname === "/ambassador/resources" ||
     pathname.startsWith("/ambassador/resources/") ||
+    pathname === "/ambassador/calendar" ||
+    pathname.startsWith("/ambassador/calendar/") ||
     pathname === "/ambassador/experiences" ||
     pathname.startsWith("/ambassador/experiences/") ||
     pathname === "/ambassador/messages" ||

@@ -1451,333 +1451,192 @@ export default function AmbassadorCurriculumPage() {
                         </span>
                       </div>
 
-                      <div className="mt-4 space-y-3">
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
                         {[
                           {
                             label: "Student Workbook",
-                            description:
-                              "Student pages, editable workbook, and printable class work.",
-                            assets: [
-                              {
-                                label: "Student Workbook",
-                                file: "Student-Workbook.pdf",
-                                format: "PDF",
-                                use: "Printable student workbook",
-                                studentAssignable: true,
-                                portfolioEligible: false,
-                              },
-                              {
-                                label: "Student Workbook",
-                                file: "Student-Workbook.docx",
-                                format: "DOCX",
-                                use: "Editable student workbook",
-                                studentAssignable: true,
-                                portfolioEligible: false,
-                              },
-                            ],
+                            description: "Student workbook pages and activities.",
+                            pdf: "Student-Workbook.pdf",
+                            docx: "Student-Workbook.docx",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Slides",
-                            description:
-                              "Presentation material for teaching and screen sharing.",
-                            assets: [
-                              {
-                                label: "Slides",
-                                file: "Slides.pptx",
-                                format: "PPTX",
-                                use: "Class presentation",
-                                studentAssignable: false,
-                                portfolioEligible: false,
-                              },
-                            ],
+                            description: "Class presentation for this week.",
+                            pptx: "Slides.pptx",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Activity Kit",
-                            description:
-                              "Role plays, classroom activities, and applied practice.",
-                            assets: [
-                              {
-                                label: "Activity Kit",
-                                file: "Activity-Kit.pdf",
-                                format: "PDF",
-                                use: "Printable classroom activities",
-                                studentAssignable: true,
-                                portfolioEligible: false,
-                              },
-                              {
-                                label: "Activity Kit",
-                                file: "Activity-Kit.docx",
-                                format: "DOCX",
-                                use: "Editable classroom activities",
-                                studentAssignable: true,
-                                portfolioEligible: false,
-                              },
-                            ],
+                            description: "Activities, role plays, cases and classroom work.",
+                            pdf: "Activity-Kit.pdf",
+                            docx: "Activity-Kit.docx",
+                            studentAssignable: true,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Assessment Rubric",
-                            description:
-                              "Facilitator assessment and evaluation reference.",
-                            assets: [
-                              {
-                                label: "Assessment Rubric",
-                                file: "Assessment-Rubric.pdf",
-                                format: "PDF",
-                                use: "Printable assessment rubric",
-                                studentAssignable: false,
-                                portfolioEligible: false,
-                              },
-                              {
-                                label: "Assessment Rubric",
-                                file: "Assessment-Rubric.docx",
-                                format: "DOCX",
-                                use: "Editable assessment rubric",
-                                studentAssignable: false,
-                                portfolioEligible: false,
-                              },
-                            ],
+                            description: "Assessment criteria and facilitator rubric.",
+                            pdf: "Assessment-Rubric.pdf",
+                            docx: "Assessment-Rubric.docx",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
                           {
                             label: "Portfolio Artifact",
-                            description:
-                              "Student evidence that may carry into the Future Ready™ portfolio or Capstone.",
-                            assets: [
-                              {
-                                label: "Portfolio Artifact",
-                                file: "Portfolio-Artifact.pdf",
-                                format: "PDF",
-                                use: "Printable portfolio evidence",
-                                studentAssignable: true,
-                                portfolioEligible: true,
-                              },
-                              {
-                                label: "Portfolio Artifact",
-                                file: "Portfolio-Artifact.docx",
-                                format: "DOCX",
-                                use: "Editable portfolio evidence",
-                                studentAssignable: true,
-                                portfolioEligible: true,
-                              },
-                            ],
+                            description: "Student portfolio and evidence template.",
+                            pdf: "Portfolio-Artifact.pdf",
+                            docx: "Portfolio-Artifact.docx",
+                            studentAssignable: true,
+                            portfolioEligible: true,
                           },
                           {
                             label: "Facilitator Guide",
-                            description:
-                              "Teaching notes and facilitation guidance.",
-                            assets: [
-                              {
-                                label: "Facilitator Guide",
-                                file: "Facilitator-Guide.pdf",
-                                format: "PDF",
-                                use: "Printable facilitator guide",
-                                studentAssignable: false,
-                                portfolioEligible: false,
-                              },
-                              {
-                                label: "Facilitator Guide",
-                                file: "Facilitator-Guide.docx",
-                                format: "DOCX",
-                                use: "Editable facilitator guide",
-                                studentAssignable: false,
-                                portfolioEligible: false,
-                              },
-                            ],
+                            description: "Weekly teaching guide and facilitation notes.",
+                            pdf: "Facilitator-Guide.pdf",
+                            docx: "Facilitator-Guide.docx",
+                            studentAssignable: false,
+                            portfolioEligible: false,
                           },
-                        ].map((group) => (
-                          <details
-                            key={group.label}
-                            className="group overflow-hidden rounded-xl border border-slate-200 bg-white"
-                          >
-                            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
-                              <div className="min-w-0">
-                                <div className="flex flex-wrap items-center gap-2">
+                        ].map((asset) => {
+                          const weekCode = String(selectedWeek).padStart(2, "0");
+
+                          const makeUrl = (file: string) => {
+                            const fileName =
+                              `Future-Ready-Week-${weekCode}-${file}`;
+
+                            return `/api/ambassador/download/${weekCode}/${encodeURIComponent(
+                              fileName
+                            )}`;
+                          };
+
+                          const primaryFile =
+                            asset.pdf ?? asset.pptx ?? asset.docx;
+
+                          if (!primaryFile) return null;
+
+                          const primaryFormat = asset.pptx
+                            ? "PPTX"
+                            : asset.pdf
+                              ? "PDF"
+                              : "DOCX";
+
+                          const primaryUrl = makeUrl(primaryFile);
+
+                          const editableUrl = asset.docx
+                            ? makeUrl(asset.docx)
+                            : null;
+
+                          const printableUrl = asset.pdf
+                            ? makeUrl(asset.pdf)
+                            : null;
+
+                          const assignKey =
+                            `packaged-${asset.label}-${primaryFormat}`;
+
+                          return (
+                            <div
+                              key={asset.label}
+                              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
                                   <p className="text-sm font-black text-[#0D1B3D]">
-                                    {group.label}
+                                    {asset.label}
                                   </p>
 
-                                  <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[9px] font-black text-[#007C7C]">
-                                    {group.assets.length}{" "}
-                                    {group.assets.length === 1 ? "FILE" : "FILES"}
-                                  </span>
+                                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                                    {asset.description}
+                                  </p>
                                 </div>
 
-                                <p className="mt-1 text-xs leading-5 text-slate-500">
-                                  {group.description}
-                                </p>
+                                <span className="shrink-0 rounded-full bg-[#EAFBFB] px-2 py-1 text-[9px] font-black text-[#007C7C]">
+                                  {asset.docx && asset.pdf
+                                    ? "PDF + EDITABLE"
+                                    : primaryFormat}
+                                </span>
                               </div>
 
-                              <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-[#0D1B3D] transition group-open:rotate-180">
-                                ↓
-                              </span>
-                            </summary>
+                              <details className="mt-3">
+                                <summary className="cursor-pointer list-none rounded-lg bg-[#0D1B3D] px-3 py-2 text-center text-[11px] font-black text-white">
+                                  Open Resource
+                                </summary>
 
-                            <div className="space-y-3 border-t border-slate-200 bg-slate-50 p-3">
-                              {group.assets.map((asset) => {
-                                const weekCode = String(selectedWeek).padStart(
-                                  2,
-                                  "0"
-                                );
-
-                                const fileName =
-                                  `Future-Ready-Week-${weekCode}-${asset.file}`;
-
-                                const openUrl =
-                                  `/api/ambassador/download/${weekCode}/${encodeURIComponent(
-                                    fileName
-                                  )}`;
-
-                                const downloadUrl = `${openUrl}?download=1`;
-
-                                const assignmentKey =
-                                  `packaged-${asset.label}-${asset.format}`;
-
-                                return (
-                                  <div
-                                    key={fileName}
-                                    className="rounded-xl border border-slate-200 bg-white p-3"
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  <a
+                                    href={`/ambassador/resource-preview?src=${encodeURIComponent(
+                                      primaryUrl
+                                    )}&name=${encodeURIComponent(
+                                      asset.label
+                                    )}&type=${encodeURIComponent(
+                                      primaryFormat.toLowerCase()
+                                    )}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
                                   >
-                                    <div className="flex flex-col gap-3">
-                                      <div className="min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                          <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[9px] font-black text-[#007C7C]">
-                                            {asset.format}
-                                          </span>
+                                    Preview
+                                  </a>
 
-                                          <p className="text-xs font-bold text-slate-600">
-                                            {asset.use}
-                                          </p>
-                                        </div>
-                                      </div>
+                                  {editableUrl && (
+                                    <a
+                                      href={`${editableUrl}?download=1`}
+                                      className="rounded-lg border border-[#00A6A6] px-3 py-2 text-[11px] font-black text-[#007C7C]"
+                                    >
+                                      Editable
+                                    </a>
+                                  )}
 
-                                      <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-3">
-                                        <a
-                                          href={`/ambassador/resource-preview?src=${encodeURIComponent(
-                                            openUrl
-                                          )}&name=${encodeURIComponent(
-                                            asset.label
-                                          )}&type=${encodeURIComponent(
-                                            asset.format.toLowerCase()
-                                          )}`}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
-                                        >
-                                          {asset.format === "PPTX"
-                                            ? "Present / Preview"
-                                            : "Preview"}
-                                        </a>
+                                  {printableUrl && (
+                                    <a
+                                      href={`${printableUrl}?download=1`}
+                                      className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
+                                    >
+                                      Print / Download
+                                    </a>
+                                  )}
 
-                                        <a
-                                          href={downloadUrl}
-                                          className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
-                                        >
-                                          Print / Download
-                                        </a>
+                                  {asset.pptx && (
+                                    <a
+                                      href={`${primaryUrl}?download=1`}
+                                      className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
+                                    >
+                                      Download Slides
+                                    </a>
+                                  )}
 
-                                        <button
-                                          type="button"
-                                          disabled={
-                                            addingLessonResourceId ===
-                                            `lesson-${fileName}`
-                                          }
-                                          onClick={() =>
-                                            addPackagedAssetToTodaysLesson({
-                                              label: asset.label,
-                                              fileName,
-                                              openUrl,
-                                            })
-                                          }
-                                          className="rounded-lg bg-[#4B2265] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
-                                        >
-                                          {addingLessonResourceId ===
-                                          `lesson-${fileName}`
-                                            ? "Adding..."
-                                            : `Add to Day ${selectedDay} Lesson`}
-                                        </button>
-
-                                        {asset.studentAssignable && (
-                                          <>
-                                            <button
-                                              type="button"
-                                              disabled={
-                                                assigningResourceId ===
-                                                assignmentKey
-                                              }
-                                              onClick={() =>
-                                                assignPackagedAssetToStudents(
-                                                  {
-                                                    label: asset.label,
-                                                    format: asset.format,
-                                                    openUrl,
-                                                    portfolioEligible:
-                                                      asset.portfolioEligible,
-                                                  },
-                                                  "ONLINE"
-                                                )
-                                              }
-                                              className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
-                                            >
-                                              {assigningResourceId ===
-                                              assignmentKey
-                                                ? "Assigning..."
-                                                : "Assign Online"}
-                                            </button>
-
-                                            <button
-                                              type="button"
-                                              disabled={
-                                                assigningResourceId ===
-                                                assignmentKey
-                                              }
-                                              onClick={() =>
-                                                assignPackagedAssetToStudents(
-                                                  {
-                                                    label: asset.label,
-                                                    format: asset.format,
-                                                    openUrl,
-                                                    portfolioEligible:
-                                                      asset.portfolioEligible,
-                                                  },
-                                                  "PRINT"
-                                                )
-                                              }
-                                              className="rounded-lg bg-[#F2B705] px-3 py-2 text-[11px] font-black text-[#0D1B3D] disabled:opacity-50"
-                                            >
-                                              Assign Printable
-                                            </button>
-
-                                            <button
-                                              type="button"
-                                              disabled={
-                                                assigningResourceId ===
-                                                assignmentKey
-                                              }
-                                              onClick={() =>
-                                                assignPackagedAssetToStudents(
-                                                  {
-                                                    label: asset.label,
-                                                    format: asset.format,
-                                                    openUrl,
-                                                    portfolioEligible:
-                                                      asset.portfolioEligible,
-                                                  },
-                                                  "BOTH"
-                                                )
-                                              }
-                                              className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
-                                            >
-                                              Assign Both
-                                            </button>
-                                          </>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                                  {asset.studentAssignable && (
+                                    <button
+                                      type="button"
+                                      disabled={
+                                        assigningResourceId === assignKey
+                                      }
+                                      onClick={() =>
+                                        assignPackagedAssetToStudents(
+                                          {
+                                            label: asset.label,
+                                            format: primaryFormat,
+                                            openUrl: primaryUrl,
+                                            portfolioEligible:
+                                              asset.portfolioEligible,
+                                          },
+                                          "BOTH"
+                                        )
+                                      }
+                                      className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                    >
+                                      {assigningResourceId === assignKey
+                                        ? "Assigning..."
+                                        : "Assign to Students"}
+                                    </button>
+                                  )}
+                                </div>
+                              </details>
                             </div>
-                          </details>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
