@@ -199,6 +199,8 @@ export default async function FacilitatorPage() {
     (student) => student.readiness > 0,
   ).length;
 
+  const primaryCohort = cohorts[0];
+
   return (
     <FacilitatorShell activePath="/ambassador/facilitator">
       <main
@@ -208,8 +210,7 @@ export default async function FacilitatorPage() {
           margin: "0 auto",
         }}
       >
-        {/* SIMPLE WELCOME */}
-
+        {/* COHORT OPERATING HEADER */}
         <section
           style={{
             borderRadius: 28,
@@ -226,28 +227,23 @@ export default async function FacilitatorPage() {
               letterSpacing: 2,
             }}
           >
-            FUTURE READY™ FACILITATOR
+            FUTURE READY™ · FACILITATOR DASHBOARD
           </div>
 
-          <h1
-            style={{
-              margin: "8px 0 0",
-              fontSize: 34,
-            }}
-          >
-            Welcome, {session.name}
+          <h1 style={{ margin: "8px 0 0", fontSize: 34 }}>
+            {primaryCohort?.name ?? "Your Cohort"}
           </h1>
 
           <p
             style={{
               marginTop: 10,
-              maxWidth: 680,
+              maxWidth: 760,
               lineHeight: 1.6,
               color: "#D7DFEC",
             }}
           >
-            Everything you need to teach, support students, and manage your
-            Future Ready™ cohort is here.
+            Welcome, {session.name}. This is your operating center for teaching,
+            planning, student support, attendance, communication, and program delivery.
           </p>
 
           <div
@@ -275,14 +271,9 @@ export default async function FacilitatorPage() {
           </div>
         </section>
 
-        {/* TODAY - PRIMARY WORK AREA */}
-
+        {/* PRIMARY ACTIONS */}
         <section style={{ marginTop: 22 }}>
-          <div
-            style={{
-              marginBottom: 12,
-            }}
-          >
+          <div style={{ marginBottom: 12 }}>
             <div
               style={{
                 color: "#4B2265",
@@ -293,7 +284,6 @@ export default async function FacilitatorPage() {
             >
               START HERE
             </div>
-
             <h2
               style={{
                 margin: "4px 0 0",
@@ -301,9 +291,8 @@ export default async function FacilitatorPage() {
                 fontSize: 25,
               }}
             >
-              Today&apos;s Class
+              Run Your Cohort
             </h2>
-
             <p
               style={{
                 margin: "6px 0 0",
@@ -311,15 +300,48 @@ export default async function FacilitatorPage() {
                 fontSize: 13,
               }}
             >
-              Your current lesson and the tools you need to deliver it.
+              Your most important facilitator actions are always visible here.
             </p>
           </div>
 
+          <div style={primaryActionGridStyle}>
+            <PrimaryAction
+              eyebrow="TEACH"
+              title="Teach Next Class"
+              description="Open the organized Teaching Workspace for the current week and class day."
+              href="/ambassador/curriculum"
+              action="Open Teaching Workspace"
+            />
+            <PrimaryAction
+              eyebrow="PLAN"
+              title="Edit / Customize"
+              description="Adjust the delivery plan, add activities, attach assets, or prepare an experience."
+              href="/ambassador/planner"
+              action="Open Planner"
+            />
+            <PrimaryAction
+              eyebrow="OPERATIONS"
+              title="Take Attendance"
+              description="Record attendance for the students in your active cohort."
+              href="/ambassador/facilitator/attendance"
+              action="Take Attendance"
+            />
+            <PrimaryAction
+              eyebrow="STUDENT WORK"
+              title="Review Students"
+              description="Open the roster to review progress, Passports, evidence, assessments, and student work."
+              href="/ambassador/facilitator/students"
+              action="Open Student Workspace"
+            />
+          </div>
+        </section>
+
+        {/* TODAY / NEXT CLASS */}
+        <section style={{ marginTop: 22 }}>
           <FacilitatorWeekOneFrontDoor />
         </section>
 
-        {/* QUICK STATUS */}
-
+        {/* COHORT SNAPSHOT */}
         <section
           style={{
             display: "grid",
@@ -328,7 +350,7 @@ export default async function FacilitatorPage() {
             marginTop: 22,
           }}
         >
-          <Metric label="Students" value={students.length} />
+          <Metric label="Active Students" value={students.length} />
           <Metric
             label="Assessments Complete"
             value={`${studentsAssessed}/${students.length}`}
@@ -336,57 +358,91 @@ export default async function FacilitatorPage() {
           <Metric label="Program Progress" value={`${averageProgress}%`} />
         </section>
 
-        {/* LESSON PLANNING */}
+        {/* ORGANIZED OPERATING AREAS */}
+        <section style={{ marginTop: 28 }}>
+          <div
+            style={{
+              color: "#4B2265",
+              fontSize: 11,
+              fontWeight: 900,
+              letterSpacing: 1.5,
+            }}
+          >
+            FACILITATOR WORKSPACE
+          </div>
+          <h2
+            style={{
+              margin: "4px 0 0",
+              color: "#0D1B3D",
+              fontSize: 25,
+            }}
+          >
+            Everything Else, Organized by the Work You&apos;re Doing
+          </h2>
+          <p
+            style={{
+              margin: "6px 0 0",
+              color: "#667085",
+              fontSize: 13,
+              maxWidth: 760,
+              lineHeight: 1.6,
+            }}
+          >
+            Curriculum, planning, students, attendance, messages, and deeper tools
+            remain intact. They now support this dashboard instead of competing with it.
+          </p>
+        </section>
 
         <DashboardSection
-          eyebrow="TEACH"
-          title="Lesson Plan & Teaching Tools"
-          description="Open when you want to plan ahead, customize a lesson, or add materials."
+          eyebrow="TEACH + PLAN"
+          title="Curriculum, Planner & Lesson Building"
+          description="Use the Teaching Workspace to teach. Open planning tools only when you need to customize or build."
         >
           <div style={toolGridStyle}>
             <ToolLink
-              title="Curriculum & Lesson Plan"
-              description="Review the full lesson, facilitator guidance, activities, and weekly materials."
+              title="Teaching Workspace"
+              description="Your primary day-of-class view: objective, teaching flow, student work, evidence, assets, assignments, and notes."
               href="/ambassador/curriculum"
-              action="Open Curriculum"
+              action="Teach"
             />
-
             <ToolLink
               title="Weekly Planner"
-              description="Manage the weekly delivery plan, agenda, classroom activities, and experiences."
+              description="The backstage editor for your weekly and daily delivery plan."
               href="/ambassador/planner"
-              action="Open Planner"
+              action="Edit / Customize"
             />
-
             <ToolLink
-              title="Program / Lesson Builder"
-              description="Customize activities, facilitation, classroom delivery, and supplemental materials."
+              title="Lesson Builder + AI Activities"
+              description="Create supplemental classroom activities and detailed facilitation assets when the core plan needs an enhancement."
               href="/ambassador/lesson-builder?week=1"
-              action="Open Lesson Builder"
+              action="Build an Activity"
             />
           </div>
         </DashboardSection>
 
-        {/* STUDENTS */}
-
         <DashboardSection
           eyebrow="STUDENTS"
-          title={`Students & Progress · ${students.length}`}
-          description="Attendance, assessments, Passports, progress, student work, and enrollment."
+          title={`Students, Work & Progress · ${students.length}`}
+          description="Roster, assessments, Passports, progress, evidence, reflections, portfolio work, and Capstone access."
         >
           <div style={toolGridStyle}>
             <ToolLink
-              title="Live Student Roster"
-              description="Your main student workspace. Take attendance and review each student's progress and Passport."
+              title="Student Workspace"
+              description="Open the active roster and choose a student to review progress, evidence, Passport, and program work."
               href="/ambassador/facilitator/students"
               action="Open Students"
             />
-
             <ToolLink
               title="Add Student"
               description="Enroll a new student into your assigned Future Ready™ cohort."
               href="/ambassador/facilitator/students/new"
               action="Add Student"
+            />
+            <ToolLink
+              title="Attendance"
+              description="Record and review attendance without leaving the facilitator workflow."
+              href="/ambassador/facilitator/attendance"
+              action="Open Attendance"
             />
           </div>
 
@@ -406,18 +462,11 @@ export default async function FacilitatorPage() {
                 alignItems: "center",
               }}
             >
-              <strong style={{ color: "#0D1B3D" }}>
-                Quick cohort status
-              </strong>
-
-              <span style={smallStatusStyle}>
-                {students.length} active students
-              </span>
-
+              <strong style={{ color: "#0D1B3D" }}>Cohort snapshot</strong>
+              <span style={smallStatusStyle}>{students.length} active students</span>
               <span style={smallStatusStyle}>
                 {studentsAssessed} assessments complete
               </span>
-
               <span style={smallStatusStyle}>
                 {averageProgress}% average progress
               </span>
@@ -425,79 +474,137 @@ export default async function FacilitatorPage() {
           </div>
         </DashboardSection>
 
-        {/* FRIDAY */}
-
         <DashboardSection
-          eyebrow="APPLY"
-          title="Friday & Applied Learning"
-          description="Use for Friday check-ins, applied learning, reflection, and classroom follow-through."
-        >
-          <div style={toolGridStyle}>
-            <ToolLink
-              title="Friday Command Center"
-              description="Manage the Friday student experience and weekly applied-learning workflow."
-              href="/ambassador/facilitator/friday"
-              action="Open Friday"
-            />
-
-            <ToolLink
-              title="Reflections"
-              description="Review student reflection work and learning evidence."
-              href="/ambassador/facilitator/reflections"
-              action="Review Reflections"
-            />
-
-            <ToolLink
-              title="Badges"
-              description="Review and manage Future Ready™ student milestone recognition."
-              href="/ambassador/facilitator/badges"
-              action="Open Badges"
-            />
-          </div>
-        </DashboardSection>
-
-        {/* COMMUNICATION */}
-
-        <DashboardSection
-          eyebrow="CONNECT"
-          title="Communication"
-          description="Reach students and authorized Future Ready™ program administrators."
+          eyebrow="CONNECT + APPLY"
+          title="Messages, Experiences & Weekly Application"
+          description="Communication and applied learning stay accessible without crowding the daily teaching workflow."
         >
           <div style={toolGridStyle}>
             <ToolLink
               title="Messages"
-              description="Communicate directly with students and program administrators."
+              description="Communicate directly with students and authorized Future Ready™ program administrators."
               href="/ambassador/messages"
               action="Open Messages"
+            />
+            <ToolLink
+              title="Friday Command Center"
+              description="Manage Friday check-ins, reflection, applied learning, and weekly follow-through."
+              href="/ambassador/facilitator/friday"
+              action="Open Friday"
+            />
+            <ToolLink
+              title="Experiences"
+              description="Add or manage speakers, employer connections, field trips, and applied-learning experiences from the planner."
+              href="/ambassador/planner"
+              action="Manage Experiences"
             />
           </div>
         </DashboardSection>
 
-        {/* ADVANCED */}
-
         <DashboardSection
-          eyebrow="MORE"
-          title="Analytics & Advanced Tools"
-          description="Additional program information is here when you need it—not in the way when you don't."
+          eyebrow="RESOURCES + INSIGHT"
+          title="Resources, Evidence & Advanced Tools"
+          description="Use these tools when you need deeper program information. They stay out of the way during normal class delivery."
         >
           <div style={toolGridStyle}>
             <ToolLink
-              title="Analytics"
-              description="Review cohort and student program performance."
-              href="/ambassador/facilitator/analytics"
-              action="Open Analytics"
+              title="Curriculum + Asset Library"
+              description="Access weekly playbooks, worksheets, slides, activity kits, assessments, facilitator guides, and additional resources."
+              href="/ambassador/curriculum"
+              action="Open Resources"
             />
-
             <ToolLink
               title="Student Passports"
-              description="Access individual student evidence, readiness, reflections, progress, and Capstone work from the roster."
+              description="Choose a student to access readiness, reflections, portfolio evidence, progress, and Capstone work."
               href="/ambassador/facilitator/students"
               action="Choose Student"
+            />
+            <ToolLink
+              title="Analytics"
+              description="Review cohort and student program performance when deeper reporting is needed."
+              href="/ambassador/facilitator/analytics"
+              action="Open Analytics"
             />
           </div>
         </DashboardSection>
       </main>
     </FacilitatorShell>
+  );
+}
+
+
+const primaryActionGridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))",
+  gap: 12,
+};
+
+function PrimaryAction({
+  eyebrow,
+  title,
+  description,
+  href,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  href: string;
+  action: string;
+}) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "block",
+        border: "1px solid #DCE3EC",
+        borderRadius: 20,
+        background: "white",
+        padding: 20,
+        textDecoration: "none",
+        boxShadow: "0 8px 24px rgba(13,27,61,.06)",
+      }}
+    >
+      <div
+        style={{
+          color: "#4B2265",
+          fontSize: 9,
+          fontWeight: 900,
+          letterSpacing: 1.4,
+        }}
+      >
+        {eyebrow}
+      </div>
+      <h3
+        style={{
+          margin: "6px 0 0",
+          color: "#0D1B3D",
+          fontSize: 18,
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        style={{
+          margin: "8px 0 0",
+          color: "#667085",
+          fontSize: 12,
+          lineHeight: 1.55,
+        }}
+      >
+        {description}
+      </p>
+      <div
+        style={{
+          marginTop: 14,
+          color: "#0D1B3D",
+          fontWeight: 900,
+          fontSize: 11,
+        }}
+      >
+        {action} →
+      </div>
+    </Link>
   );
 }
 
