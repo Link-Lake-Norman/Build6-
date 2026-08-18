@@ -43,6 +43,11 @@ const classNavigation: NavItem[] = [
     label: "Teaching Resources",
     description: "Preview, download and add lesson assets",
   },
+  {
+    href: "/ambassador/experiences",
+    label: "Experiences",
+    description: "Speakers, field trips and employer experiences",
+  },
 ];
 
 const studentNavigation: NavItem[] = [
@@ -77,6 +82,8 @@ function isWorkspacePath(pathname: string) {
     pathname.startsWith("/ambassador/lesson-builder/") ||
     pathname === "/ambassador/resources" ||
     pathname.startsWith("/ambassador/resources/") ||
+    pathname === "/ambassador/experiences" ||
+    pathname.startsWith("/ambassador/experiences/") ||
     pathname === "/ambassador/messages" ||
     pathname.startsWith("/ambassador/messages/")
   );
@@ -116,6 +123,11 @@ function isActive(pathname: string, href: string) {
   if (href === "/ambassador/resources") {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
+
+  if (href === "/ambassador/experiences") {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
 
   if (href === "/ambassador/messages") {
     return pathname === href || pathname.startsWith(`${href}/`);
