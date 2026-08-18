@@ -179,10 +179,9 @@ const requirementOptions: RequirementValue[] = [
 
 export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  const [selectedDay, setSelectedDay] = useState(() => {
-    const weekday = new Date().getDay();
-    return weekday >= 1 && weekday <= 5 ? weekday : 1;
-  });
+  // Ambassador pilot is currently on Week 1, with Day 1 completed.
+  // Open the teaching workspace on the next class instead of the calendar weekday.
+  const [selectedDay, setSelectedDay] = useState(2);
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
   const [showFullTools, setShowFullTools] = useState(false);
   const [assigningResourceId, setAssigningResourceId] =
@@ -859,8 +858,8 @@ export default function AmbassadorCurriculumPage() {
               </h1>
 
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">
-                Start with the class day below. Teach the plan, use only the assets you need,
-                assign student work, capture notes, and open deeper tools only when you need them.
+                One screen for the class you are teaching: outcome, agenda, student work,
+                materials, reflection, and closeout. Customize only when something needs to change.
               </p>
             </div>
 
@@ -884,34 +883,6 @@ export default function AmbassadorCurriculumPage() {
           </div>
         </div>
 
-        <div className="grid gap-3 bg-[#F8FAFC] p-4 sm:grid-cols-2 lg:grid-cols-4 md:px-8">
-          <Link
-            href="/ambassador/planner"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-[#0D1B3D]"
-          >
-            Plan + Build →
-          </Link>
-          <button
-            type="button"
-            onClick={openAssignments}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black text-[#0D1B3D]"
-          >
-            Student Work →
-          </button>
-          <button
-            type="button"
-            onClick={openResourceHub}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-black text-[#0D1B3D]"
-          >
-            Asset Library →
-          </button>
-          <Link
-            href="/ambassador/messages"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-[#0D1B3D]"
-          >
-            Messages →
-          </Link>
-        </div>
       </section>
 
       {error && (
@@ -1171,7 +1142,7 @@ export default function AmbassadorCurriculumPage() {
                   </div>
 
                   <span className="w-fit rounded-full bg-white/10 px-4 py-2 text-xs font-black">
-                    {totalMinutes || lesson.estimatedMinutes} MIN
+                    {lesson.estimatedMinutes} MIN CLASS
                   </span>
                 </div>
               </div>
@@ -1206,9 +1177,9 @@ export default function AmbassadorCurriculumPage() {
                             </span>
                           </div>
 
-                          <p className="mt-2 text-sm leading-6 text-slate-600">
+                          <div className="mt-3 whitespace-pre-line rounded-xl bg-slate-50 p-3 text-sm leading-7 text-slate-700">
                             {task.instructions}
-                          </p>
+                          </div>
 
                         </div>
                       ))}
@@ -2222,46 +2193,59 @@ export default function AmbassadorCurriculumPage() {
         )}
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-              SUPPORTING TOOLS + LIBRARY
-            </p>
-
-            <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">
-              Need to go deeper?
-            </h2>
-
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              The Daily Teaching Plan is the primary facilitator view. Open supporting tools only for deeper guidance, student work setup, asset management, scheduling, or release controls.
-            </p>
+      <details className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none p-5">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
+            MANAGE + CUSTOMIZE
+          </p>
+          <div className="mt-1 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black text-[#0D1B3D]">
+                Need to change today&apos;s plan?
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Open only the tool you need. The teaching screen stays focused.
+              </p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-[#0D1B3D]">↓</span>
           </div>
+        </summary>
 
+        <div className="grid gap-3 border-t border-slate-200 p-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/ambassador/planner"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-[#0D1B3D]"
+          >
+            Edit / Customize Day →
+          </Link>
+          <Link
+            href={`/ambassador/lesson-builder?week=${selectedWeek}`}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-[#0D1B3D]"
+          >
+            Generate Activity →
+          </Link>
           <button
             type="button"
-            onClick={() => setShowFullTools((current) => !current)}
-            className="w-fit rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white"
+            onClick={openAssignments}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left text-sm font-black text-[#0D1B3D]"
           >
-            {showFullTools
-              ? "Hide Supporting Tools"
-              : "Open Supporting Tools"}
+            Manage Student Work →
+          </button>
+          <button
+            type="button"
+            onClick={openResourceHub}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left text-sm font-black text-[#0D1B3D]"
+          >
+            Open Asset Library →
           </button>
         </div>
-      </section>
+      </details>
 
-      {showFullTools && (
-        <TeacherGuideSection
-          title="Weekly Delivery Map"
-          description="Open the full delivery rhythm, daily flow, and teaching sequence."
-        >
-          <AmbassadorWeekDeliveryConsole week={lesson.weekNumber} />
-        </TeacherGuideSection>
-      )}
+      {/* Legacy weekly delivery console preserved in codebase; not rendered in focused Teach view. */}
 
       <section
         className={`${
-          showFullTools ? "" : "hidden"
+          "hidden"
         } rounded-3xl border border-slate-200 bg-white p-6 shadow-sm`}
       >
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -2325,7 +2309,7 @@ export default function AmbassadorCurriculumPage() {
 
       <section
         className={`${
-          showFullTools ? "" : "hidden"
+          "hidden"
         } overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm`}
       >
         <div className="border-b border-slate-200 bg-slate-50 p-6">
