@@ -822,6 +822,19 @@ model LessonDeliverySetting {
   @@index([lessonId])
 }
 
+model FacilitatorDailyNote {
+  id          String   @id @default(cuid())
+  lessonId    String
+  cohortId    String
+  dayNumber   Int
+  content     String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  @@index([lessonId, cohortId, dayNumber, createdAt])
+  @@index([cohortId, createdAt])
+}
+
 model LessonResource {
   id                   String             @id @default(cuid())
   lessonId             String

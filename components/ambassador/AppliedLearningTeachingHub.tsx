@@ -57,38 +57,38 @@ export default function AppliedLearningTeachingHub({ week }: Props) {
   }
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
             Applied Learning Lab
           </p>
 
-          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+          <h2 className="mt-0.5 text-sm font-black text-[#0D1B3D]">
             Week {week} · Practice It Before It Counts
           </h2>
 
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+          <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-600">
             Students do not just talk about the skill. They make a decision,
             communicate it, experience the consequence and get another chance to
             respond professionally.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-[#0D1B3D] px-5 py-4 text-white">
+        <div className="rounded-xl bg-[#0D1B3D] px-3 py-2 text-white">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#F2B705]">
             Hard Stop
           </p>
 
-          <p className="mt-1 text-xl font-black">50 Minutes</p>
+          <p className="mt-0.5 text-sm font-black">50 Minutes</p>
 
-          <p className="mt-1 text-xs text-slate-300">
+          <p className="mt-0.5 hidden text-[10px] text-slate-300 md:block">
             Built for one Ambassador class period
           </p>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-3 md:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
         <TimingCard
           time="5 MIN"
           title="Set the Room"
@@ -114,12 +114,12 @@ export default function AppliedLearningTeachingHub({ week }: Props) {
         />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+      <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
         <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-800">
           Facilitator Rule
         </p>
 
-        <p className="mt-2 text-sm font-semibold leading-6 text-amber-950">
+        <p className="mt-1 text-xs font-semibold leading-5 text-amber-950">
           Do not give students the answer before the activity. Let them make the
           choice first. The learning happens when they have to explain the
           decision, see what their choice created and try again.
@@ -493,12 +493,12 @@ function TimingCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
       <p className="text-xs font-black text-[#725500]">{time}</p>
 
       <p className="mt-1 font-black text-[#0D1B3D]">{title}</p>
 
-      <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">
+      <p className="mt-1 hidden text-[10px] font-semibold leading-4 text-slate-500 xl:block">
         {detail}
       </p>
     </div>

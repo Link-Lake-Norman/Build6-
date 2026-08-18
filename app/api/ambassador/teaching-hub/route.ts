@@ -267,6 +267,18 @@ export async function GET(request: NextRequest) {
         ],
       });
 
+    const dailyNotes =
+      await prisma.facilitatorDailyNote.findMany({
+        where: {
+          lessonId: lesson.id,
+          cohortId: AMBASSADOR_COHORT_ID,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 100,
+      });
+
     return NextResponse.json({
       program: {
         id: AMBASSADOR_PROGRAM_ID,
@@ -297,6 +309,7 @@ export async function GET(request: NextRequest) {
       resources: lesson.customResources,
       planTasks: lesson.planTasks,
       assignments,
+      dailyNotes,
     });
   } catch (error) {
     console.error(
@@ -585,6 +598,149 @@ export async function POST(
         {
           status: 404,
         }
+      );
+    }
+
+    if (action === "saveDailyNote") {
+      const dayNumber =
+        Number.isInteger(body.dayNumber) &&
+        body.dayNumber >= 1 &&
+        body.dayNumber <= 5
+          ? body.dayNumber
+          : null;
+
+      const content =
+        typeof body.content === "string"
+          ? body.content.trim()
+          : "";
+
+      if (!dayNumber || !content) {
+        return NextResponse.json(
+          {
+            error: "Day and note are required.",
+          },
+          {
+            status: 400,
+          },
+        );
+      }
+
+      const note =
+        await prisma.facilitatorDailyNote.create({
+          data: {
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            dayNumber,
+            content,
+            createdById: authorization.session.id,
+          },
+        });
+
+      return NextResponse.json(
+        {
+          success: true,
+          note,
+        },
+        {
+          status: 201,
+        },
+      );
+    }
+
+    if (action === "upsertDailyDirections") {
+      const dayNumber =
+        Number.isInteger(body.dayNumber) &&
+        body.dayNumber >= 1 &&
+        body.dayNumber <= 5
+          ? body.dayNumber
+          : null;
+
+      const instructions =
+        typeof body.instructions === "string"
+          ? body.instructions.trim()
+          : "";
+
+      if (!dayNumber) {
+        return NextResponse.json(
+          {
+            error: "A valid class day is required.",
+          },
+          {
+            status: 400,
+          },
+        );
+      }
+
+      const existing =
+        await prisma.lessonPlanTask.findFirst({
+          where: {
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            dayNumber,
+            taskType: "DAILY_DIRECTIONS",
+          },
+        });
+
+      if (existing) {
+        const task =
+          await prisma.lessonPlanTask.update({
+            where: {
+              id: existing.id,
+            },
+            data: {
+              title: `Day ${dayNumber} Assignment Directions`,
+              instructions:
+                instructions ||
+                "Complete the work assigned for today's class.",
+              requirement: "REQUIRED",
+              visibleToStudent: true,
+              visibleToFacilitator: true,
+            },
+          });
+
+        return NextResponse.json({
+          success: true,
+          task,
+        });
+      }
+
+      const taskCount =
+        await prisma.lessonPlanTask.count({
+          where: {
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            dayNumber,
+          },
+        });
+
+      const task =
+        await prisma.lessonPlanTask.create({
+          data: {
+            lessonId,
+            cohortId: AMBASSADOR_COHORT_ID,
+            taskType: "DAILY_DIRECTIONS",
+            title: `Day ${dayNumber} Assignment Directions`,
+            instructions:
+              instructions ||
+              "Complete the work assigned for today's class.",
+            dayNumber,
+            durationMinutes: 0,
+            requirement: "REQUIRED",
+            visibleToStudent: true,
+            visibleToFacilitator: true,
+            sortOrder: taskCount,
+            createdById: authorization.session.id,
+          },
+        });
+
+      return NextResponse.json(
+        {
+          success: true,
+          task,
+        },
+        {
+          status: 201,
+        },
       );
     }
 

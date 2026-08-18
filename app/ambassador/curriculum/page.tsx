@@ -124,6 +124,16 @@ type Assignment = {
   status: string;
 };
 
+type DailyTeachingNote = {
+  id: string;
+  lessonId: string;
+  cohortId: string;
+  dayNumber: number;
+  content: string;
+  createdById: string | null;
+  createdAt: string;
+};
+
 type TeachingHubResponse = {
   program: {
     id: string;
@@ -138,6 +148,7 @@ type TeachingHubResponse = {
   resources: Resource[];
   planTasks: PlanTask[];
   assignments: Assignment[];
+  dailyNotes: DailyTeachingNote[];
 };
 
 const tabs: { key: HubTab; label: string }[] = [
@@ -198,6 +209,8 @@ export default function AmbassadorCurriculumPage() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const [facilitatorNotes, setFacilitatorNotes] = useState("");
+
+  const [dailyDirections, setDailyDirections] = useState("");
 
   const [assignmentForm, setAssignmentForm] = useState({
     title: "",
@@ -274,7 +287,7 @@ export default function AmbassadorCurriculumPage() {
       const typedResult = result as TeachingHubResponse;
 
       setData(typedResult);
-      setFacilitatorNotes(typedResult.delivery?.facilitatorNotes ?? "");
+      setFacilitatorNotes("");
     } catch (caughtError) {
       setData(null);
 
@@ -291,6 +304,16 @@ export default function AmbassadorCurriculumPage() {
   useEffect(() => {
     loadWeek(selectedWeek);
   }, [selectedWeek]);
+
+  useEffect(() => {
+    const currentDirections = data?.planTasks.find(
+      (task) =>
+        task.dayNumber === selectedDay &&
+        task.taskType === "DAILY_DIRECTIONS",
+    );
+
+    setDailyDirections(currentDirections?.instructions ?? "");
+  }, [data, selectedDay]);
 
   async function patchDelivery(
     update: Record<string, unknown>,
@@ -329,7 +352,7 @@ export default function AmbassadorCurriculumPage() {
         };
       });
 
-      setFacilitatorNotes(result.delivery?.facilitatorNotes ?? "");
+      // Daily staff notes are append-only.
 
       setSaveMessage(successMessage);
     } catch (caughtError) {
@@ -1956,6 +1979,57 @@ export default function AmbassadorCurriculumPage() {
                 </DailyPilotCard>
               </div>
 
+              <div className="border-t border-slate-200 bg-white p-5 md:p-6">
+                <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+                      DAILY ASSIGNMENT DIRECTIONS
+                    </p>
+
+                    <h4 className="mt-1 text-lg font-black text-[#0D1B3D]">
+                      What students need to do after class
+                    </h4>
+
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Staff/admin editing only. Students see the saved directions
+                      with their daily closeout work.
+                    </p>
+
+                    <textarea
+                      value={dailyDirections}
+                      onChange={(event) =>
+                        setDailyDirections(event.target.value)
+                      }
+                      rows={3}
+                      placeholder="Example: Finish the reflection, upload your evidence, then complete today's Capstone build before the next class."
+                      className="mt-3 w-full rounded-xl border border-slate-300 bg-white p-4 text-sm text-[#0D1B3D] outline-none focus:border-[#4B2265]"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={async () => {
+                      const saved = await createHubItem(
+                        {
+                          action: "upsertDailyDirections",
+                          dayNumber: selectedDay,
+                          instructions: dailyDirections,
+                        },
+                        `Day ${selectedDay} directions saved.`,
+                      );
+
+                      if (saved) {
+                        await loadWeek(selectedWeek);
+                      }
+                    }}
+                    className="rounded-xl bg-[#4B2265] px-5 py-3 text-sm font-black text-white disabled:opacity-50"
+                  >
+                    {saving ? "Saving..." : "Save Directions"}
+                  </button>
+                </div>
+              </div>
+
               <div className="border-t border-slate-200 bg-[#FFFDF5] p-6 md:p-8">
                 <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
                   <div>
@@ -1972,16 +2046,62 @@ export default function AmbassadorCurriculumPage() {
                       placeholder="What worked, what students needed, what to revisit, speaker notes, classroom observations, or follow-up..."
                       className="mt-3 w-full rounded-xl border border-slate-300 bg-white p-4 text-sm text-[#0D1B3D] outline-none focus:border-[#F2B705]"
                     />
+
+                    <details className="mt-3 rounded-xl border border-slate-200 bg-white">
+                      <summary className="cursor-pointer list-none px-4 py-3 text-xs font-black text-[#0D1B3D]">
+                        PAST STAFF NOTES · {(data?.dailyNotes ?? []).length}
+                      </summary>
+
+                      <div className="max-h-72 space-y-3 overflow-y-auto border-t border-slate-200 p-4">
+                        {(data?.dailyNotes ?? []).length === 0 ? (
+                          <p className="text-xs text-slate-500">
+                            No daily staff notes have been saved yet.
+                          </p>
+                        ) : (
+                          (data?.dailyNotes ?? []).map((note) => (
+                            <div
+                              key={note.id}
+                              className="rounded-lg bg-slate-50 p-3"
+                            >
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#725500]">
+                                  Week {selectedWeek} · Day {note.dayNumber}
+                                </p>
+
+                                <p className="text-[10px] font-semibold text-slate-400">
+                                  {new Date(note.createdAt).toLocaleString()}
+                                </p>
+                              </div>
+
+                              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                                {note.content}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </details>
                   </div>
                   <button
                     type="button"
                     disabled={saving}
-                    onClick={() =>
-                      patchDelivery(
-                        { facilitatorNotes },
-                        "Facilitator notes saved.",
-                      )
-                    }
+                    onClick={async () => {
+                      if (!facilitatorNotes.trim()) return;
+
+                      const saved = await createHubItem(
+                        {
+                          action: "saveDailyNote",
+                          dayNumber: selectedDay,
+                          content: facilitatorNotes,
+                        },
+                        `Day ${selectedDay} staff note saved.`,
+                      );
+
+                      if (saved) {
+                        setFacilitatorNotes("");
+                        await loadWeek(selectedWeek);
+                      }
+                    }}
                     className="rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-50"
                   >
                     {saving ? "Saving..." : "Save Notes"}
@@ -2390,14 +2510,23 @@ export default function AmbassadorCurriculumPage() {
                 <button
                   type="button"
                   disabled={saving}
-                  onClick={() =>
-                    patchDelivery(
+                  onClick={async () => {
+                    if (!facilitatorNotes.trim()) return;
+
+                    const saved = await createHubItem(
                       {
-                        facilitatorNotes,
+                        action: "saveDailyNote",
+                        dayNumber: selectedDay,
+                        content: facilitatorNotes,
                       },
-                      "Facilitator notes saved.",
-                    )
-                  }
+                      `Day ${selectedDay} staff note saved.`,
+                    );
+
+                    if (saved) {
+                      setFacilitatorNotes("");
+                      await loadWeek(selectedWeek);
+                    }
+                  }}
                   className="mt-4 rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save Facilitator Notes"}

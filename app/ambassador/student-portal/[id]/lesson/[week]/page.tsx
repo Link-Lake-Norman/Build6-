@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletion";
 import StudentAppliedLearningLab from "@/components/student/StudentAppliedLearningLab";
+import StudentDailyCapstone from "@/components/student/StudentDailyCapstone";
 import type { StudentAppliedLearningAsset } from "@/components/student/StudentAppliedLearningLab";
 import { getAppliedLearningForWeek } from "@/content/applied-learning";
 
@@ -348,6 +349,12 @@ export default async function StudentLessonPage({ params }: PageProps) {
           assets={studentAppliedLearningAssets}
         />
       ) : null}
+
+      <StudentDailyCapstone
+        studentId={student.id}
+        lessonId={lesson.id}
+        weekNumber={lesson.weekNumber}
+      />
 
       <LessonCompletion
         week={lesson.weekNumber}
