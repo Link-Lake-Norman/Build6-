@@ -1082,6 +1082,40 @@ export default function AmbassadorCurriculumPage() {
             (task) => task.dayNumber === selectedDay
           );
 
+          const teachingTasks = dayTasks.filter((task) => {
+            const type = task.taskType.toLowerCase();
+            const title = task.title.toLowerCase();
+            return !(
+              type.includes("resource") ||
+              title === "lesson resources" ||
+              title === "resources"
+            );
+          });
+
+          const attachedLessonResources = dayTasks.flatMap((task) =>
+            task.resources?.map(({ id, resource }) => ({
+              id: `${task.id}-${id}`,
+              resource,
+            })) ?? []
+          );
+
+          const uniqueLessonResources = Array.from(
+            new Map(
+              attachedLessonResources.map((item) => [
+                item.resource.id || item.resource.fileName || item.resource.url || item.id,
+                item,
+              ])
+            ).values()
+          );
+
+          const todayAssignments = data.assignments.filter(
+            (assignment) => assignment.dayNumber === selectedDay
+          );
+
+          const sharedAssignments = data.assignments.filter(
+            (assignment) => assignment.dayNumber === null
+          );
+
           const discussions = dayTasks.filter((task) =>
             task.taskType.toLowerCase().includes("discussion")
           );
@@ -1149,9 +1183,9 @@ export default function AmbassadorCurriculumPage() {
                   eyebrow="1 · TEACHING FLOW"
                   title="Run the Class"
                 >
-                  {dayTasks.length > 0 ? (
+                  {teachingTasks.length > 0 ? (
                     <div className="space-y-3">
-                      {dayTasks.map((task) => (
+                      {teachingTasks.map((task) => (
                         <div
                           key={task.id}
                           className="rounded-xl border border-slate-200 bg-white p-4"
@@ -1176,82 +1210,65 @@ export default function AmbassadorCurriculumPage() {
                             {task.instructions}
                           </p>
 
-                          {task.resources?.length > 0 && (
-                            <div className="mt-4 border-t border-slate-100 pt-4">
-                              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-[#007C7C]">
-                                TODAY'S LESSON RESOURCES
-                              </p>
-
-                              <div className="space-y-2">
-                                {task.resources.map(
-                                  ({ id, resource }) => {
-                                    const sourceUrl =
-                                      resource.filePath
-                                        ? `/api/ambassador/resources/file?id=${resource.id}`
-                                        : resource.url;
-
-                                    if (!sourceUrl) return null;
-
-                                    const previewType =
-                                      resourcePreviewType(resource);
-
-                                    return (
-                                      <div
-                                        key={id}
-                                        className="rounded-xl border border-slate-200 bg-slate-50 p-3"
-                                      >
-                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                          <div className="min-w-0">
-                                            <p className="font-black text-[#0D1B3D]">
-                                              {resource.title}
-                                            </p>
-
-                                            <p className="mt-1 text-xs text-slate-500">
-                                              Ready to present, preview, or print during class.
-                                            </p>
-                                          </div>
-
-                                          <div className="flex flex-wrap gap-2">
-                                            <a
-                                              href={`/ambassador/resource-preview?src=${encodeURIComponent(
-                                                sourceUrl
-                                              )}&name=${encodeURIComponent(
-                                                resource.title
-                                              )}&type=${encodeURIComponent(
-                                                previewType
-                                              )}`}
-                                              target="_blank"
-                                              rel="noreferrer"
-                                              className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white"
-                                            >
-                                              Present / Preview
-                                            </a>
-
-                                            <a
-                                              href={
-                                                resource.filePath
-                                                  ? `/api/ambassador/resources/file?id=${resource.id}&download=1`
-                                                  : `${sourceUrl}${
-                                                      sourceUrl.includes("?")
-                                                        ? "&"
-                                                        : "?"
-                                                    }download=1`
-                                              }
-                                              className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
-                                            >
-                                              Print / Download
-                                            </a>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  }
-                                )}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       ))}
+
+                      {uniqueLessonResources.length > 0 && (
+                        <div className="rounded-2xl border border-[#00A6A6]/30 bg-[#EAFBFB] p-4">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#007C7C]">
+                                READY FOR CLASS
+                              </p>
+                              <p className="mt-1 text-sm font-black text-[#0D1B3D]">
+                                {uniqueLessonResources.length} lesson {uniqueLessonResources.length === 1 ? "resource" : "resources"} attached
+                              </p>
+                            </div>
+                            <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-[#007C7C]">
+                              DAY {selectedDay}
+                            </span>
+                          </div>
+
+                          <div className="mt-3 space-y-2">
+                            {uniqueLessonResources.map(({ id, resource }) => {
+                              const sourceUrl = resource.filePath
+                                ? `/api/ambassador/resources/file?id=${resource.id}`
+                                : resource.url;
+
+                              if (!sourceUrl) return null;
+
+                              const previewType = resourcePreviewType(resource);
+
+                              return (
+                                <div key={id} className="flex flex-col gap-3 rounded-xl border border-white bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+                                  <div className="min-w-0">
+                                    <p className="font-black text-[#0D1B3D]">{resource.title}</p>
+                                    <p className="mt-1 text-xs text-slate-500">Attached to today’s teaching plan.</p>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    <a
+                                      href={`/ambassador/resource-preview?src=${encodeURIComponent(sourceUrl)}&name=${encodeURIComponent(resource.title)}&type=${encodeURIComponent(previewType)}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white"
+                                    >
+                                      Present / Preview
+                                    </a>
+                                    <a
+                                      href={resource.filePath
+                                        ? `/api/ambassador/resources/file?id=${resource.id}&download=1`
+                                        : `${sourceUrl}${sourceUrl.includes("?") ? "&" : "?"}download=1`}
+                                      className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                    >
+                                      Print / Download
+                                    </a>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -1999,55 +2016,58 @@ export default function AmbassadorCurriculumPage() {
                   eyebrow="7 · ASSIGN / TURN IN"
                   title="Assignments & Evidence"
                 >
-                  {data.assignments.filter(
-                    (assignment) =>
-                      assignment.dayNumber === null ||
-                      assignment.dayNumber === selectedDay
-                  ).length > 0 ? (
-                    <div className="space-y-3">
-                      {data.assignments
-                        .filter(
-                          (assignment) =>
-                            assignment.dayNumber === null ||
-                            assignment.dayNumber === selectedDay
-                        )
-                        .map((assignment) => (
-                        <div
-                          key={assignment.id}
-                          className="rounded-xl border border-slate-200 bg-white p-3"
-                        >
-                          <div className="flex flex-wrap items-start justify-between gap-2">
-                            <p className="font-black text-[#0D1B3D]">
-                              {assignment.title}
-                            </p>
-
-                            <span className="rounded-full bg-[#EAFBFB] px-2 py-1 text-[10px] font-black text-[#007C7C]">
-                              {assignment.dayNumber
-                                ? `DAY ${assignment.dayNumber}`
-                                : "SHARED"}
-                            </span>
+                  {todayAssignments.length > 0 ? (
+                    <div>
+                      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-[#007C7C]">
+                        TODAY’S WORK · DAY {selectedDay}
+                      </p>
+                      <div className="space-y-3">
+                        {todayAssignments.map((assignment) => (
+                          <div key={assignment.id} className="rounded-xl border-2 border-[#00A6A6]/30 bg-[#F7FFFF] p-4">
+                            <div className="flex flex-wrap items-start justify-between gap-2">
+                              <p className="font-black text-[#0D1B3D]">{assignment.title}</p>
+                              <span className="rounded-full bg-[#00A6A6] px-2 py-1 text-[10px] font-black text-white">DAY {selectedDay}</span>
+                            </div>
+                            <p className="mt-2 text-sm leading-6">{assignment.instructions}</p>
+                            <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black text-slate-500">
+                              <span>{assignment.requirement}</span>
+                              <span>• {assignment.estimatedMinutes} min</span>
+                              {assignment.portfolioEligible && <span>• PORTFOLIO</span>}
+                            </div>
                           </div>
-
-                          <p className="mt-1 text-sm">
-                            {assignment.instructions}
-                          </p>
-
-                          <div className="mt-2 flex flex-wrap gap-2 text-[10px] font-black text-slate-500">
-                            <span>{assignment.requirement}</span>
-                            <span>• {assignment.estimatedMinutes} min</span>
-
-                            {assignment.portfolioEligible && (
-                              <span>• PORTFOLIO</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   ) : (
-                    <p>
-                      No additional lesson assignments have been created for
-                      this week.
-                    </p>
+                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                      <p className="font-black text-[#0D1B3D]">No Day {selectedDay} assignment is required.</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">Shared weekly work is available below without cluttering today’s required actions.</p>
+                    </div>
+                  )}
+
+                  {sharedAssignments.length > 0 && (
+                    <details className="group mt-4 rounded-xl border border-slate-200 bg-white">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#4B2265]">WEEKLY / SHARED WORK</p>
+                          <p className="mt-1 text-sm font-black text-[#0D1B3D]">{sharedAssignments.length} shared {sharedAssignments.length === 1 ? "assignment" : "assignments"}</p>
+                        </div>
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-[#0D1B3D] transition group-open:rotate-180">↓</span>
+                      </summary>
+                      <div className="space-y-3 border-t border-slate-200 p-4">
+                        {sharedAssignments.map((assignment) => (
+                          <div key={assignment.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                            <p className="font-black text-[#0D1B3D]">{assignment.title}</p>
+                            <p className="mt-1 text-sm leading-6">{assignment.instructions}</p>
+                            <div className="mt-2 flex flex-wrap gap-2 text-[10px] font-black text-slate-500">
+                              <span>{assignment.requirement}</span>
+                              <span>• {assignment.estimatedMinutes} min</span>
+                              {assignment.portfolioEligible && <span>• PORTFOLIO</span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </details>
                   )}
 
                   <button
@@ -2113,7 +2133,7 @@ export default function AmbassadorCurriculumPage() {
                       FACILITATOR NOTES
                     </p>
                     <h4 className="mt-1 text-lg font-black text-[#0D1B3D]">
-                      Capture what happened in class
+                      Close the class + capture what happened
                     </h4>
                     <textarea
                       value={facilitatorNotes}
