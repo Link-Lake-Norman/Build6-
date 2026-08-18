@@ -39,9 +39,9 @@ const classNavigation: NavItem[] = [
     description: "Generate optional classroom activities",
   },
   {
-    href: "/ambassador/curriculum",
+    href: "/ambassador/resources",
     label: "Teaching Resources",
-    description: "Guides, downloads, lesson assets and classroom materials",
+    description: "Preview, download and add lesson assets",
   },
 ];
 
@@ -75,6 +75,8 @@ function isWorkspacePath(pathname: string) {
     pathname.startsWith("/ambassador/planner/") ||
     pathname === "/ambassador/lesson-builder" ||
     pathname.startsWith("/ambassador/lesson-builder/") ||
+    pathname === "/ambassador/resources" ||
+    pathname.startsWith("/ambassador/resources/") ||
     pathname === "/ambassador/messages" ||
     pathname.startsWith("/ambassador/messages/")
   );
@@ -109,6 +111,10 @@ function isActive(pathname: string, href: string) {
 
   if (href === "/ambassador/facilitator/attendance") {
     return pathname === href;
+  }
+
+  if (href === "/ambassador/resources") {
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   if (href === "/ambassador/messages") {
