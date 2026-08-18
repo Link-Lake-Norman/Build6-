@@ -57,6 +57,11 @@ const studentNavigation: NavItem[] = [
     description: "Roster, Passport, portfolio and Capstone",
   },
   {
+    href: "/ambassador/facilitator/assessments",
+    label: "Assessments",
+    description: "Readiness and student assessment progress",
+  },
+  {
     href: "/ambassador/facilitator/attendance",
     label: "Attendance",
     description: "Record class attendance",
