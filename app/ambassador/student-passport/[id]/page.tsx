@@ -31,6 +31,8 @@ export default async function StudentPassportPage({ params }: PageProps) {
     redirect("/student-portal");
   }
 
+  const isStudentView = access.session.role === "STUDENT";
+
   const student = await prisma.student.findUnique({
     where: {
       id,
@@ -464,27 +466,37 @@ export default async function StudentPassportPage({ params }: PageProps) {
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-                Complete Your Future Ready™ Assessment
+                {isStudentView
+                  ? "Complete Your Future Ready™ Assessment"
+                  : "Future Ready™ Assessment Not Completed"}
               </h2>
 
               <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
-                Before you begin your Future Ready™ journey, complete your
-                starting assessment. This gives you a baseline of where you are
-                today across the skills you will build throughout the program.
+                {isStudentView
+                  ? "Before you begin your Future Ready™ journey, complete your starting assessment. This gives you a baseline of where you are today across the skills you will build throughout the program."
+                  : "This student has not yet completed the required starting assessment. Their readiness results will appear here automatically after they submit it."}
               </p>
 
-              <p className="mt-3 max-w-3xl font-bold text-[#0D1B3D]">
-                There are no right or wrong answers. Answer honestly based on
-                where you are right now.
-              </p>
+              {isStudentView ? (
+                <p className="mt-3 max-w-3xl font-bold text-[#0D1B3D]">
+                  There are no right or wrong answers. Answer honestly based on
+                  where you are right now.
+                </p>
+              ) : null}
             </div>
 
-            <Link
-              href={`/ambassador/student-portal/${student.id}/assessment`}
-              className="shrink-0 rounded-xl bg-[#00A6A6] px-8 py-4 text-center text-lg font-black text-white shadow-lg transition hover:bg-[#008C8C]"
-            >
-              Start My Assessment →
-            </Link>
+            {isStudentView ? (
+              <Link
+                href={`/ambassador/student-portal/${student.id}/assessment`}
+                className="shrink-0 rounded-xl bg-[#00A6A6] px-8 py-4 text-center text-lg font-black text-white shadow-lg transition hover:bg-[#008C8C]"
+              >
+                Start My Assessment →
+              </Link>
+            ) : (
+              <span className="shrink-0 rounded-xl border border-[#00A6A6] bg-white px-6 py-3 text-sm font-black text-[#007C7C]">
+                Not Completed
+              </span>
+            )}
           </div>
         </section>
       )}
@@ -527,7 +539,9 @@ export default async function StudentPassportPage({ params }: PageProps) {
             </p>
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-              My Future Ready™ Story
+              {isStudentView
+                ? "My Future Ready™ Story"
+                : "Future Ready™ Capstone"}
             </h2>
 
             <p className="mt-2 text-lg font-bold text-[#4B2265]">
@@ -535,11 +549,9 @@ export default async function StudentPassportPage({ params }: PageProps) {
             </p>
 
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
-              Your Capstone is the reflection book you will build throughout
-              Future Ready™. It brings together your identity, experiences,
-              skills, reflections, challenges, accomplishments, relationships,
-              career exploration, and future direction into the story of who you
-              are becoming.
+              {isStudentView
+                ? "Your Capstone is the reflection book you will build throughout Future Ready™. It brings together your identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction into the story of who you are becoming."
+                : "This student's Capstone develops throughout Future Ready™ and brings together identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction."}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
@@ -561,7 +573,9 @@ export default async function StudentPassportPage({ params }: PageProps) {
             href={`/ambassador/student-portal/${student.id}/capstone`}
             className="shrink-0 rounded-xl bg-[#0D1B3D] px-7 py-4 text-center text-lg font-black text-white shadow-lg transition hover:bg-[#162A59]"
           >
-            Open My Capstone →
+            {isStudentView
+              ? "Open My Capstone →"
+              : "Review Student Capstone →"}
           </Link>
         </div>
       </section>
@@ -569,7 +583,9 @@ export default async function StudentPassportPage({ params }: PageProps) {
       <section className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
         <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
-            Continue Your Journey
+            {isStudentView
+              ? "Continue Your Journey"
+              : "Student Journey"}
           </p>
 
           {currentLesson ? (

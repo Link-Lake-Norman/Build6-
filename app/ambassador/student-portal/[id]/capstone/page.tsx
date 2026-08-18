@@ -70,17 +70,26 @@ export default async function StudentCapstonePage({ params }: PageProps) {
     <main className="mx-auto max-w-6xl space-y-8 px-5 py-8 md:px-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
-          href={`/ambassador/student-portal/${student.id}`}
+          href={
+            session.role === "STUDENT"
+              ? `/ambassador/student-portal/${student.id}`
+              : `/ambassador/student-passport/${student.id}`
+          }
           className="font-black text-[#0D1B3D]"
         >
-          ← Back to My Dashboard
+          {session.role === "STUDENT"
+            ? "← Back to My Dashboard"
+            : "← Back to Student Passport"}
         </Link>
 
         <Link
           href={`/ambassador/student-passport/${student.id}/portfolio`}
           className="rounded-xl border border-[#0D1B3D] px-4 py-2 text-sm font-black text-[#0D1B3D]"
         >
-          My Evidence · {evidenceCount}
+          {session.role === "STUDENT"
+            ? "My Evidence"
+            : "Student Evidence"}{" "}
+          · {evidenceCount}
         </Link>
       </div>
 
@@ -138,7 +147,10 @@ export default async function StudentCapstonePage({ params }: PageProps) {
         </div>
       </section>
 
-      <CapstoneBrainMap studentId={student.id} />
+      <CapstoneBrainMap
+        studentId={student.id}
+        readOnly={session.role !== "STUDENT"}
+      />
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
