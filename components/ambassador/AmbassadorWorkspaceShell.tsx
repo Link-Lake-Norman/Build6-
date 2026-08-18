@@ -23,25 +23,33 @@ const primaryNavigation: NavItem[] = [
   {
     href: "/ambassador/facilitator",
     label: "Dashboard",
-    description: "Your cohort command center",
+    description: "Your cohort operating center",
   },
   {
     href: "/ambassador/curriculum",
-    label: "Teach",
-    description: "Run today's class",
-  },
-  {
-    href: "/ambassador/planner",
-    label: "Plan + Build",
-    description: "Customize the teaching plan",
+    label: "Lesson Plans",
+    description: "Follow the 16-week Future Ready™ plan",
   },
 ];
 
 const classNavigation: NavItem[] = [
   {
+    href: "/ambassador/lesson-builder",
+    label: "AI Activity Generator",
+    description: "Generate optional classroom activities",
+  },
+  {
+    href: "/ambassador/curriculum",
+    label: "Teaching Resources",
+    description: "Guides, downloads, lesson assets and classroom materials",
+  },
+];
+
+const studentNavigation: NavItem[] = [
+  {
     href: "/ambassador/facilitator/students",
     label: "Students",
-    description: "Roster, progress and work",
+    description: "Roster, Passport, portfolio and Capstone",
   },
   {
     href: "/ambassador/facilitator/attendance",
@@ -51,17 +59,11 @@ const classNavigation: NavItem[] = [
   {
     href: "/ambassador/messages",
     label: "Messages",
-    description: "Student communication",
+    description: "Student and program communication",
   },
 ];
 
-const toolNavigation: NavItem[] = [
-  {
-    href: "/ambassador/lesson-builder",
-    label: "Activity Builder",
-    description: "Generate or build activities",
-  },
-];
+const insightNavigation: NavItem[] = [];
 
 function isWorkspacePath(pathname: string) {
   return (
@@ -297,15 +299,15 @@ function WorkspaceSidebar({
       />
 
       <SidebarGroup
-        title="MANAGE CLASS"
+        title="TEACHING TOOLS"
         items={classNavigation}
         pathname={pathname}
         onNavigate={onNavigate}
       />
 
       <SidebarGroup
-        title="TOOLS"
-        items={toolNavigation}
+        title="STUDENTS + CLASS"
+        items={studentNavigation}
         pathname={pathname}
         onNavigate={onNavigate}
       />
@@ -322,6 +324,14 @@ function WorkspaceSidebar({
             className="block rounded-xl px-3 py-3 text-sm font-black text-slate-600 hover:bg-slate-100"
           >
             Admin Center ↗
+          </Link>
+
+          <Link
+            href="/ambassador/admin/asset-vault"
+            onClick={onNavigate}
+            className="mt-1 block rounded-xl px-3 py-3 text-sm font-black text-slate-600 hover:bg-slate-100"
+          >
+            Asset Vault ↗
           </Link>
         </div>
       ) : null}
