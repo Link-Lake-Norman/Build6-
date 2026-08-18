@@ -1,0 +1,589 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type FridayData = {
+  enabled: boolean;
+  weekNumber?: number;
+  account?: {
+    checkingCents: number;
+    savingsCents: number;
+    trustScore: number;
+    fridayStreak: number;
+  };
+  goal?: {
+    title: string;
+    targetCents: number;
+  } | null;
+  bills?: Array<{
+    id: string;
+    title: string;
+    amountCents: number;
+  }>;
+
+  heartbeat?: {
+    weeklyCreditsCents: number;
+    weeklyDebitsCents: number;
+    weeklyEarnedCents: number;
+    netWeekCents: number;
+
+    upcomingBillsCount: number;
+    upcomingBillsCents: number;
+
+    moneyIStillOweCents: number;
+    moneyOwedToMeCents: number;
+
+    lifeHappensCount: number;
+    warningCount: number;
+
+    warnings: Array<{
+      id: string;
+      type: string;
+      title: string;
+      amountCents: number;
+    }>;
+
+    goalProgress: number;
+    goalRemainingCents: number;
+
+    accountStatus: string;
+
+    weeklyTakeaway: string;
+  };
+
+  check?: {
+    status: string;
+    reviewedChecking: boolean;
+    reviewedSavings: boolean;
+    reviewedBills: boolean;
+    reviewedLoans: boolean;
+    reviewedGoal: boolean;
+  };
+  bonusCents?: number;
+  missedFeeCents?: number;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default function FutureReadyFriday({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<FridayData | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const [checks, setChecks] = useState({
+    reviewedChecking: false,
+    reviewedSavings: false,
+    reviewedBills: false,
+    reviewedLoans: false,
+    reviewedGoal: false,
+  });
+
+  const [moveToSavings, setMoveToSavings] = useState("0");
+
+  const [smartestDecision, setSmartestDecision] = useState("");
+
+  const [biggestSurprise, setBiggestSurprise] = useState("");
+
+  const [nextMoneyMove, setNextMoneyMove] = useState("");
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/friday`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Friday check.");
+      }
+
+      setData(result);
+
+      if (result.check) {
+        setChecks({
+          reviewedChecking: result.check.reviewedChecking,
+          reviewedSavings: result.check.reviewedSavings,
+          reviewedBills: result.check.reviewedBills,
+          reviewedLoans: result.check.reviewedLoans,
+          reviewedGoal: result.check.reviewedGoal,
+        });
+      }
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to load Friday check.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  function toggle(key: keyof typeof checks) {
+    setChecks((current) => ({
+      ...current,
+      [key]: !current[key],
+    }));
+  }
+
+  async function submit() {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/friday`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...checks,
+            moveToSavings: Number(moveToSavings),
+            smartestDecision,
+            biggestSurprise,
+            nextMoneyMove,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to complete Friday check.");
+      }
+
+      setMessage(result.message);
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to complete Friday check.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#F5F7FA] p-8">
+        Loading Future Ready Friday™...
+      </main>
+    );
+  }
+
+  if (!data?.enabled) {
+    return (
+      <main className="min-h-screen bg-[#F5F7FA] p-8">
+        <div className="mx-auto max-w-4xl rounded-3xl bg-white p-8">
+          Future Ready Friday™ is not active.
+        </div>
+      </main>
+    );
+  }
+
+  const alreadyComplete = data.check?.status === "COMPLETED";
+
+  const allReviewed = Object.values(checks).every(Boolean);
+
+  return (
+    <main className="min-h-screen bg-[#F5F7FA] px-5 py-8">
+      <div className="mx-auto max-w-5xl space-y-7">
+        <section className="rounded-[34px] bg-[#0D1B3D] p-8 text-white shadow-xl">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+            Week {data.weekNumber}
+          </p>
+
+          <h1 className="mt-3 text-4xl font-black">💰 Future Ready Friday™</h1>
+
+          <p className="mt-4 text-lg text-slate-200">
+            Check the account. Face the bills. Protect your goal. Decide what
+            happens next.
+          </p>
+
+          <div className="mt-7 grid gap-4 sm:grid-cols-4">
+            <Stat
+              label="Checking"
+              value={money(data.account?.checkingCents ?? 0)}
+            />
+            <Stat
+              label="Savings"
+              value={money(data.account?.savingsCents ?? 0)}
+            />
+            <Stat
+              label="Trust Score"
+              value={`${data.account?.trustScore ?? 0}/100`}
+            />
+            <Stat
+              label="Friday Streak"
+              value={`${data.account?.fridayStreak ?? 0} 🔥`}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+                Weekly Economy Heartbeat
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+                📊 What actually happened to your money?
+              </h2>
+            </div>
+
+            <span
+              className={`rounded-full px-4 py-2 text-xs font-black ${
+                data.heartbeat?.accountStatus === "RECOVERY"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-emerald-100 text-emerald-800"
+              }`}
+            >
+              {data.heartbeat?.accountStatus ?? "ACTIVE"}
+            </span>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <HeartbeatStat
+              emoji="💵"
+              label="Earned This Week"
+              value={money(data.heartbeat?.weeklyEarnedCents ?? 0)}
+            />
+
+            <HeartbeatStat
+              emoji="💸"
+              label="Money Out"
+              value={money(data.heartbeat?.weeklyDebitsCents ?? 0)}
+            />
+
+            <HeartbeatStat
+              emoji={(data.heartbeat?.netWeekCents ?? 0) >= 0 ? "📈" : "📉"}
+              label="Net This Week"
+              value={money(data.heartbeat?.netWeekCents ?? 0)}
+            />
+
+            <HeartbeatStat
+              emoji="🧾"
+              label="Bills Coming"
+              value={`${data.heartbeat?.upcomingBillsCount ?? 0} · ${money(
+                data.heartbeat?.upcomingBillsCents ?? 0,
+              )}`}
+            />
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <HeartbeatStat
+              emoji="🤝"
+              label="I Still Owe"
+              value={money(data.heartbeat?.moneyIStillOweCents ?? 0)}
+            />
+
+            <HeartbeatStat
+              emoji="💰"
+              label="Owed To Me"
+              value={money(data.heartbeat?.moneyOwedToMeCents ?? 0)}
+            />
+
+            <HeartbeatStat
+              emoji="🎲"
+              label="Life Happened"
+              value={`${data.heartbeat?.lifeHappensCount ?? 0} event${
+                (data.heartbeat?.lifeHappensCount ?? 0) === 1 ? "" : "s"
+              }`}
+            />
+
+            <HeartbeatStat
+              emoji={(data.heartbeat?.warningCount ?? 0) > 0 ? "⚠️" : "✅"}
+              label="Money Warnings"
+              value={`${data.heartbeat?.warningCount ?? 0}`}
+            />
+          </div>
+
+          {data.goal ? (
+            <div className="mt-6 rounded-2xl bg-[#EEF5FF] p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                    🎯 Goal Progress
+                  </p>
+
+                  <p className="mt-1 text-xl font-black text-[#0D1B3D]">
+                    {data.goal.title}
+                  </p>
+                </div>
+
+                <p className="text-2xl font-black text-[#0D1B3D]">
+                  {data.heartbeat?.goalProgress ?? 0}%
+                </p>
+              </div>
+
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-white">
+                <div
+                  className="h-full rounded-full bg-[#F2B705]"
+                  style={{
+                    width: `${data.heartbeat?.goalProgress ?? 0}%`,
+                  }}
+                />
+              </div>
+
+              <p className="mt-3 text-sm font-bold text-slate-600">
+                {money(data.heartbeat?.goalRemainingCents ?? 0)} left to reach
+                your target.
+              </p>
+            </div>
+          ) : null}
+
+          {(data.heartbeat?.warnings?.length ?? 0) > 0 ? (
+            <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5">
+              <p className="text-xs font-black uppercase tracking-wider text-red-700">
+                ⚠️ Money Got Expensive
+              </p>
+
+              <div className="mt-3 space-y-2">
+                {data.heartbeat?.warnings.map((warning) => (
+                  <div
+                    key={warning.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white px-4 py-3"
+                  >
+                    <div>
+                      <p className="font-black text-[#0D1B3D]">
+                        {warning.title}
+                      </p>
+
+                      <p className="text-xs font-bold text-slate-500">
+                        {warning.type.replaceAll("_", " ")}
+                      </p>
+                    </div>
+
+                    <p className="font-black text-red-700">
+                      -{money(warning.amountCents)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mt-6 rounded-2xl bg-[#FFF8D9] p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+              Street Smart Money Rule · This Week
+            </p>
+
+            <p className="mt-2 text-lg font-black leading-8 text-[#0D1B3D]">
+              {data.heartbeat?.weeklyTakeaway}
+            </p>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link
+              href={`/ambassador/student-portal/${studentId}/life-account/money-life`}
+              className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white"
+            >
+              💳 BILLS + GOALS
+            </Link>
+
+            <Link
+              href={`/ambassador/student-portal/${studentId}/life-account/money-circle`}
+              className="rounded-xl bg-violet-700 px-4 py-3 text-sm font-black text-white"
+            >
+              🤝 LOANS + GIVING
+            </Link>
+
+            <Link
+              href={`/ambassador/student-portal/${studentId}/life-account/life-happens`}
+              className="rounded-xl bg-red-700 px-4 py-3 text-sm font-black text-white"
+            >
+              🎲 LIFE HAPPENS™
+            </Link>
+
+            {data.heartbeat?.accountStatus === "RECOVERY" ? (
+              <Link
+                href={`/ambassador/student-portal/${studentId}/life-account/recovery`}
+                className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-black text-white"
+              >
+                🛠️ RECOVERY CENTER
+              </Link>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-white p-7 shadow-sm">
+          <h2 className="text-3xl font-black text-[#0D1B3D]">
+            Did you actually look?
+          </h2>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              ["reviewedChecking", "🏦 I checked my checking balance"],
+              ["reviewedSavings", "💰 I checked my savings"],
+              ["reviewedBills", "🧾 I reviewed my bills"],
+              ["reviewedLoans", "🤝 I checked money I owe or am owed"],
+              [
+                "reviewedGoal",
+                `🎯 I checked my goal: ${data.goal?.title ?? "Build wealth"}`,
+              ],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggle(key as keyof typeof checks)}
+                className={`rounded-2xl border p-5 text-left font-black ${
+                  checks[key as keyof typeof checks]
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                    : "border-slate-200"
+                }`}
+              >
+                {checks[key as keyof typeof checks] ? "✓ " : "○ "}
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-white p-7 shadow-sm">
+          <h2 className="text-2xl font-black text-[#0D1B3D]">
+            Move anything to savings?
+          </h2>
+
+          <input
+            type="number"
+            min="0"
+            value={moveToSavings}
+            onChange={(event) => setMoveToSavings(event.target.value)}
+            className="mt-4 w-full rounded-xl border border-slate-300 px-4 py-3 font-black"
+          />
+        </section>
+
+        <section className="rounded-3xl bg-white p-7 shadow-sm">
+          <h2 className="text-3xl font-black text-[#0D1B3D]">Money Q&A</h2>
+
+          <div className="mt-5 space-y-5">
+            <Question
+              label="What was your smartest money decision this week — and why?"
+              value={smartestDecision}
+              onChange={setSmartestDecision}
+            />
+
+            <Question
+              label="What cost you more than you expected this week?"
+              value={biggestSurprise}
+              onChange={setBiggestSurprise}
+            />
+
+            <Question
+              label="What will you do differently with your next $20?"
+              value={nextMoneyMove}
+              onChange={setNextMoneyMove}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-[#FFF8D9] p-7">
+          <p className="font-bold text-slate-700">
+            Complete check: +{money(data.bonusCents ?? 0)}
+            {" · "}
+            Miss it after Friday closes: -{money(data.missedFeeCents ?? 0)}
+          </p>
+
+          <button
+            type="button"
+            disabled={saving || !allReviewed || alreadyComplete}
+            onClick={submit}
+            className="mt-5 rounded-xl bg-[#0D1B3D] px-6 py-4 font-black text-white disabled:opacity-40"
+          >
+            {alreadyComplete ? "FRIDAY COMPLETE ✓" : "COMPLETE FRIDAY →"}
+          </button>
+
+          {message ? <p className="mt-4 font-black">🔊 {message}</p> : null}
+        </section>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="inline-flex rounded-xl bg-white px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          ← Back to Life Account
+        </Link>
+      </div>
+    </main>
+  );
+}
+
+function HeartbeatStat({
+  emoji,
+  label,
+  value,
+}: {
+  emoji: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <div className="text-2xl">{emoji}</div>
+
+      <p className="mt-3 text-[10px] font-black uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-1 text-xl font-black text-[#0D1B3D]">{value}</p>
+    </article>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white/10 p-4">
+      <p className="text-xs font-black uppercase text-slate-300">{label}</p>
+      <p className="mt-2 text-2xl font-black">{value}</p>
+    </div>
+  );
+}
+
+function Question({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="font-black text-[#0D1B3D]">{label}</span>
+
+      <textarea
+        rows={3}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 w-full rounded-xl border border-slate-300 p-4"
+      />
+    </label>
+  );
+}

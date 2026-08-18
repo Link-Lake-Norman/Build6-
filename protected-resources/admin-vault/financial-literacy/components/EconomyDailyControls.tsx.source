@@ -1,0 +1,457 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Student = {
+  id: string;
+  name: string;
+  checkingCents: number;
+  savingsCents: number;
+  trustScore: number;
+};
+
+type LifeDrop = {
+  key: string;
+  emoji: string;
+  title: string;
+  description: string;
+  direction: "CREDIT" | "DEBIT";
+  amountCents: number;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default function EconomyDailyControls({
+  cohortCode,
+  weekNumber,
+  dayNumber,
+}: {
+  cohortCode: string;
+  weekNumber: number;
+  dayNumber: number;
+}) {
+  const [students, setStudents] = useState<Student[]>([]);
+
+  const [cohortId, setCohortId] = useState("");
+
+  const [lifeDrops, setLifeDrops] = useState<LifeDrop[]>([]);
+
+  const [enabled, setEnabled] = useState(false);
+
+  const [studentId, setStudentId] = useState("ALL");
+
+  const [mode, setMode] = useState("BONUS");
+
+  const [amount, setAmount] = useState("10");
+
+  const [title, setTitle] = useState("");
+
+  const [description, setDescription] = useState("");
+
+  const [eventKey, setEventKey] = useState("");
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const [saving, setSaving] = useState(false);
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/classroom?cohortCode=${encodeURIComponent(
+          cohortCode,
+        )}`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Life Economy.");
+      }
+
+      setEnabled(
+        Boolean(
+          result.settings?.enabled &&
+          result.settings?.facilitatorControlsEnabled,
+        ),
+      );
+
+      setCohortId(
+        typeof result.cohort?.id === "string" ? result.cohort.id : "",
+      );
+
+      setStudents(result.students ?? []);
+
+      setLifeDrops(result.lifeDrops ?? []);
+
+      if (!eventKey && result.lifeDrops?.length) {
+        setEventKey(result.lifeDrops[0].key);
+      }
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to load Life Economy.",
+      );
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cohortCode]);
+
+  async function syncEarnings() {
+    if (!cohortId) {
+      setMessage("The cohort is still loading. Try again in a moment.");
+      return;
+    }
+
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/ambassador/economy/sync", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          cohortId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to sync automatic earnings.");
+      }
+
+      const transactions = Number(result.summary?.transactions ?? 0);
+
+      const totalCents = Number(result.summary?.cents ?? 0);
+
+      if (transactions > 0) {
+        setMessage(
+          `CHA-CHING! ${transactions} new earning${
+            transactions === 1 ? "" : "s"
+          } posted across the class for ${money(totalCents)}.`,
+        );
+      } else {
+        setMessage(
+          "Everyone is caught up — no new automatic earnings are waiting.",
+        );
+      }
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to sync automatic earnings.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function send(body: Record<string, unknown>) {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/ambassador/economy/classroom", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          cohortCode,
+          weekNumber,
+          dayNumber,
+          ...body,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to complete action.");
+      }
+
+      setMessage(result.message ?? "Done.");
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to complete action.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!enabled) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-[30px] border-2 border-[#F2B705]/50 bg-[#FFFDF4] p-6 shadow-sm md:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Life Economy · Daily Hub
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            💰 Run the Economy
+          </h2>
+
+          <p className="mt-2 max-w-3xl leading-7 text-slate-600">
+            Payday, bonuses, charges, refunds, bills and real-life surprises —
+            without leaving today's teaching plan.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            disabled={saving || !cohortId}
+            onClick={syncEarnings}
+            className="rounded-full bg-[#0D1B3D] px-4 py-2 text-xs font-black text-white shadow-sm transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {saving ? "SYNCING..." : "💸 SYNC EARNINGS"}
+          </button>
+
+          <span className="rounded-full bg-emerald-100 px-4 py-2 text-xs font-black text-emerald-800">
+            LIVE
+          </span>
+        </div>
+      </div>
+
+      {message ? (
+        <div className="mt-5 rounded-2xl bg-white p-4 font-black text-[#0D1B3D] shadow-sm">
+          🔊 {message}
+        </div>
+      ) : null}
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+            Quick Money Move
+          </p>
+
+          <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
+            Pay, reward or charge.
+          </h3>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <select
+              value={studentId}
+              onChange={(event) => setStudentId(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            >
+              <option value="ALL">Entire Cohort</option>
+
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.name} · {money(student.checkingCents)}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={mode}
+              onChange={(event) => setMode(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            >
+              <option value="PAY">💵 Payday</option>
+
+              <option value="BONUS">⭐ Bonus</option>
+
+              <option value="CHARGE">😬 Charge</option>
+
+              <option value="REFUND">↩ Refund</option>
+            </select>
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-[130px_1fr]">
+            <input
+              type="number"
+              min="1"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-black"
+              placeholder="Amount"
+            />
+
+            <input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+              placeholder="Great participation, payday, forgot homework..."
+            />
+          </div>
+
+          <textarea
+            rows={2}
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3"
+            placeholder="Optional explanation"
+          />
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              send({
+                action: "transaction",
+                studentId,
+                mode,
+                amount: Number(amount),
+                title,
+                description,
+              })
+            }
+            className="mt-4 rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white disabled:opacity-50"
+          >
+            APPLY {mode}
+          </button>
+        </div>
+
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+            🎲 Life Drop
+          </p>
+
+          <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
+            Real life just happened.
+          </h3>
+
+          <select
+            value={eventKey}
+            onChange={(event) => setEventKey(event.target.value)}
+            className="mt-5 w-full rounded-xl border border-slate-300 px-4 py-3 font-bold"
+          >
+            {lifeDrops.map((drop) => (
+              <option key={drop.key} value={drop.key}>
+                {drop.emoji} {drop.title} ·{" "}
+                {drop.direction === "CREDIT" ? "+" : "-"}
+                {money(drop.amountCents)}
+              </option>
+            ))}
+          </select>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() =>
+                send({
+                  action: "lifeDrop",
+                  studentId,
+                  eventKey,
+                })
+              }
+              className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D] disabled:opacity-50"
+            >
+              SEND LIFE DROP
+            </button>
+
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() =>
+                send({
+                  action: "lifeDrop",
+                  studentId,
+                  eventKey: "RANDOM",
+                })
+              }
+              className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-black text-[#0D1B3D] disabled:opacity-50"
+            >
+              SURPRISE ME 🎲
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+            🧾 Create a Bill
+          </p>
+
+          <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
+            Make real life recurring.
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Use the selected student above, or Entire Cohort.
+          </p>
+
+          <button
+            type="button"
+            disabled={saving || !title.trim() || Number(amount) <= 0}
+            onClick={() =>
+              send({
+                action: "bill",
+                studentId,
+                title,
+                description,
+                amount: Number(amount),
+                frequency: "MONTHLY",
+              })
+            }
+            className="mt-5 rounded-xl bg-slate-800 px-5 py-3 font-black text-white disabled:opacity-40"
+          >
+            ADD MONTHLY BILL
+          </button>
+        </div>
+
+        <div className="rounded-3xl border border-red-200 bg-red-50 p-6">
+          <p className="text-xs font-black uppercase tracking-wider text-red-700">
+            Friday Close
+          </p>
+
+          <h3 className="mt-2 text-xl font-black text-red-950">
+            Close Week {weekNumber}
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-red-800">
+            Students who finished Future Ready Friday™ are complete. Students
+            who missed the check receive the configured missed-check fee.
+          </p>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => {
+              const confirmed = window.confirm(
+                `Close Future Ready Friday™ for Week ${weekNumber}?`,
+              );
+
+              if (confirmed) {
+                send({
+                  action: "closeFriday",
+                });
+              }
+            }}
+            className="mt-5 rounded-xl bg-red-700 px-5 py-3 font-black text-white disabled:opacity-50"
+          >
+            CLOSE FRIDAY
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}

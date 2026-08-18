@@ -1,0 +1,410 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type Bill = {
+  id: string;
+  category: string;
+  title: string;
+  description: string | null;
+  amountCents: number;
+  frequency: string;
+  nextDueAt: string | null;
+};
+
+type Goal = {
+  id: string;
+  category: string;
+  title: string;
+  whyItMatters: string | null;
+  targetCents: number;
+};
+
+type Account = {
+  checkingCents: number;
+  savingsCents: number;
+  emergencyCents: number;
+  investmentCents: number;
+  retirementCents: number;
+};
+
+type Data = {
+  enabled: boolean;
+  account?: Account;
+  bills?: Bill[];
+  goals?: Goal[];
+  error?: string;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+const GOALS = [
+  ["CAR", "🚗", "Car"],
+  ["FIRST_HOME", "🏠", "First Home"],
+  ["VACATION", "🏝️", "Vacation"],
+  ["TRAVEL", "✈️", "Travel"],
+  ["SHOES", "👟", "Shoes / Nikes"],
+  ["FASHION", "👜", "Fashion / Luxury"],
+  ["TECHNOLOGY", "💻", "Technology"],
+  ["BUSINESS", "🚀", "Start a Business"],
+  ["WEALTH", "💰", "Build Wealth"],
+  ["FINANCIAL_FREEDOM", "🔥", "Financial Freedom"],
+  ["OTHER", "🎯", "My Goal"],
+];
+
+const PURCHASES = [
+  ["Lunch Out", 14],
+  ["Concert Ticket", 85],
+  ["New Nikes", 160],
+  ["Manicure", 55],
+  ["Gas", 45],
+  ["Junk Food Run", 18],
+  ["TikTok Store", 32],
+  ["New Headphones", 110],
+];
+
+export default function MoneyLifeDashboard({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<Data | null>(null);
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const [category, setCategory] = useState("CAR");
+
+  const [goalTitle, setGoalTitle] = useState("My first car");
+
+  const [goalTarget, setGoalTarget] = useState("5000");
+
+  const [whyItMatters, setWhyItMatters] = useState("");
+
+  async function load() {
+    const response = await fetch(
+      `/api/ambassador/economy/student/${studentId}/money-life`,
+      {
+        cache: "no-store",
+      },
+    );
+
+    const result = await response.json();
+
+    setData(result);
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  async function send(body: Record<string, unknown>) {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/money-life`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(body),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to save.");
+      }
+
+      setMessage(result.message ?? "Saved.");
+
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to save.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!data) {
+    return <div className="p-8">Loading your real-life money...</div>;
+  }
+
+  if (!data.enabled) {
+    return (
+      <div className="rounded-3xl bg-white p-8">Money Life is not active.</div>
+    );
+  }
+
+  const currentGoal = data.goals?.[0] ?? null;
+
+  return (
+    <div className="space-y-7">
+      <section className="rounded-[34px] bg-[#0D1B3D] p-8 text-white shadow-xl md:p-10">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+          Real Life · Real Choices
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black md:text-5xl">
+          💳 My Money Life
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
+          Bills do not care that concert tickets just dropped. Your goal does
+          not disappear because you wanted new shoes. Decide what matters.
+        </p>
+      </section>
+
+      {message ? (
+        <section className="rounded-2xl bg-[#FFF8D9] p-5 font-black text-[#0D1B3D]">
+          🔊 {message}
+        </section>
+      ) : null}
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <Stat
+          label="Checking"
+          value={money(data.account?.checkingCents ?? 0)}
+        />
+
+        <Stat label="Savings" value={money(data.account?.savingsCents ?? 0)} />
+
+        <Stat
+          label="Emergency"
+          value={money(data.account?.emergencyCents ?? 0)}
+        />
+
+        <Stat
+          label="Investing"
+          value={money(data.account?.investmentCents ?? 0)}
+        />
+
+        <Stat
+          label="Retirement"
+          value={money(data.account?.retirementCents ?? 0)}
+        />
+      </section>
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+          Bills
+        </p>
+
+        <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+          Life costs money.
+        </h2>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {data.bills?.length ? (
+            data.bills.map((bill) => (
+              <article
+                key={bill.id}
+                className="rounded-2xl border border-slate-200 p-5"
+              >
+                <div className="flex justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                      {bill.category.replaceAll("_", " ")}
+                    </p>
+
+                    <h3 className="mt-1 text-xl font-black text-[#0D1B3D]">
+                      {bill.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-xl font-black text-[#0D1B3D]">
+                    {money(bill.amountCents)}
+                  </p>
+                </div>
+
+                <p className="mt-3 text-sm text-slate-600">
+                  {bill.frequency}
+                  {bill.nextDueAt
+                    ? ` · Due ${new Date(bill.nextDueAt).toLocaleDateString()}`
+                    : ""}
+                </p>
+              </article>
+            ))
+          ) : (
+            <p className="text-slate-500">No active bills yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+          Temptation Station
+        </p>
+
+        <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+          Want it? Pay for it.
+        </h2>
+
+        <p className="mt-2 text-slate-600">
+          These are choices, not punishments.
+        </p>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {PURCHASES.map(([label, amount]) => (
+            <button
+              key={String(label)}
+              type="button"
+              disabled={saving}
+              onClick={() =>
+                send({
+                  action: "purchase",
+
+                  title: label,
+
+                  amount,
+                })
+              }
+              className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:border-[#F2B705] hover:bg-[#FFF9DF]"
+            >
+              <p className="font-black text-[#0D1B3D]">{label}</p>
+
+              <p className="mt-2 text-xl font-black text-slate-700">
+                ${amount}
+              </p>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-[30px] bg-[#EEF5FF] p-7">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0D1B3D]">
+          My Why
+        </p>
+
+        <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+          What are you willing to sacrifice for?
+        </h2>
+
+        {currentGoal ? (
+          <div className="mt-5 rounded-2xl bg-white p-5">
+            <p className="text-sm font-black uppercase text-slate-500">
+              Current Goal
+            </p>
+
+            <p className="mt-2 text-2xl font-black text-[#0D1B3D]">
+              🎯 {currentGoal.title}
+            </p>
+
+            <p className="mt-1 font-bold text-slate-600">
+              Target: {money(currentGoal.targetCents)}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {GOALS.map(([value, emoji, label]) => (
+            <button
+              type="button"
+              key={value}
+              onClick={() => {
+                setCategory(value);
+
+                setGoalTitle(label);
+              }}
+              className={`rounded-2xl border p-4 text-left font-black ${
+                category === value
+                  ? "border-[#F2B705] bg-[#FFF8D9]"
+                  : "border-slate-200 bg-white"
+              }`}
+            >
+              {emoji} {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <input
+            value={goalTitle}
+            onChange={(event) => setGoalTitle(event.target.value)}
+            className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            placeholder="Goal"
+          />
+
+          <input
+            type="number"
+            value={goalTarget}
+            onChange={(event) => setGoalTarget(event.target.value)}
+            className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            placeholder="Target amount"
+          />
+        </div>
+
+        <textarea
+          rows={3}
+          value={whyItMatters}
+          onChange={(event) => setWhyItMatters(event.target.value)}
+          className="mt-4 w-full rounded-xl border border-slate-300 p-4"
+          placeholder="Why is this worth saying no to other things?"
+        />
+
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() =>
+            send({
+              action: "updateGoal",
+
+              category,
+
+              title: goalTitle,
+
+              target: Number(goalTarget),
+
+              whyItMatters,
+            })
+          }
+          className="mt-4 rounded-xl bg-[#0D1B3D] px-6 py-3 font-black text-white"
+        >
+          SET MY GOAL
+        </button>
+      </section>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          ← Life Account
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/leaderboard`}
+          className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          🏆 Leaderboard
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <article className="rounded-2xl bg-white p-5 shadow-sm">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-2 text-2xl font-black text-[#0D1B3D]">{value}</p>
+    </article>
+  );
+}

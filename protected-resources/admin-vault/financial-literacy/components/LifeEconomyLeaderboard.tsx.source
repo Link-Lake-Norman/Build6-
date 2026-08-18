@@ -1,0 +1,440 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+
+type Milestone = {
+  key: string;
+  emoji: string;
+  title: string;
+  description: string;
+  level: number;
+};
+
+type Entry = {
+  studentId: string;
+  name: string;
+  isCurrentStudent: boolean;
+  rank: number;
+
+  checkingCents: number;
+  savingsCents: number;
+  emergencyCents: number;
+  investmentCents: number;
+  retirementCents: number;
+
+  totalPositionCents: number;
+  totalEarnedCents: number;
+
+  trustScore: number;
+  fridayStreak: number;
+  longestFridayStreak: number;
+
+  status: string;
+
+  goal: {
+    title: string;
+    targetCents: number;
+    savedCents: number;
+    progress: number;
+  } | null;
+
+  milestones: Milestone[];
+};
+
+type MilestoneWallItem = Milestone & {
+  studentId: string;
+  name: string;
+};
+
+type LeaderboardData = {
+  success?: boolean;
+  enabled: boolean;
+
+  cohort?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+
+  current?: Entry | null;
+
+  leaderboard?: Entry[];
+
+  milestones?: MilestoneWallItem[];
+
+  publicMilestonesEnabled?: boolean;
+
+  error?: string;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(cents / 100);
+}
+
+function rankDisplay(rank: number) {
+  if (rank === 1) {
+    return "🥇";
+  }
+
+  if (rank === 2) {
+    return "🥈";
+  }
+
+  if (rank === 3) {
+    return "🥉";
+  }
+
+  return `#${rank}`;
+}
+
+export default function LifeEconomyLeaderboard({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<LeaderboardData | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [celebration, setCelebration] = useState<string | null>(null);
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/leaderboard?studentId=${encodeURIComponent(
+          studentId,
+        )}`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = (await response.json()) as LeaderboardData;
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load leaderboard.");
+      }
+
+      setData(result);
+
+      const personalTop = result.current?.milestones?.[0];
+
+      if (personalTop) {
+        setCelebration(`${personalTop.emoji} CHA-CHING! ${personalTop.title}`);
+      }
+    } catch (error) {
+      setData({
+        enabled: false,
+
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to load leaderboard.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  const topThree = useMemo(() => data?.leaderboard?.slice(0, 3) ?? [], [data]);
+
+  if (loading) {
+    return (
+      <div className="rounded-3xl bg-white p-8 font-bold text-slate-600 shadow-sm">
+        Loading Life Economy leaderboard...
+      </div>
+    );
+  }
+
+  if (!data?.enabled) {
+    return (
+      <div className="rounded-3xl bg-white p-8 shadow-sm">
+        <h2 className="text-2xl font-black text-[#0D1B3D]">
+          Life Economy Leaderboard
+        </h2>
+
+        <p className="mt-3 text-slate-600">
+          {data?.error ?? "The leaderboard is not active for this cohort."}
+        </p>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="mt-5 inline-flex rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          Back to Life Account
+        </Link>
+      </div>
+    );
+  }
+
+  const entries = data.leaderboard ?? [];
+
+  return (
+    <div className="space-y-7">
+      <section className="overflow-hidden rounded-[34px] bg-[#0D1B3D] text-white shadow-xl">
+        <div className="p-8 md:p-10">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+            {data.cohort?.name}
+          </p>
+
+          <h1 className="mt-3 text-4xl font-black md:text-5xl">
+            🏆 Life Economy
+          </h1>
+
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
+            This is not about who spends the least. It is about building
+            financial position, savings habits, consistency and trust.
+          </p>
+        </div>
+
+        {data.current ? (
+          <div className="grid border-t border-white/10 sm:grid-cols-4">
+            <HeroStat label="My Rank" value={rankDisplay(data.current.rank)} />
+
+            <HeroStat
+              label="Financial Position"
+              value={money(data.current.totalPositionCents)}
+            />
+
+            <HeroStat
+              label="Savings"
+              value={money(data.current.savingsCents)}
+            />
+
+            <HeroStat
+              label="Friday Streak"
+              value={`${data.current.fridayStreak} 🔥`}
+            />
+          </div>
+        ) : null}
+      </section>
+
+      {celebration ? (
+        <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF8D9] p-6 shadow-sm">
+          <p className="text-2xl font-black text-[#0D1B3D]">🔊 {celebration}</p>
+
+          <p className="mt-2 text-slate-700">
+            Keep building. The goal is not one good week. The goal is creating
+            habits your future self can use.
+          </p>
+        </section>
+      ) : null}
+
+      {topThree.length ? (
+        <section>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Current Leaders
+          </p>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {topThree.map((entry) => (
+              <article
+                key={entry.studentId}
+                className={`rounded-[28px] border p-6 shadow-sm ${
+                  entry.isCurrentStudent
+                    ? "border-[#F2B705] bg-[#FFF8D9]"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <div className="text-4xl">{rankDisplay(entry.rank)}</div>
+
+                <h2 className="mt-4 text-xl font-black text-[#0D1B3D]">
+                  {entry.name}
+                </h2>
+
+                <p className="mt-1 text-sm font-bold text-slate-500">
+                  Financial Position
+                </p>
+
+                <p className="mt-1 text-3xl font-black text-[#0D1B3D]">
+                  {money(entry.totalPositionCents)}
+                </p>
+
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <MiniStat label="Saved" value={money(entry.savingsCents)} />
+
+                  <MiniStat label="Trust" value={`${entry.trustScore}`} />
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+              Cohort Board
+            </p>
+
+            <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+              Build. Save. Recover. Grow.
+            </h2>
+          </div>
+
+          <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
+            {entries.length} visible students
+          </span>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          {entries.map((entry) => (
+            <article
+              key={entry.studentId}
+              className={`grid gap-4 rounded-2xl border p-5 md:grid-cols-[70px_1.4fr_repeat(4,minmax(90px,.6fr))] md:items-center ${
+                entry.isCurrentStudent
+                  ? "border-[#F2B705] bg-[#FFF9DF]"
+                  : "border-slate-200 bg-white"
+              }`}
+            >
+              <div className="text-2xl font-black">
+                {rankDisplay(entry.rank)}
+              </div>
+
+              <div>
+                <p className="font-black text-[#0D1B3D]">
+                  {entry.name}
+                  {entry.isCurrentStudent ? " · YOU" : ""}
+                </p>
+
+                {entry.goal ? (
+                  <div className="mt-2">
+                    <div className="flex justify-between gap-3 text-xs font-bold text-slate-500">
+                      <span>🎯 {entry.goal.title}</span>
+
+                      <span>{entry.goal.progress}%</span>
+                    </div>
+
+                    <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full bg-[#F2B705]"
+                        style={{
+                          width: `${entry.goal.progress}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              <BoardStat
+                label="Position"
+                value={money(entry.totalPositionCents)}
+              />
+
+              <BoardStat label="Savings" value={money(entry.savingsCents)} />
+
+              <BoardStat label="Trust" value={`${entry.trustScore}/100`} />
+
+              <BoardStat label="Streak" value={`${entry.fridayStreak} 🔥`} />
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {data.publicMilestonesEnabled && data.milestones?.length ? (
+        <section className="rounded-[30px] bg-[#EEF5FF] p-6 md:p-8">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0D1B3D]">
+            🔊 Cohort Milestone Wall
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            CHA-CHING Moments
+          </h2>
+
+          <p className="mt-2 max-w-3xl leading-7 text-slate-600">
+            Celebrate progress, not perfection. These are financial habits worth
+            noticing.
+          </p>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {data.milestones.map((milestone) => (
+              <article
+                key={`${milestone.studentId}-${milestone.key}`}
+                className="rounded-2xl bg-white p-5 shadow-sm"
+              >
+                <div className="text-3xl">{milestone.emoji}</div>
+
+                <p className="mt-3 text-xs font-black uppercase tracking-wider text-slate-500">
+                  {milestone.name}
+                </p>
+
+                <h3 className="mt-1 text-lg font-black text-[#0D1B3D]">
+                  {milestone.title}
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {milestone.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          ← Life Account
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/friday`}
+          className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          Future Ready Friday™
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function HeroStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border-white/10 p-6 sm:border-l first:border-l-0">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+        {label}
+      </p>
+
+      <p className="mt-2 text-2xl font-black">{value}</p>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-3">
+      <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-1 font-black text-[#0D1B3D]">{value}</p>
+    </div>
+  );
+}
+
+function BoardStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+        {label}
+      </p>
+
+      <p className="mt-1 font-black text-[#0D1B3D]">{value}</p>
+    </div>
+  );
+}

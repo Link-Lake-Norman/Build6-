@@ -1,0 +1,456 @@
+import {
+  ensureLifeAccount,
+  postCheckingTransaction,
+} from "@/lib/economy/life-economy";
+import { prisma } from "@/lib/prisma";
+
+export type EconomyAutomationResult = {
+  studentId: string;
+  cohortId: string;
+
+  attendancePaid: number;
+  assignmentsPaid: number;
+  reflectionsPaid: number;
+  lessonsPaid: number;
+  portfolioPaid: number;
+
+  totalTransactions: number;
+  totalCents: number;
+};
+
+async function hasAlreadyPaid(idempotencyKey: string) {
+  const existing = await prisma.lifeTransaction.findUnique({
+    where: {
+      idempotencyKey,
+    },
+
+    select: {
+      id: true,
+    },
+  });
+
+  return Boolean(existing);
+}
+
+async function payOnce(input: {
+  accountId: string;
+
+  type:
+    | "ATTENDANCE_PAY"
+    | "ASSIGNMENT_PAY"
+    | "REFLECTION_PAY"
+    | "LESSON_COMPLETION_PAY"
+    | "PORTFOLIO_PAY";
+
+  amountCents: number;
+
+  title: string;
+  description: string;
+
+  sourceType: string;
+  sourceId: string;
+
+  idempotencyKey: string;
+
+  weekNumber?: number | null;
+}) {
+  const alreadyPaid = await hasAlreadyPaid(input.idempotencyKey);
+
+  if (alreadyPaid) {
+    return false;
+  }
+
+  await postCheckingTransaction({
+    accountId: input.accountId,
+
+    type: input.type,
+
+    direction: "CREDIT",
+
+    amountCents: input.amountCents,
+
+    title: input.title,
+
+    description: input.description,
+
+    sourceType: input.sourceType,
+
+    sourceId: input.sourceId,
+
+    idempotencyKey: input.idempotencyKey,
+
+    weekNumber: input.weekNumber ?? null,
+
+    automated: true,
+  });
+
+  return true;
+}
+
+export async function syncStudentLifeEconomy(
+  studentId: string,
+  cohortId: string,
+): Promise<EconomyAutomationResult> {
+  const result: EconomyAutomationResult = {
+    studentId,
+    cohortId,
+
+    attendancePaid: 0,
+    assignmentsPaid: 0,
+    reflectionsPaid: 0,
+    lessonsPaid: 0,
+    portfolioPaid: 0,
+
+    totalTransactions: 0,
+    totalCents: 0,
+  };
+
+  const settings = await prisma.economySettings.findUnique({
+    where: {
+      cohortId,
+    },
+  });
+
+  if (!settings || !settings.enabled || !settings.automatedEarningsEnabled) {
+    return result;
+  }
+
+  const enrollment = await prisma.enrollment.findFirst({
+    where: {
+      studentId,
+      cohortId,
+      status: "ACTIVE",
+    },
+
+    select: {
+      id: true,
+    },
+  });
+
+  if (!enrollment) {
+    return result;
+  }
+
+  const account = await ensureLifeAccount({
+    studentId,
+    cohortId,
+  });
+
+  if (settings.attendancePayEnabled && settings.attendancePayCents > 0) {
+    const records = await prisma.attendanceRecord.findMany({
+      where: {
+        studentId,
+        cohortId,
+        status: "PRESENT",
+      },
+
+      orderBy: {
+        date: "asc",
+      },
+    });
+
+    for (const record of records) {
+      const paid = await payOnce({
+        accountId: account.id,
+
+        type: "ATTENDANCE_PAY",
+
+        amountCents: settings.attendancePayCents,
+
+        title: "Showed Up Ready",
+
+        description: "Automatic Future Ready™ earnings for being present.",
+
+        sourceType: "AttendanceRecord",
+
+        sourceId: record.id,
+
+        idempotencyKey: `economy:attendance:${record.id}`,
+      });
+
+      if (paid) {
+        result.attendancePaid += 1;
+        result.totalTransactions += 1;
+        result.totalCents += settings.attendancePayCents;
+      }
+    }
+  }
+
+  if (settings.assignmentPayEnabled && settings.assignmentPayCents > 0) {
+    const submissions = await prisma.assignmentSubmission.findMany({
+      where: {
+        studentId,
+
+        status: {
+          in: ["SUBMITTED", "APPROVED"],
+        },
+
+        assignment: {
+          OR: [
+            {
+              cohortId,
+            },
+            {
+              cohortId: null,
+            },
+          ],
+        },
+      },
+
+      include: {
+        assignment: {
+          select: {
+            title: true,
+            lessonId: true,
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    const lessonIds = [
+      ...new Set(
+        submissions.map((submission) => submission.assignment.lessonId),
+      ),
+    ];
+
+    const lessons =
+      lessonIds.length > 0
+        ? await prisma.lesson.findMany({
+            where: {
+              id: {
+                in: lessonIds,
+              },
+            },
+
+            select: {
+              id: true,
+              weekNumber: true,
+            },
+          })
+        : [];
+
+    const weekByLessonId = new Map(
+      lessons.map((lesson) => [lesson.id, lesson.weekNumber]),
+    );
+
+    for (const submission of submissions) {
+      const paid = await payOnce({
+        accountId: account.id,
+
+        type: "ASSIGNMENT_PAY",
+
+        amountCents: settings.assignmentPayCents,
+
+        title: "Assignment Completed",
+
+        description: submission.assignment.title,
+
+        sourceType: "AssignmentSubmission",
+
+        sourceId: submission.id,
+
+        idempotencyKey: `economy:assignment:${submission.id}`,
+
+        weekNumber: weekByLessonId.get(submission.assignment.lessonId) ?? null,
+      });
+
+      if (paid) {
+        result.assignmentsPaid += 1;
+        result.totalTransactions += 1;
+        result.totalCents += settings.assignmentPayCents;
+      }
+    }
+  }
+
+  if (settings.reflectionPayEnabled && settings.reflectionPayCents > 0) {
+    const reflections = await prisma.reflection.findMany({
+      where: {
+        studentId,
+
+        status: {
+          in: ["SUBMITTED", "APPROVED"],
+        },
+      },
+
+      include: {
+        lesson: {
+          select: {
+            weekNumber: true,
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    for (const reflection of reflections) {
+      const paid = await payOnce({
+        accountId: account.id,
+
+        type: "REFLECTION_PAY",
+
+        amountCents: settings.reflectionPayCents,
+
+        title: "Reflection Submitted",
+
+        description:
+          "You documented what you learned and what you will do with it.",
+
+        sourceType: "Reflection",
+
+        sourceId: reflection.id,
+
+        idempotencyKey: `economy:reflection:${reflection.id}`,
+
+        weekNumber: reflection.lesson?.weekNumber ?? null,
+      });
+
+      if (paid) {
+        result.reflectionsPaid += 1;
+        result.totalTransactions += 1;
+        result.totalCents += settings.reflectionPayCents;
+      }
+    }
+  }
+
+  if (
+    settings.lessonCompletionPayEnabled &&
+    settings.lessonCompletionPayCents > 0
+  ) {
+    const progress = await prisma.lessonProgress.findMany({
+      where: {
+        studentId,
+
+        completedAt: {
+          not: null,
+        },
+      },
+
+      include: {
+        lesson: {
+          select: {
+            title: true,
+            weekNumber: true,
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    for (const item of progress) {
+      const paid = await payOnce({
+        accountId: account.id,
+
+        type: "LESSON_COMPLETION_PAY",
+
+        amountCents: settings.lessonCompletionPayCents,
+
+        title: "Lesson Completed",
+
+        description: item.lesson.title,
+
+        sourceType: "LessonProgress",
+
+        sourceId: item.id,
+
+        idempotencyKey: `economy:lesson:${item.id}`,
+
+        weekNumber: item.lesson.weekNumber,
+      });
+
+      if (paid) {
+        result.lessonsPaid += 1;
+        result.totalTransactions += 1;
+        result.totalCents += settings.lessonCompletionPayCents;
+      }
+    }
+  }
+
+  if (settings.portfolioPayEnabled && settings.portfolioPayCents > 0) {
+    const artifacts = await prisma.portfolioArtifact.findMany({
+      where: {
+        portfolio: {
+          studentId,
+        },
+      },
+
+      include: {
+        lesson: {
+          select: {
+            weekNumber: true,
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    for (const artifact of artifacts) {
+      const paid = await payOnce({
+        accountId: account.id,
+
+        type: "PORTFOLIO_PAY",
+
+        amountCents: settings.portfolioPayCents,
+
+        title: "Portfolio Evidence Added",
+
+        description: artifact.title,
+
+        sourceType: "PortfolioArtifact",
+
+        sourceId: artifact.id,
+
+        idempotencyKey: `economy:portfolio:${artifact.id}`,
+
+        weekNumber: artifact.lesson?.weekNumber ?? null,
+      });
+
+      if (paid) {
+        result.portfolioPaid += 1;
+        result.totalTransactions += 1;
+        result.totalCents += settings.portfolioPayCents;
+      }
+    }
+  }
+
+  return result;
+}
+
+export async function syncCohortLifeEconomy(cohortId: string) {
+  const enrollments = await prisma.enrollment.findMany({
+    where: {
+      cohortId,
+      status: "ACTIVE",
+
+      student: {
+        deletedAt: null,
+      },
+    },
+
+    select: {
+      studentId: true,
+    },
+  });
+
+  const results: EconomyAutomationResult[] = [];
+
+  for (const enrollment of enrollments) {
+    const result = await syncStudentLifeEconomy(enrollment.studentId, cohortId);
+
+    results.push(result);
+  }
+
+  return results;
+}

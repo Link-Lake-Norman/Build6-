@@ -1,0 +1,801 @@
+"use client";
+
+import Link from "next/link";
+
+import { useEffect, useMemo, useState } from "react";
+
+type Transaction = {
+  id: string;
+  type: string;
+  direction: "CREDIT" | "DEBIT";
+  amountCents: number;
+  title: string;
+  description: string | null;
+  balanceAfterCents: number | null;
+  automated: boolean;
+  createdAt: string;
+};
+
+type Account = {
+  id: string;
+  checkingCents: number;
+  savingsCents: number;
+  emergencyCents: number;
+  investmentCents: number;
+  retirementCents: number;
+  totalEarnedCents: number;
+  totalSpentCents: number;
+  totalSavedCents: number;
+  totalGivenCents: number;
+  trustScore: number;
+  fridayStreak: number;
+  firstPaycheckUnlocked: boolean;
+  transactions: Transaction[];
+};
+
+type Goal = {
+  id: string;
+  category: string;
+  title: string;
+  whyItMatters: string | null;
+  targetCents: number;
+  savedCents: number;
+};
+
+type EconomyData = {
+  success: boolean;
+  enabled: boolean;
+  student?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    displayName: string | null;
+  };
+  cohort?: {
+    id: string;
+    code: string;
+    name: string;
+  };
+  settings?: {
+    openingBalanceCents: number;
+    firstPaycheckCents: number;
+    savingsEnabled: boolean;
+    emergencyFundEnabled: boolean;
+    investingEnabled: boolean;
+    retirementEnabled: boolean;
+    fridayCheckEnabled: boolean;
+    peerGivingEnabled: boolean;
+    peerLendingEnabled: boolean;
+    leaderboardEnabled: boolean;
+  };
+  account?: Account;
+  primaryGoal?: Goal | null;
+  onboardingComplete?: boolean;
+  error?: string;
+};
+
+const GOALS = [
+  { value: "CAR", emoji: "🚗", label: "Car" },
+  { value: "FIRST_HOME", emoji: "🏠", label: "House / First Home" },
+  { value: "VACATION", emoji: "🏝️", label: "Vacation" },
+  { value: "TRAVEL", emoji: "✈️", label: "Travel" },
+  { value: "SHOES", emoji: "👟", label: "Shoes" },
+  { value: "FASHION", emoji: "👜", label: "Fashion / Something I Want" },
+  { value: "TECHNOLOGY", emoji: "💻", label: "Technology" },
+  { value: "EDUCATION", emoji: "🎓", label: "Education" },
+  { value: "BUSINESS", emoji: "🚀", label: "My Business" },
+  { value: "EMERGENCY_FUND", emoji: "🛟", label: "Emergency Fund" },
+  { value: "WEALTH", emoji: "💰", label: "Build Wealth" },
+  { value: "FINANCIAL_FREEDOM", emoji: "🔥", label: "Financial Freedom" },
+  { value: "OTHER", emoji: "🎯", label: "My Own Goal" },
+];
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+function friendlyType(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export default function StudentLifeAccount({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<EconomyData | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const [startingSavings, setStartingSavings] = useState("25");
+
+  const [goalCategory, setGoalCategory] = useState("CAR");
+
+  const [goalTitle, setGoalTitle] = useState("My first car");
+
+  const [goalAmount, setGoalAmount] = useState("5000");
+
+  const [whyItMatters, setWhyItMatters] = useState("");
+
+  const [savingsAmount, setSavingsAmount] = useState("10");
+
+  async function load() {
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = (await response.json()) as EconomyData;
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Life Account.");
+      }
+
+      setData(result);
+    } catch (error) {
+      setData({
+        success: false,
+        enabled: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to load Life Account.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  async function sendAction(body: Record<string, unknown>) {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to update account.");
+      }
+
+      setMessage(result.message ?? "Saved.");
+
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to save.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const account = data?.account;
+
+  const goal = data?.primaryGoal;
+
+  const cashTotal = account
+    ? account.checkingCents +
+      account.savingsCents +
+      account.emergencyCents +
+      account.investmentCents +
+      account.retirementCents
+    : 0;
+
+  const goalPercent = useMemo(() => {
+    if (!goal || goal.targetCents <= 0) {
+      return 0;
+    }
+
+    const saved = account?.savingsCents ?? goal.savedCents;
+
+    return Math.min(100, Math.round((saved / goal.targetCents) * 100));
+  }, [goal, account?.savingsCents]);
+
+  if (loading) {
+    return (
+      <div className="rounded-[30px] border border-slate-200 bg-white p-10 font-bold text-slate-600 shadow-sm">
+        Opening your Future Ready™ Life Account...
+      </div>
+    );
+  }
+
+  if (!data?.enabled) {
+    return (
+      <div className="rounded-[30px] border border-slate-200 bg-white p-10 shadow-sm">
+        <h2 className="text-2xl font-black text-[#0D1B3D]">Life Economy</h2>
+
+        <p className="mt-3 text-slate-600">
+          {data?.error ??
+            "The Life Economy is not currently active for this cohort."}
+        </p>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}`}
+          className="mt-6 inline-flex rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          Back to Dashboard
+        </Link>
+      </div>
+    );
+  }
+
+  if (!data.onboardingComplete) {
+    return (
+      <div className="space-y-7">
+        <section className="overflow-hidden rounded-[34px] bg-[#0D1B3D] text-white shadow-xl">
+          <div className="p-8 md:p-10">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+              Future Ready™ Life Economy
+            </p>
+
+            <h1 className="mt-4 max-w-3xl text-4xl font-black md:text-5xl">
+              Welcome to your first account.
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-200">
+              You are starting with <strong className="text-white">$100</strong>
+              . Before you earn your first paycheck, decide what your money is
+              going to do for you.
+            </p>
+          </div>
+
+          <div className="grid border-t border-white/10 md:grid-cols-3">
+            <div className="p-7">
+              <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                Opening Balance
+              </p>
+              <p className="mt-2 text-4xl font-black">$100.00</p>
+            </div>
+
+            <div className="border-white/10 p-7 md:border-l">
+              <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                First Paycheck
+              </p>
+              <p className="mt-2 text-4xl font-black text-[#F2B705]">+$500</p>
+              <p className="mt-1 text-xs text-slate-300">Unlocks after setup</p>
+            </div>
+
+            <div className="border-white/10 p-7 md:border-l">
+              <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                Rule #1
+              </p>
+              <p className="mt-2 font-black">Your money needs a purpose.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm md:p-9">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Step 1
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            Split your first $100.
+          </h2>
+
+          <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+            How much do you want to protect in savings before you get your first
+            paycheck?
+          </p>
+
+          <div className="mt-6 flex max-w-md items-center overflow-hidden rounded-2xl border border-slate-300 bg-white">
+            <span className="px-4 text-xl font-black text-slate-500">$</span>
+
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              value={startingSavings}
+              onChange={(event) => setStartingSavings(event.target.value)}
+              className="w-full px-2 py-4 text-2xl font-black outline-none"
+            />
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl bg-[#EEF5FF] p-5">
+              <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                Checking
+              </p>
+
+              <p className="mt-2 text-3xl font-black text-[#0D1B3D]">
+                ${Math.max(0, 100 - Number(startingSavings || 0)).toFixed(2)}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-emerald-50 p-5">
+              <p className="text-xs font-black uppercase tracking-wider text-emerald-700">
+                Savings
+              </p>
+
+              <p className="mt-2 text-3xl font-black text-emerald-900">
+                $
+                {Math.min(
+                  100,
+                  Math.max(0, Number(startingSavings || 0)),
+                ).toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm md:p-9">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Step 2
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            What are you building toward?
+          </h2>
+
+          <p className="mt-3 max-w-3xl leading-7 text-slate-600">
+            Maybe it's a car. Maybe it's your first house five years from now.
+            Maybe it's travel, Nikes, a business, Prada, college, financial
+            freedom, or simply having wealth.
+          </p>
+
+          <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {GOALS.map((item) => (
+              <button
+                type="button"
+                key={item.value}
+                onClick={() => {
+                  setGoalCategory(item.value);
+
+                  if (item.value !== "OTHER") {
+                    setGoalTitle(item.label);
+                  }
+                }}
+                className={`rounded-2xl border p-5 text-left transition ${
+                  goalCategory === item.value
+                    ? "border-[#F2B705] bg-[#FFF8D9] ring-2 ring-[#F2B705]/30"
+                    : "border-slate-200 bg-white hover:border-slate-400"
+                }`}
+              >
+                <span className="text-3xl">{item.emoji}</span>
+
+                <p className="mt-3 font-black text-[#0D1B3D]">{item.label}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-7 grid gap-5 md:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-black text-slate-700">
+                Name your goal
+              </span>
+
+              <input
+                value={goalTitle}
+                onChange={(event) => setGoalTitle(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-bold outline-none focus:border-[#0D1B3D]"
+                placeholder="My first car"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-sm font-black text-slate-700">
+                How much will you need?
+              </span>
+
+              <div className="mt-2 flex overflow-hidden rounded-2xl border border-slate-300">
+                <span className="px-4 py-4 font-black text-slate-500">$</span>
+
+                <input
+                  type="number"
+                  min="1"
+                  value={goalAmount}
+                  onChange={(event) => setGoalAmount(event.target.value)}
+                  className="w-full py-4 pr-4 font-bold outline-none"
+                />
+              </div>
+            </label>
+          </div>
+
+          <label className="mt-5 block">
+            <span className="text-sm font-black text-slate-700">
+              Why does this matter to you?
+            </span>
+
+            <textarea
+              value={whyItMatters}
+              onChange={(event) => setWhyItMatters(event.target.value)}
+              rows={4}
+              className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 leading-7 outline-none focus:border-[#0D1B3D]"
+              placeholder="What would reaching this goal give you, change for you, or make possible?"
+            />
+          </label>
+        </section>
+
+        <section className="rounded-[30px] border border-[#F2B705]/50 bg-[#FFF8D9] p-7 md:p-9">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Ready?
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            Make your first money move.
+          </h2>
+
+          <p className="mt-3 max-w-2xl leading-7 text-slate-700">
+            Complete your setup and Future Ready™ will deposit your first
+            simulated $500 paycheck.
+          </p>
+
+          {message ? (
+            <p className="mt-4 font-black text-[#0D1B3D]">{message}</p>
+          ) : null}
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              sendAction({
+                action: "onboard",
+                startingSavings: Number(startingSavings),
+                goalCategory,
+                goalTitle,
+                goalAmount: Number(goalAmount),
+                whyItMatters,
+              })
+            }
+            className="mt-6 rounded-2xl bg-[#0D1B3D] px-7 py-4 text-lg font-black text-white shadow-lg disabled:opacity-50"
+          >
+            {saving ? "Opening Account..." : "OPEN MY LIFE ACCOUNT →"}
+          </button>
+        </section>
+      </div>
+    );
+  }
+
+  if (!account) {
+    return (
+      <div className="rounded-3xl bg-white p-8">Life Account unavailable.</div>
+    );
+  }
+
+  return (
+    <div className="space-y-7">
+      <section className="overflow-hidden rounded-[34px] bg-[#0D1B3D] text-white shadow-xl">
+        <div className="flex flex-wrap items-start justify-between gap-6 p-8 md:p-10">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+              Future Ready™ Life Account
+            </p>
+
+            <h1 className="mt-3 text-4xl font-black">
+              Hey, {data.student?.firstName}.
+            </h1>
+
+            <p className="mt-2 text-slate-300">
+              Your choices are building your financial life.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/10 px-5 py-4 backdrop-blur">
+            <p className="text-xs font-black uppercase tracking-wider text-slate-300">
+              Trust Score
+            </p>
+
+            <p className="mt-1 text-3xl font-black text-[#F2B705]">
+              {account.trustScore}/100
+            </p>
+          </div>
+        </div>
+
+        <div className="grid border-t border-white/10 sm:grid-cols-3">
+          <div className="p-7">
+            <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+              Checking
+            </p>
+            <p className="mt-2 text-4xl font-black">
+              {money(account.checkingCents)}
+            </p>
+          </div>
+
+          <div className="border-white/10 p-7 sm:border-l">
+            <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+              Savings
+            </p>
+            <p className="mt-2 text-4xl font-black text-emerald-300">
+              {money(account.savingsCents)}
+            </p>
+          </div>
+
+          <div className="border-white/10 p-7 sm:border-l">
+            <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+              Total Cash
+            </p>
+            <p className="mt-2 text-4xl font-black text-[#F2B705]">
+              {money(cashTotal)}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {message ? (
+        <div className="rounded-2xl border border-[#F2B705]/50 bg-[#FFF8D9] p-5 font-black text-[#0D1B3D]">
+          🔊 {message}
+        </div>
+      ) : null}
+
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_.8fr]">
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            My Big Goal
+          </p>
+
+          {goal ? (
+            <>
+              <div className="mt-4 flex items-start justify-between gap-5">
+                <div>
+                  <h2 className="text-3xl font-black text-[#0D1B3D]">
+                    {goal.title}
+                  </h2>
+
+                  {goal.whyItMatters ? (
+                    <p className="mt-2 leading-7 text-slate-600">
+                      {goal.whyItMatters}
+                    </p>
+                  ) : null}
+                </div>
+
+                <p className="whitespace-nowrap text-lg font-black text-[#0D1B3D]">
+                  {money(goal.targetCents)}
+                </p>
+              </div>
+
+              <div className="mt-7 h-5 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-[#F2B705]"
+                  style={{
+                    width: `${goalPercent}%`,
+                  }}
+                />
+              </div>
+
+              <div className="mt-3 flex justify-between text-sm font-black">
+                <span className="text-emerald-700">
+                  {money(account.savingsCents)} saved
+                </span>
+                <span className="text-slate-500">{goalPercent}%</span>
+              </div>
+            </>
+          ) : (
+            <p className="mt-4 text-slate-600">No active goal.</p>
+          )}
+        </section>
+
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Pay Yourself First
+          </p>
+
+          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+            Move money to savings.
+          </h2>
+
+          <div className="mt-5 flex overflow-hidden rounded-2xl border border-slate-300">
+            <span className="px-4 py-4 font-black text-slate-500">$</span>
+
+            <input
+              type="number"
+              min="1"
+              value={savingsAmount}
+              onChange={(event) => setSavingsAmount(event.target.value)}
+              className="w-full py-4 pr-4 font-black outline-none"
+            />
+          </div>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              sendAction({
+                action: "moveToSavings",
+                amount: Number(savingsAmount),
+              })
+            }
+            className="mt-4 w-full rounded-2xl bg-emerald-600 px-5 py-4 font-black text-white disabled:opacity-50"
+          >
+            MOVE TO SAVINGS
+          </button>
+        </section>
+      </div>
+
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat
+          emoji="💵"
+          label="Total Earned"
+          value={money(account.totalEarnedCents)}
+        />
+
+        <Stat
+          emoji="🛍️"
+          label="Total Spent"
+          value={money(account.totalSpentCents)}
+        />
+
+        <Stat
+          emoji="🏦"
+          label="Total Saved"
+          value={money(account.totalSavedCents)}
+        />
+
+        <Stat
+          emoji="🤝"
+          label="Total Given"
+          value={money(account.totalGivenCents)}
+        />
+      </section>
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+              Money Activity
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+              My Transactions
+            </h2>
+          </div>
+
+          <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
+            Real-time ledger
+          </span>
+        </div>
+
+        <div className="mt-6 divide-y divide-slate-100">
+          {account.transactions.length ? (
+            account.transactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="flex items-center justify-between gap-5 py-5"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-black text-[#0D1B3D]">
+                      {transaction.title}
+                    </p>
+
+                    {transaction.automated ? (
+                      <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-black uppercase text-sky-700">
+                        Auto
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <p className="mt-1 text-xs font-bold text-slate-500">
+                    {friendlyType(transaction.type)} ·{" "}
+                    {new Date(transaction.createdAt).toLocaleDateString()}
+                  </p>
+
+                  {transaction.description ? (
+                    <p className="mt-1 text-sm text-slate-500">
+                      {transaction.description}
+                    </p>
+                  ) : null}
+                </div>
+
+                <p
+                  className={`whitespace-nowrap text-lg font-black ${
+                    transaction.direction === "CREDIT"
+                      ? "text-emerald-600"
+                      : "text-slate-900"
+                  }`}
+                >
+                  {transaction.direction === "CREDIT" ? "+" : "-"}
+                  {money(transaction.amountCents)}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="py-8 text-slate-500">Your money story starts here.</p>
+          )}
+        </div>
+      </section>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/ambassador/student-portal/${studentId}`}
+          className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          ← Student Dashboard
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/recovery`}
+          className="rounded-xl bg-red-800 px-5 py-3 font-black text-white"
+        >
+          🛠️ RECOVERY CENTER
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/money-circle`}
+          className="rounded-xl bg-violet-700 px-5 py-3 font-black text-white"
+        >
+          🤝 MONEY CIRCLE™
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/life-happens`}
+          className="rounded-xl bg-red-600 px-5 py-3 font-black text-white"
+        >
+          🎲 LIFE HAPPENS™
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/money-life`}
+          className="rounded-xl bg-emerald-600 px-5 py-3 font-black text-white"
+        >
+          💳 MY MONEY LIFE
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/leaderboard`}
+          className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          🏆 LIFE ECONOMY LEADERBOARD
+        </Link>
+
+        <Link
+          href={`/ambassador/student-passport/${studentId}`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          My Passport
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function Stat({
+  emoji,
+  label,
+  value,
+}: {
+  emoji: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="text-2xl">{emoji}</div>
+
+      <p className="mt-4 text-xs font-black uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-2 text-2xl font-black text-[#0D1B3D]">{value}</p>
+    </article>
+  );
+}

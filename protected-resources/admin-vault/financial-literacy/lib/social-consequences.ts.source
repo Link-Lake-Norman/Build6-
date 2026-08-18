@@ -1,0 +1,227 @@
+import { prisma } from "@/lib/prisma";
+
+export type SocialConsequenceResult = {
+  cohortId: string;
+  studentId?: string;
+
+  markedLate: number;
+  markedDefaulted: number;
+  restoredActive: number;
+};
+
+export async function reconcileStudentSocialConsequences(
+  studentId: string,
+  cohortId: string,
+): Promise<SocialConsequenceResult> {
+  const result: SocialConsequenceResult = {
+    cohortId,
+    studentId,
+    markedLate: 0,
+    markedDefaulted: 0,
+    restoredActive: 0,
+  };
+
+  const settings = await prisma.economySettings.findUnique({
+    where: {
+      cohortId,
+    },
+  });
+
+  if (!settings?.enabled || !settings.peerLendingEnabled) {
+    return result;
+  }
+
+  const account = await prisma.lifeAccount.findUnique({
+    where: {
+      studentId_cohortId: {
+        studentId,
+        cohortId,
+      },
+    },
+  });
+
+  if (!account) {
+    return result;
+  }
+
+  const now = new Date();
+
+  /*
+   * =====================================================
+   * ACTIVE -> LATE
+   * =====================================================
+   */
+
+  const overdueActiveLoans = await prisma.peerLoan.findMany({
+    where: {
+      cohortId,
+
+      borrowerStudentId: studentId,
+
+      status: "ACTIVE",
+
+      dueAt: {
+        lt: now,
+      },
+    },
+  });
+
+  for (const loan of overdueActiveLoans) {
+    await prisma.peerLoan.update({
+      where: {
+        id: loan.id,
+      },
+
+      data: {
+        status: "LATE",
+      },
+    });
+
+    await prisma.lifeAccount.update({
+      where: {
+        id: account.id,
+      },
+
+      data: {
+        trustScore: {
+          decrement: 3,
+        },
+      },
+    });
+
+    result.markedLate += 1;
+  }
+
+  /*
+   * =====================================================
+   * LATE -> DEFAULTED
+   *
+   * Seven days after the original due date.
+   * =====================================================
+   */
+
+  const defaultThreshold = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const seriouslyLateLoans = await prisma.peerLoan.findMany({
+    where: {
+      cohortId,
+
+      borrowerStudentId: studentId,
+
+      status: "LATE",
+
+      dueAt: {
+        lt: defaultThreshold,
+      },
+    },
+  });
+
+  for (const loan of seriouslyLateLoans) {
+    await prisma.peerLoan.update({
+      where: {
+        id: loan.id,
+      },
+
+      data: {
+        status: "DEFAULTED",
+      },
+    });
+
+    await prisma.lifeAccount.update({
+      where: {
+        id: account.id,
+      },
+
+      data: {
+        trustScore: {
+          decrement: 10,
+        },
+
+        status: "RECOVERY",
+      },
+    });
+
+    result.markedDefaulted += 1;
+  }
+
+  /*
+   * =====================================================
+   * RECOVERY -> ACTIVE
+   *
+   * Student exits Recovery Mode when no unresolved
+   * late/defaulted loans remain.
+   * =====================================================
+   */
+
+  const refreshedAccount = await prisma.lifeAccount.findUnique({
+    where: {
+      id: account.id,
+    },
+
+    select: {
+      status: true,
+    },
+  });
+
+  if (refreshedAccount?.status === "RECOVERY") {
+    const unresolved = await prisma.peerLoan.count({
+      where: {
+        cohortId,
+
+        borrowerStudentId: studentId,
+
+        status: {
+          in: ["LATE", "DEFAULTED"],
+        },
+      },
+    });
+
+    if (unresolved === 0) {
+      await prisma.lifeAccount.update({
+        where: {
+          id: account.id,
+        },
+
+        data: {
+          status: "ACTIVE",
+
+          trustScore: {
+            increment: 3,
+          },
+        },
+      });
+
+      result.restoredActive += 1;
+    }
+  }
+
+  return result;
+}
+
+export async function reconcileCohortSocialConsequences(cohortId: string) {
+  const enrollments = await prisma.enrollment.findMany({
+    where: {
+      cohortId,
+
+      status: "ACTIVE",
+
+      student: {
+        deletedAt: null,
+      },
+    },
+
+    select: {
+      studentId: true,
+    },
+  });
+
+  const results: SocialConsequenceResult[] = [];
+
+  for (const enrollment of enrollments) {
+    results.push(
+      await reconcileStudentSocialConsequences(enrollment.studentId, cohortId),
+    );
+  }
+
+  return results;
+}

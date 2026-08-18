@@ -1,0 +1,455 @@
+import type { Prisma } from "@/lib/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+
+export const MONEY = {
+  dollars(value: number) {
+    return Math.round(value * 100);
+  },
+
+  display(cents: number) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(cents / 100);
+  },
+};
+
+type PostTransactionInput = {
+  accountId: string;
+
+  type:
+    | "OPENING_BALANCE"
+    | "PAYDAY"
+    | "ATTENDANCE_PAY"
+    | "ASSIGNMENT_PAY"
+    | "REFLECTION_PAY"
+    | "LESSON_COMPLETION_PAY"
+    | "PORTFOLIO_PAY"
+    | "FRIDAY_CHECK_BONUS"
+    | "STREAK_BONUS"
+    | "SKILL_BONUS"
+    | "LEADERSHIP_BONUS"
+    | "INITIATIVE_BONUS"
+    | "FACILITATOR_BONUS"
+    | "SIDE_HUSTLE"
+    | "CUSTOM_EARNING"
+    | "PURCHASE"
+    | "BILL_PAYMENT"
+    | "GAS"
+    | "FOOD"
+    | "INSURANCE"
+    | "SUBSCRIPTION"
+    | "ENTERTAINMENT"
+    | "CONCERT"
+    | "CLOTHING"
+    | "BEAUTY"
+    | "TECHNOLOGY"
+    | "TRANSPORTATION"
+    | "DONATION"
+    | "COMMUNITY_FUND"
+    | "PEER_GIFT"
+    | "PEER_LOAN_OUT"
+    | "PEER_LOAN_IN"
+    | "PEER_REPAYMENT"
+    | "SAVINGS_TRANSFER"
+    | "SAVINGS_WITHDRAWAL"
+    | "LATE_FEE"
+    | "OVERDRAFT_FEE"
+    | "ACCOUNT_NEGLECT_FEE"
+    | "MISSED_OBLIGATION"
+    | "CUSTOM_CHARGE"
+    | "REFUND"
+    | "INTEREST"
+    | "EMPLOYER_MATCH"
+    | "LIFE_EVENT"
+    | "ADJUSTMENT";
+
+  direction: "CREDIT" | "DEBIT";
+
+  amountCents: number;
+
+  title: string;
+  description?: string | null;
+
+  idempotencyKey?: string | null;
+
+  sourceType?: string | null;
+  sourceId?: string | null;
+
+  counterpartyStudentId?: string | null;
+
+  weekNumber?: number | null;
+  dayNumber?: number | null;
+
+  createdById?: string | null;
+  automated?: boolean;
+
+  metadata?: Prisma.InputJsonValue;
+};
+
+export async function ensureLifeAccount({
+  studentId,
+  cohortId,
+}: {
+  studentId: string;
+  cohortId: string;
+}) {
+  const existing = await prisma.lifeAccount.findUnique({
+    where: {
+      studentId_cohortId: {
+        studentId,
+        cohortId,
+      },
+    },
+  });
+
+  if (existing) {
+    return existing;
+  }
+
+  const settings = await prisma.economySettings.upsert({
+    where: {
+      cohortId,
+    },
+    update: {},
+    create: {
+      cohortId,
+    },
+  });
+
+  return prisma.$transaction(async (tx) => {
+    const account = await tx.lifeAccount.create({
+      data: {
+        studentId,
+        cohortId,
+
+        openingBalanceCents: settings.openingBalanceCents,
+
+        checkingCents: settings.openingBalanceCents,
+      },
+    });
+
+    await tx.lifeTransaction.create({
+      data: {
+        accountId: account.id,
+
+        type: "OPENING_BALANCE",
+        direction: "CREDIT",
+
+        amountCents: settings.openingBalanceCents,
+
+        title: "Welcome to your first Future Ready™ account",
+
+        description:
+          "Every student begins the Life Economy with a simulated $100 opening balance.",
+
+        balanceAfterCents: settings.openingBalanceCents,
+
+        idempotencyKey: `opening-balance:${account.id}`,
+
+        automated: true,
+      },
+    });
+
+    return account;
+  });
+}
+
+export async function postCheckingTransaction(input: PostTransactionInput) {
+  if (!Number.isInteger(input.amountCents) || input.amountCents <= 0) {
+    throw new Error(
+      "Transaction amount must be a positive integer number of cents.",
+    );
+  }
+
+  if (input.idempotencyKey) {
+    const existing = await prisma.lifeTransaction.findUnique({
+      where: {
+        idempotencyKey: input.idempotencyKey,
+      },
+    });
+
+    if (existing) {
+      return existing;
+    }
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const account = await tx.lifeAccount.findUnique({
+      where: {
+        id: input.accountId,
+      },
+    });
+
+    if (!account) {
+      throw new Error("Life Account not found.");
+    }
+
+    const delta =
+      input.direction === "CREDIT" ? input.amountCents : -input.amountCents;
+
+    const nextChecking = account.checkingCents + delta;
+
+    const earningTypes = new Set([
+      "PAYDAY",
+      "ATTENDANCE_PAY",
+      "ASSIGNMENT_PAY",
+      "REFLECTION_PAY",
+      "LESSON_COMPLETION_PAY",
+      "PORTFOLIO_PAY",
+      "FRIDAY_CHECK_BONUS",
+      "STREAK_BONUS",
+      "SKILL_BONUS",
+      "LEADERSHIP_BONUS",
+      "INITIATIVE_BONUS",
+      "FACILITATOR_BONUS",
+      "SIDE_HUSTLE",
+      "CUSTOM_EARNING",
+      "REFUND",
+      "INTEREST",
+      "EMPLOYER_MATCH",
+    ]);
+
+    const givingTypes = new Set(["DONATION", "COMMUNITY_FUND", "PEER_GIFT"]);
+
+    const updated = await tx.lifeAccount.update({
+      where: {
+        id: account.id,
+      },
+      data: {
+        checkingCents: nextChecking,
+
+        totalEarnedCents:
+          input.direction === "CREDIT" && earningTypes.has(input.type)
+            ? {
+                increment: input.amountCents,
+              }
+            : undefined,
+
+        totalSpentCents:
+          input.direction === "DEBIT"
+            ? {
+                increment: input.amountCents,
+              }
+            : undefined,
+
+        totalGivenCents:
+          input.direction === "DEBIT" && givingTypes.has(input.type)
+            ? {
+                increment: input.amountCents,
+              }
+            : undefined,
+
+        status:
+          nextChecking < 0
+            ? "RECOVERY"
+            : account.status === "RECOVERY"
+              ? "ACTIVE"
+              : undefined,
+      },
+    });
+
+    const transaction = await tx.lifeTransaction.create({
+      data: {
+        accountId: account.id,
+
+        type: input.type,
+        direction: input.direction,
+
+        amountCents: input.amountCents,
+
+        title: input.title,
+
+        description: input.description ?? null,
+
+        balanceAfterCents: updated.checkingCents,
+
+        idempotencyKey: input.idempotencyKey ?? null,
+
+        sourceType: input.sourceType ?? null,
+
+        sourceId: input.sourceId ?? null,
+
+        counterpartyStudentId: input.counterpartyStudentId ?? null,
+
+        weekNumber: input.weekNumber ?? null,
+
+        dayNumber: input.dayNumber ?? null,
+
+        createdById: input.createdById ?? null,
+
+        automated: input.automated ?? false,
+
+        metadata: input.metadata,
+      },
+    });
+
+    return transaction;
+  });
+}
+
+export async function moveToSavings({
+  accountId,
+  amountCents,
+}: {
+  accountId: string;
+  amountCents: number;
+}) {
+  if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    throw new Error("Savings transfer must be greater than zero.");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const account = await tx.lifeAccount.findUnique({
+      where: {
+        id: accountId,
+      },
+    });
+
+    if (!account) {
+      throw new Error("Life Account not found.");
+    }
+
+    if (account.checkingCents < amountCents) {
+      throw new Error("Not enough money in checking.");
+    }
+
+    const updated = await tx.lifeAccount.update({
+      where: {
+        id: accountId,
+      },
+      data: {
+        checkingCents: {
+          decrement: amountCents,
+        },
+
+        savingsCents: {
+          increment: amountCents,
+        },
+
+        totalSavedCents: {
+          increment: amountCents,
+        },
+      },
+    });
+
+    await tx.lifeTransaction.create({
+      data: {
+        accountId,
+
+        type: "SAVINGS_TRANSFER",
+
+        direction: "DEBIT",
+
+        amountCents,
+
+        title: "Moved money to savings",
+
+        balanceAfterCents: updated.checkingCents,
+      },
+    });
+
+    return updated;
+  });
+}
+
+export async function unlockFirstPaycheck({
+  accountId,
+}: {
+  accountId: string;
+}) {
+  const account = await prisma.lifeAccount.findUnique({
+    where: {
+      id: accountId,
+    },
+  });
+
+  if (!account) {
+    throw new Error("Life Account not found.");
+  }
+
+  if (account.firstPaycheckUnlocked) {
+    return account;
+  }
+
+  const settings = await prisma.economySettings.findUnique({
+    where: {
+      cohortId: account.cohortId,
+    },
+  });
+
+  const amount = settings?.firstPaycheckCents ?? 50000;
+
+  await postCheckingTransaction({
+    accountId,
+
+    type: "PAYDAY",
+    direction: "CREDIT",
+
+    amountCents: amount,
+
+    title: "First Future Ready™ Paycheck",
+
+    description:
+      "Banking onboarding completed. Your first simulated paycheck has been deposited.",
+
+    idempotencyKey: `first-paycheck:${accountId}`,
+
+    automated: true,
+  });
+
+  return prisma.lifeAccount.update({
+    where: {
+      id: accountId,
+    },
+    data: {
+      firstPaycheckUnlocked: true,
+    },
+  });
+}
+
+export async function applyOverdraftIfNeeded({
+  accountId,
+  reason = "Checking account fell below $0.",
+}: {
+  accountId: string;
+  reason?: string;
+}) {
+  const account = await prisma.lifeAccount.findUnique({
+    where: {
+      id: accountId,
+    },
+  });
+
+  if (!account || account.checkingCents >= 0) {
+    return null;
+  }
+
+  const settings = await prisma.economySettings.findUnique({
+    where: {
+      cohortId: account.cohortId,
+    },
+  });
+
+  const fee = settings?.overdraftFeeCents ?? 1500;
+
+  const day = new Date().toISOString().slice(0, 10);
+
+  return postCheckingTransaction({
+    accountId,
+
+    type: "OVERDRAFT_FEE",
+
+    direction: "DEBIT",
+
+    amountCents: fee,
+
+    title: "😬 Overdraft Fee",
+
+    description: reason,
+
+    idempotencyKey: `overdraft:${accountId}:${day}`,
+
+    automated: true,
+  });
+}

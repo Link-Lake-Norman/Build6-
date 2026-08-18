@@ -1,0 +1,157 @@
+export type LifeHappensEvent = {
+  key: string;
+  emoji: string;
+  category: string;
+  title: string;
+  story: string;
+  amountCents: number;
+  lesson: string;
+  choices: Array<{
+    key: "CHECKING" | "EMERGENCY" | "SAVINGS" | "BORROW" | "DELAY";
+    label: string;
+    description: string;
+  }>;
+};
+
+const STANDARD_CHOICES: LifeHappensEvent["choices"] = [
+  {
+    key: "CHECKING",
+    label: "Pay from checking",
+    description: "Handle it now, but lose spending cash.",
+  },
+  {
+    key: "EMERGENCY",
+    label: "Use my emergency fund",
+    description: "Exactly what emergency money is built for.",
+  },
+  {
+    key: "SAVINGS",
+    label: "Pull from savings",
+    description: "Solve the problem, but move farther from your goal.",
+  },
+  {
+    key: "BORROW",
+    label: "Borrow the money",
+    description: "Solve it today and owe 10% more next week.",
+  },
+  {
+    key: "DELAY",
+    label: "Delay it",
+    description: "Keep the cash today, but take a fee and Trust Score hit.",
+  },
+];
+
+export const LIFE_HAPPENS_EVENTS: LifeHappensEvent[] = [
+  {
+    key: "CAR_REPAIR",
+    emoji: "🚗",
+    category: "Transportation",
+    title: "Your Car Said Nope",
+    story:
+      "The check-engine light is on and the repair shop says you need $425 before this becomes a much bigger problem.",
+    amountCents: 42500,
+    lesson:
+      "Transportation creates financial responsibility long after the car is purchased.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "PHONE_REPLACEMENT",
+    emoji: "📱",
+    category: "Technology",
+    title: "Cracked. Dead. Done.",
+    story:
+      "Your phone hit the pavement and is officially finished. A basic replacement is $280.",
+    amountCents: 28000,
+    lesson:
+      "Unexpected replacement costs are easier to manage when cash reserves already exist.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "INSURANCE_DEDUCTIBLE",
+    emoji: "🛡️",
+    category: "Insurance",
+    title: "The Deductible Nobody Talks About",
+    story:
+      "Insurance covers the bigger problem, but your deductible is still $350.",
+    amountCents: 35000,
+    lesson: "Having insurance does not mean an emergency costs nothing.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "LOST_WORK_HOURS",
+    emoji: "🕒",
+    category: "Income",
+    title: "Your Hours Got Cut",
+    story:
+      "Business is slow. Your work schedule was cut and your simulated account takes a $150 income hit.",
+    amountCents: 15000,
+    lesson: "Income can change before expenses do.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "EMERGENCY_TRAVEL",
+    emoji: "✈️",
+    category: "Family",
+    title: "You Need to Get There",
+    story:
+      "A family situation requires unexpected travel. Your share of the trip costs $375.",
+    amountCents: 37500,
+    lesson:
+      "Some expenses are not fun purchases, but they may still matter deeply.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "DENTAL_SURPRISE",
+    emoji: "🦷",
+    category: "Health",
+    title: "That Tooth Is Not Waiting",
+    story:
+      "You need an unexpected dental procedure. Your out-of-pocket cost is $220.",
+    amountCents: 22000,
+    lesson: "Health expenses rarely ask whether this is a convenient week.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "TIRE_BLOWOUT",
+    emoji: "🛞",
+    category: "Transportation",
+    title: "Flat Tire. Real Bill.",
+    story: "One tire is destroyed and the safest repair option costs $190.",
+    amountCents: 19000,
+    lesson: "Owning something means eventually maintaining it.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "LAPTOP_FAILURE",
+    emoji: "💻",
+    category: "Technology",
+    title: "Laptop Down",
+    story:
+      "Your laptop dies during a week when you actually need it. Repair cost: $325.",
+    amountCents: 32500,
+    lesson: "Important tools can become financial obligations.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "PARKING_TICKET",
+    emoji: "🅿️",
+    category: "Consequences",
+    title: "Read the Sign Next Time",
+    story: "You ignored the parking sign and now owe $85.",
+    amountCents: 8500,
+    lesson: "Some financial emergencies are really decision consequences.",
+    choices: STANDARD_CHOICES,
+  },
+  {
+    key: "FRIEND_WEEKEND",
+    emoji: "🎉",
+    category: "Social",
+    title: "Everybody Is Going",
+    story:
+      "Your friends planned a weekend experience that will cost you $240. It is optional, but the FOMO is real.",
+    amountCents: 24000,
+    lesson:
+      "Not every opportunity deserves a yes just because everyone else is doing it.",
+    choices: STANDARD_CHOICES,
+  },
+];

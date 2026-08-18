@@ -1,0 +1,107 @@
+import { prisma } from "../lib/prisma";
+
+async function main() {
+  const cohorts = await prisma.cohort.findMany({
+    where: {
+      deletedAt: null,
+      OR: [
+        {
+          school: {
+            name: {
+              contains: "Ambassador",
+            },
+          },
+        },
+        {
+          organization: {
+            name: {
+              contains: "Ambassador",
+            },
+          },
+        },
+        {
+          name: {
+            contains: "Ambassador",
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      code: true,
+      name: true,
+    },
+  });
+
+  if (cohorts.length === 0) {
+    console.log("No Ambassador cohort found. No settings changed.");
+    return;
+  }
+
+  for (const cohort of cohorts) {
+    await prisma.economySettings.upsert({
+      where: {
+        cohortId: cohort.id,
+      },
+      update: {
+        enabled: true,
+        studentPortalEnabled: true,
+
+        fridayCheckEnabled: true,
+        autoAddFridayCheck: true,
+
+        lifeDropsEnabled: true,
+        randomLifeDropsPerWeek: 2,
+
+        automatedEarningsEnabled: true,
+        automatedFeesEnabled: true,
+
+        peerGivingEnabled: true,
+        peerLendingEnabled: true,
+        communityFundsEnabled: true,
+
+        leaderboardEnabled: true,
+        publicMilestonesEnabled: true,
+
+        openingBalanceCents: 10000,
+        firstPaycheckCents: 50000,
+      },
+      create: {
+        cohortId: cohort.id,
+
+        enabled: true,
+        studentPortalEnabled: true,
+
+        fridayCheckEnabled: true,
+        autoAddFridayCheck: true,
+
+        lifeDropsEnabled: true,
+        randomLifeDropsPerWeek: 2,
+
+        automatedEarningsEnabled: true,
+        automatedFeesEnabled: true,
+
+        peerGivingEnabled: true,
+        peerLendingEnabled: true,
+        communityFundsEnabled: true,
+
+        leaderboardEnabled: true,
+        publicMilestonesEnabled: true,
+
+        openingBalanceCents: 10000,
+        firstPaycheckCents: 50000,
+      },
+    });
+
+    console.log(`✓ Life Economy enabled: ${cohort.name} (${cohort.code})`);
+  }
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -1,0 +1,289 @@
+export type LifeEventChoice = {
+  label: string;
+  amountCents: number;
+  direction: "DEBIT" | "CREDIT" | "NONE";
+  response: string;
+};
+
+export type LifeEventTemplate = {
+  key: string;
+  emoji: string;
+  title: string;
+  category: string;
+  story: string;
+  choices: LifeEventChoice[];
+};
+
+export const LIFE_EVENT_LIBRARY: LifeEventTemplate[] = [
+  {
+    key: "forgot-lunch",
+    emoji: "🍔",
+    title: "FORGOT YOUR LUNCH",
+    category: "FOOD",
+    story:
+      "Your lunch is sitting on the kitchen counter. Your friends are ordering food.",
+    choices: [
+      {
+        label: "Order lunch — $18.72",
+        amountCents: 1872,
+        direction: "DEBIT",
+        response: "Convenience won today. Was it worth $18.72?",
+      },
+      {
+        label: "Find another solution",
+        amountCents: 0,
+        direction: "NONE",
+        response: "Resourcefulness protected your account.",
+      },
+    ],
+  },
+
+  {
+    key: "junk-food-run",
+    emoji: "🍟",
+    title: "THE JUNK FOOD RUN",
+    category: "FOOD",
+    story:
+      "Everyone is stopping for snacks after school. Chips, drink and candy total $11.46.",
+    choices: [
+      {
+        label: "I'm in — $11.46",
+        amountCents: 1146,
+        direction: "DEBIT",
+        response:
+          "Fun has value too. Now decide whether the tradeoff was worth it.",
+      },
+      {
+        label: "Spend $4 instead",
+        amountCents: 400,
+        direction: "DEBIT",
+        response: "You participated without spending the full amount.",
+      },
+      {
+        label: "Skip it",
+        amountCents: 0,
+        direction: "NONE",
+        response: "That money stays available for another goal.",
+      },
+    ],
+  },
+
+  {
+    key: "concert-tickets",
+    emoji: "🎟️",
+    title: "YOUR FAVORITE ARTIST IS COMING",
+    category: "CONCERT",
+    story:
+      "Tickets just dropped. Your friends are going. Your ticket after fees is $146.",
+    choices: [
+      {
+        label: "BUY THE TICKET — $146",
+        amountCents: 14600,
+        direction: "DEBIT",
+        response:
+          "Experiences can absolutely be worth money. What did you sacrifice to make this choice?",
+      },
+      {
+        label: "Start a concert goal",
+        amountCents: 0,
+        direction: "NONE",
+        response: "You decided to plan instead of impulse-buy.",
+      },
+      {
+        label: "Not this time",
+        amountCents: 0,
+        direction: "NONE",
+        response: "You protected another priority.",
+      },
+    ],
+  },
+
+  {
+    key: "tiktok-shop",
+    emoji: "📱",
+    title: "THE TIKTOK SHOP GOT YOU",
+    category: "SHOPPING",
+    story:
+      "You've watched the product video 14 times. The countdown says the deal ends tonight.",
+    choices: [
+      {
+        label: "Buy it — $29.99",
+        amountCents: 2999,
+        direction: "DEBIT",
+        response:
+          "Flash-sale psychology worked. Would you buy it without the countdown?",
+      },
+      {
+        label: "Wait 48 hours",
+        amountCents: 0,
+        direction: "NONE",
+        response: "You created space between wanting something and buying it.",
+      },
+    ],
+  },
+
+  {
+    key: "new-nikes",
+    emoji: "👟",
+    title: "THE NEW NIKES",
+    category: "CLOTHING",
+    story: "Your current shoes are fine. The pair you really want costs $165.",
+    choices: [
+      {
+        label: "Buy them — $165",
+        amountCents: 16500,
+        direction: "DEBIT",
+        response: "If they're worth it to you, own the tradeoff.",
+      },
+      {
+        label: "Create a Nike savings goal",
+        amountCents: 0,
+        direction: "NONE",
+        response: "Wanting something and planning for it can coexist.",
+      },
+      {
+        label: "Keep my money",
+        amountCents: 0,
+        direction: "NONE",
+        response: "Your bigger goal wins today.",
+      },
+    ],
+  },
+
+  {
+    key: "manicure",
+    emoji: "💅",
+    title: "MANICURE SATURDAY",
+    category: "BEAUTY",
+    story: "Your friends are going. Service is $48 and you still need to tip.",
+    choices: [
+      {
+        label: "Go — $58 total",
+        amountCents: 5800,
+        direction: "DEBIT",
+        response: "You budgeted for something that makes you happy.",
+      },
+      {
+        label: "Do my own — $8",
+        amountCents: 800,
+        direction: "DEBIT",
+        response: "You found a less expensive version of the experience.",
+      },
+      {
+        label: "Skip it",
+        amountCents: 0,
+        direction: "NONE",
+        response: "You chose another priority.",
+      },
+    ],
+  },
+
+  {
+    key: "gas-empty",
+    emoji: "⛽",
+    title: "YOU'RE ON EMPTY",
+    category: "GAS",
+    story: "You need transportation this week. A full tank is $42.18.",
+    choices: [
+      {
+        label: "Fill it — $42.18",
+        amountCents: 4218,
+        direction: "DEBIT",
+        response: "Transportation is part of the real cost of having a car.",
+      },
+      {
+        label: "Put in $20",
+        amountCents: 2000,
+        direction: "DEBIT",
+        response: "You handled the immediate need, but the expense isn't gone.",
+      },
+    ],
+  },
+
+  {
+    key: "subscription",
+    emoji: "😬",
+    title: "SUBSCRIPTION SNEAK ATTACK",
+    category: "SUBSCRIPTION",
+    story:
+      "That free trial wasn't free forever. Your account was charged $14.99.",
+    choices: [
+      {
+        label: "Keep it",
+        amountCents: 1499,
+        direction: "DEBIT",
+        response: "It's now a recurring expense. Is it worth keeping?",
+      },
+      {
+        label: "Cancel after this charge",
+        amountCents: 1499,
+        direction: "DEBIT",
+        response: "You caught the expense before another month.",
+      },
+    ],
+  },
+
+  {
+    key: "side-hustle",
+    emoji: "💵",
+    title: "SIDE HUSTLE AVAILABLE",
+    category: "EARNING",
+    story:
+      "A neighbor offers you $45 to help with a three-hour project Saturday afternoon.",
+    choices: [
+      {
+        label: "Take the job — +$45",
+        amountCents: 4500,
+        direction: "CREDIT",
+        response: "You traded three hours of time for additional income.",
+      },
+      {
+        label: "Keep my Saturday",
+        amountCents: 0,
+        direction: "NONE",
+        response:
+          "Time has value too. Money isn't the only thing worth protecting.",
+      },
+    ],
+  },
+
+  {
+    key: "found-money",
+    emoji: "🎉",
+    title: "JACKET MONEY!",
+    category: "SURPRISE",
+    story: "You find $20 in the pocket of a jacket you haven't worn in months.",
+    choices: [
+      {
+        label: "Take the $20 — +$20",
+        amountCents: 2000,
+        direction: "CREDIT",
+        response: "Unexpected money! What will you do with it?",
+      },
+    ],
+  },
+
+  {
+    key: "car-repair",
+    emoji: "🚗",
+    title: "THAT LIGHT WASN'T DECORATIVE",
+    category: "CAR",
+    story:
+      "Your car needs an unexpected repair. Your share of the simulated bill is $125.",
+    choices: [
+      {
+        label: "Pay from checking — $125",
+        amountCents: 12500,
+        direction: "DEBIT",
+        response:
+          "Unexpected expenses are why cash flow and emergency funds matter.",
+      },
+      {
+        label: "I need a recovery plan",
+        amountCents: 0,
+        direction: "NONE",
+        response: "Time to use savings, negotiate, earn, or restructure.",
+      },
+    ],
+  },
+];

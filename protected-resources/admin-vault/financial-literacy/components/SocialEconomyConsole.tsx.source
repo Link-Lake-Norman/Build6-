@@ -1,0 +1,573 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+
+type Loan = {
+  id: string;
+
+  lenderName: string;
+  borrowerName: string;
+
+  principalCents: number;
+  repaymentCents: number;
+  amountRepaidCents: number;
+
+  dueAt: string | null;
+
+  status: string;
+};
+
+type Contribution = {
+  id: string;
+  studentName: string;
+  amountCents: number;
+  anonymous: boolean;
+  createdAt: string;
+};
+
+type Fund = {
+  id: string;
+  title: string;
+  story: string;
+
+  goalCents: number;
+  raisedCents: number;
+
+  matchingEnabled: boolean;
+
+  matchLimitCents: number | null;
+
+  matchedCents: number;
+
+  status: string;
+
+  closesAt: string | null;
+
+  contributions: Contribution[];
+};
+
+type Data = {
+  enabled: boolean;
+
+  cohort?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+
+  settings?: {
+    peerGivingEnabled: boolean;
+
+    peerLendingEnabled: boolean;
+
+    communityFundsEnabled: boolean;
+
+    maxPeerLoanCents: number;
+  };
+
+  loans?: Loan[];
+  funds?: Fund[];
+
+  error?: string;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default function SocialEconomyConsole({
+  cohortCode,
+}: {
+  cohortCode: string;
+}) {
+  const [data, setData] = useState<Data | null>(null);
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const [title, setTitle] = useState("");
+
+  const [story, setStory] = useState("");
+
+  const [goal, setGoal] = useState("500");
+
+  const [matchingEnabled, setMatchingEnabled] = useState(false);
+
+  const [matchLimit, setMatchLimit] = useState("100");
+
+  const [closesAt, setClosesAt] = useState("");
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/social-console?cohortCode=${encodeURIComponent(
+          cohortCode,
+        )}`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Social Economy.");
+      }
+
+      setData(result);
+    } catch (error) {
+      setData({
+        enabled: false,
+
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to load Social Economy.",
+      });
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cohortCode]);
+
+  async function send(body: Record<string, unknown>) {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/ambassador/economy/social-console", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          cohortCode,
+          ...body,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to complete action.");
+      }
+
+      setMessage(result.message ?? "Done.");
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to complete action.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const openLoans = useMemo(
+    () =>
+      data?.loans?.filter((loan) =>
+        ["REQUESTED", "ACTIVE", "LATE", "DEFAULTED"].includes(loan.status),
+      ) ?? [],
+    [data],
+  );
+
+  if (!data) {
+    return (
+      <section className="rounded-3xl bg-white p-7 shadow-sm">
+        Loading Social Economy...
+      </section>
+    );
+  }
+
+  if (!data.enabled) {
+    return (
+      <section className="rounded-3xl bg-white p-7 shadow-sm">
+        {data.error ?? "Social Economy is not active."}
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-7">
+      <div className="rounded-[30px] bg-[#0D1B3D] p-7 text-white shadow-xl">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#F2B705]">
+          Facilitator · Admin
+        </p>
+
+        <h2 className="mt-2 text-3xl font-black">🤝 Social Economy Console</h2>
+
+        <p className="mt-3 max-w-3xl leading-7 text-slate-200">
+          Manage peer lending, community giving and the money decisions that
+          happen between students.
+        </p>
+      </div>
+
+      {message ? (
+        <div className="rounded-2xl border-2 border-[#F2B705] bg-[#FFF8D9] p-5 font-black text-[#0D1B3D]">
+          🔊 {message}
+        </div>
+      ) : null}
+
+      {data.settings?.communityFundsEnabled ? (
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Community Fund Builder
+          </p>
+
+          <h3 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            ❤️ Launch a giving challenge
+          </h3>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Fund title"
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            />
+
+            <input
+              type="number"
+              value={goal}
+              onChange={(event) => setGoal(event.target.value)}
+              placeholder="Goal amount"
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            />
+          </div>
+
+          <textarea
+            value={story}
+            onChange={(event) => setStory(event.target.value)}
+            rows={3}
+            placeholder="What are students raising simulated money for?"
+            className="mt-4 w-full rounded-xl border border-slate-300 p-4"
+          />
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <label className="flex items-center gap-3 rounded-xl border border-slate-200 p-4">
+              <input
+                type="checkbox"
+                checked={matchingEnabled}
+                onChange={(event) => setMatchingEnabled(event.target.checked)}
+              />
+
+              <span className="font-black text-[#0D1B3D]">
+                Add matching money
+              </span>
+            </label>
+
+            <input
+              type="number"
+              disabled={!matchingEnabled}
+              value={matchLimit}
+              onChange={(event) => setMatchLimit(event.target.value)}
+              placeholder="Match limit"
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold disabled:opacity-40"
+            />
+          </div>
+
+          <input
+            type="date"
+            value={closesAt}
+            onChange={(event) => setClosesAt(event.target.value)}
+            className="mt-4 rounded-xl border border-slate-300 px-4 py-3 font-bold"
+          />
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              send({
+                action: "createFund",
+
+                title,
+
+                story,
+
+                goal: Number(goal),
+
+                matchingEnabled,
+
+                matchLimit: Number(matchLimit),
+
+                closesAt: closesAt || null,
+              })
+            }
+            className="mt-5 rounded-xl bg-[#0D1B3D] px-6 py-3 font-black text-white"
+          >
+            LAUNCH FUND
+          </button>
+        </section>
+      ) : null}
+
+      {data.funds?.length ? (
+        <section className="rounded-[30px] bg-[#FFF8D9] p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Community Funds
+          </p>
+
+          <div className="mt-5 grid gap-5 xl:grid-cols-2">
+            {data.funds.map((fund) => {
+              const progress =
+                fund.goalCents > 0
+                  ? Math.min(
+                      100,
+                      Math.round((fund.raisedCents / fund.goalCents) * 100),
+                    )
+                  : 0;
+
+              return (
+                <article
+                  key={fund.id}
+                  className="rounded-3xl bg-white p-6 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                        {fund.status}
+                      </p>
+
+                      <h3 className="mt-1 text-2xl font-black text-[#0D1B3D]">
+                        {fund.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-xl font-black text-[#0D1B3D]">
+                      {progress}%
+                    </p>
+                  </div>
+
+                  <p className="mt-3 leading-6 text-slate-600">{fund.story}</p>
+
+                  <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-[#F2B705]"
+                      style={{
+                        width: `${progress}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap justify-between gap-3 text-sm font-black">
+                    <span>Raised {money(fund.raisedCents)}</span>
+
+                    <span>Goal {money(fund.goalCents)}</span>
+                  </div>
+
+                  {fund.matchingEnabled ? (
+                    <p className="mt-2 text-sm font-black text-emerald-700">
+                      ⚡ Matched: {money(fund.matchedCents)}
+                    </p>
+                  ) : null}
+
+                  <div className="mt-5">
+                    <p className="text-xs font-black uppercase tracking-wider text-slate-500">
+                      Recent Contributions
+                    </p>
+
+                    <div className="mt-2 space-y-2">
+                      {fund.contributions.slice(0, 5).map((contribution) => (
+                        <div
+                          key={contribution.id}
+                          className="flex justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3"
+                        >
+                          <span className="font-bold text-slate-700">
+                            {contribution.studentName}
+                          </span>
+
+                          <span className="font-black text-[#0D1B3D]">
+                            {money(contribution.amountCents)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {fund.status !== "ACTIVE" ? (
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          send({
+                            action: "updateFundStatus",
+
+                            fundId: fund.id,
+
+                            status: "ACTIVE",
+                          })
+                        }
+                        className="rounded-xl bg-emerald-600 px-4 py-2 font-black text-white"
+                      >
+                        ACTIVATE
+                      </button>
+                    ) : null}
+
+                    {fund.status === "ACTIVE" ? (
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          send({
+                            action: "updateFundStatus",
+
+                            fundId: fund.id,
+
+                            status: "CLOSED",
+                          })
+                        }
+                        className="rounded-xl bg-slate-800 px-4 py-2 font-black text-white"
+                      >
+                        CLOSE FUND
+                      </button>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {data.settings?.peerLendingEnabled ? (
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+                Peer Lending
+              </p>
+
+              <h3 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+                Who owes whom?
+              </h3>
+            </div>
+
+            <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
+              {openLoans.length} open
+            </span>
+          </div>
+
+          <div className="mt-6 space-y-4">
+            {openLoans.length ? (
+              openLoans.map((loan) => {
+                const remaining = Math.max(
+                  0,
+                  loan.repaymentCents - loan.amountRepaidCents,
+                );
+
+                return (
+                  <article
+                    key={loan.id}
+                    className="rounded-2xl border border-slate-200 p-5"
+                  >
+                    <div className="grid gap-4 lg:grid-cols-[1.4fr_.8fr_.8fr] lg:items-center">
+                      <div>
+                        <p className="text-lg font-black text-[#0D1B3D]">
+                          {loan.borrowerName} owes {loan.lenderName}
+                        </p>
+
+                        <p className="mt-1 text-sm text-slate-500">
+                          Due{" "}
+                          {loan.dueAt
+                            ? new Date(loan.dueAt).toLocaleDateString()
+                            : "not set"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                          Remaining
+                        </p>
+
+                        <p className="mt-1 text-xl font-black text-[#0D1B3D]">
+                          {money(remaining)}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                          Status
+                        </p>
+
+                        <p className="mt-1 font-black text-[#0D1B3D]">
+                          {loan.status}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          send({
+                            action: "updateLoanStatus",
+
+                            loanId: loan.id,
+
+                            status: "LATE",
+                          })
+                        }
+                        className="rounded-xl bg-amber-500 px-4 py-2 font-black text-[#0D1B3D]"
+                      >
+                        MARK LATE
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          send({
+                            action: "updateLoanStatus",
+
+                            loanId: loan.id,
+
+                            status: "DEFAULTED",
+                          })
+                        }
+                        className="rounded-xl bg-red-700 px-4 py-2 font-black text-white"
+                      >
+                        DEFAULT
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() =>
+                          send({
+                            action: "updateLoanStatus",
+
+                            loanId: loan.id,
+
+                            status: "REPAID",
+                          })
+                        }
+                        className="rounded-xl bg-emerald-600 px-4 py-2 font-black text-white"
+                      >
+                        MARK REPAID
+                      </button>
+                    </div>
+                  </article>
+                );
+              })
+            ) : (
+              <div className="rounded-2xl bg-slate-50 p-6 text-slate-500">
+                No open peer loans.
+              </div>
+            )}
+          </div>
+        </section>
+      ) : null}
+    </section>
+  );
+}

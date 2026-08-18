@@ -1,0 +1,653 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type Peer = {
+  id: string;
+  name: string;
+};
+
+type Loan = {
+  id: string;
+
+  lenderStudentId: string;
+  borrowerStudentId: string;
+
+  lenderName: string;
+  borrowerName: string;
+
+  principalCents: number;
+  repaymentCents: number;
+  amountRepaidCents: number;
+
+  dueAt: string | null;
+
+  status: string;
+
+  borrowerNote: string | null;
+
+  lenderNote: string | null;
+};
+
+type Fund = {
+  id: string;
+  title: string;
+  story: string;
+
+  goalCents: number;
+  raisedCents: number;
+
+  matchingEnabled: boolean;
+
+  matchLimitCents: number | null;
+
+  matchedCents: number;
+
+  myContributionCents: number;
+
+  closesAt: string | null;
+};
+
+type Data = {
+  enabled: boolean;
+
+  settings?: {
+    peerGivingEnabled: boolean;
+
+    peerLendingEnabled: boolean;
+
+    communityFundsEnabled: boolean;
+
+    maxPeerLoanCents: number;
+  };
+
+  student?: {
+    id: string;
+    name: string;
+  };
+
+  account?: {
+    checkingCents: number;
+    savingsCents: number;
+    totalGivenCents: number;
+    trustScore: number;
+  };
+
+  peers?: Peer[];
+  loans?: Loan[];
+  funds?: Fund[];
+
+  error?: string;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default function MoneyCircleDashboard({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<Data | null>(null);
+
+  const [selectedPeer, setSelectedPeer] = useState("");
+
+  const [giftAmount, setGiftAmount] = useState("5");
+
+  const [loanAmount, setLoanAmount] = useState("10");
+
+  const [fundAmount, setFundAmount] = useState("5");
+
+  const [note, setNote] = useState("");
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/money-circle`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Money Circle.");
+      }
+
+      setData(result);
+
+      if (!selectedPeer && result.peers?.length) {
+        setSelectedPeer(result.peers[0].id);
+      }
+    } catch (error) {
+      setData({
+        enabled: false,
+
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to load Money Circle.",
+      });
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  async function send(body: Record<string, unknown>) {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/money-circle`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(body),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to complete action.");
+      }
+
+      setMessage(result.message ?? "Done.");
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to complete action.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!data) {
+    return <div className="p-8">Loading Money Circle™...</div>;
+  }
+
+  if (!data.enabled) {
+    return (
+      <div className="rounded-3xl bg-white p-8">
+        {data.error ?? "Money Circle™ is not active."}
+      </div>
+    );
+  }
+
+  const incomingRequests =
+    data.loans?.filter(
+      (loan) =>
+        loan.lenderStudentId === studentId && loan.status === "REQUESTED",
+    ) ?? [];
+
+  const borrowedLoans =
+    data.loans?.filter(
+      (loan) =>
+        loan.borrowerStudentId === studentId &&
+        ["ACTIVE", "LATE"].includes(loan.status),
+    ) ?? [];
+
+  const lentLoans =
+    data.loans?.filter(
+      (loan) => loan.lenderStudentId === studentId && loan.status === "ACTIVE",
+    ) ?? [];
+
+  return (
+    <div className="space-y-7">
+      <section className="rounded-[34px] bg-[#0D1B3D] p-8 text-white shadow-xl md:p-10">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+          Give · Borrow · Repay · Help
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black md:text-5xl">
+          🤝 Money Circle™
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
+          Money gets more complicated when other people are involved. Friendship
+          does not erase responsibility. Generosity does not mean ignoring your
+          own finances.
+        </p>
+
+        <div className="mt-7 grid gap-4 sm:grid-cols-4">
+          <Stat
+            label="Checking"
+            value={money(data.account?.checkingCents ?? 0)}
+          />
+
+          <Stat
+            label="Savings"
+            value={money(data.account?.savingsCents ?? 0)}
+          />
+
+          <Stat
+            label="Total Given"
+            value={money(data.account?.totalGivenCents ?? 0)}
+          />
+
+          <Stat
+            label="Trust Score"
+            value={`${data.account?.trustScore ?? 0}/100`}
+          />
+        </div>
+      </section>
+
+      {message ? (
+        <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF8D9] p-6 font-black text-[#0D1B3D]">
+          🔊 {message}
+        </section>
+      ) : null}
+
+      {data.settings?.peerGivingEnabled ? (
+        <section className="rounded-[30px] border border-slate-200 bg-white p-7 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Friend Transfer
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            💸 Send a friend money
+          </h2>
+
+          <p className="mt-2 text-slate-600">
+            Helping is your choice. Your account still has to live with the
+            choice afterward.
+          </p>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-[1.4fr_.6fr]">
+            <select
+              value={selectedPeer}
+              onChange={(event) => setSelectedPeer(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-bold"
+            >
+              {(data.peers ?? []).map((peer) => (
+                <option key={peer.id} value={peer.id}>
+                  {peer.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              min="1"
+              value={giftAmount}
+              onChange={(event) => setGiftAmount(event.target.value)}
+              className="rounded-xl border border-slate-300 px-4 py-3 font-black"
+            />
+          </div>
+
+          <input
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3"
+            placeholder="Optional: Why are you sending it?"
+          />
+
+          <button
+            type="button"
+            disabled={saving || !selectedPeer}
+            onClick={() =>
+              send({
+                action: "gift",
+
+                recipientId: selectedPeer,
+
+                amount: Number(giftAmount),
+
+                note,
+              })
+            }
+            className="mt-4 rounded-xl bg-[#0D1B3D] px-6 py-3 font-black text-white disabled:opacity-40"
+          >
+            SEND MONEY
+          </button>
+        </section>
+      ) : null}
+
+      {data.settings?.peerLendingEnabled ? (
+        <section className="rounded-[30px] bg-[#EEF5FF] p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0D1B3D]">
+            Borrowing
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            🤝 Ask a friend for a loan
+          </h2>
+
+          <p className="mt-2 max-w-3xl leading-7 text-slate-600">
+            A loan is not a gift. Someone else is trusting you with money they
+            could have kept for themselves.
+          </p>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-[1.4fr_.6fr]">
+            <select
+              value={selectedPeer}
+              onChange={(event) => setSelectedPeer(event.target.value)}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 font-bold"
+            >
+              {(data.peers ?? []).map((peer) => (
+                <option key={peer.id} value={peer.id}>
+                  Ask {peer.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              min="1"
+              max={(data.settings?.maxPeerLoanCents ?? 0) / 100}
+              value={loanAmount}
+              onChange={(event) => setLoanAmount(event.target.value)}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 font-black"
+            />
+          </div>
+
+          <button
+            type="button"
+            disabled={saving || !selectedPeer}
+            onClick={() =>
+              send({
+                action: "requestLoan",
+
+                lenderStudentId: selectedPeer,
+
+                amount: Number(loanAmount),
+
+                note,
+              })
+            }
+            className="mt-4 rounded-xl bg-sky-700 px-6 py-3 font-black text-white disabled:opacity-40"
+          >
+            REQUEST LOAN
+          </button>
+
+          <p className="mt-3 text-xs font-bold text-slate-500">
+            Cohort limit: {money(data.settings?.maxPeerLoanCents ?? 0)}
+          </p>
+        </section>
+      ) : null}
+
+      {incomingRequests.length ? (
+        <section className="rounded-[30px] border-2 border-[#F2B705] bg-[#FFFDF4] p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Decision Required
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            Someone asked you for money.
+          </h2>
+
+          <div className="mt-6 space-y-4">
+            {incomingRequests.map((loan) => (
+              <article
+                key={loan.id}
+                className="rounded-2xl bg-white p-5 shadow-sm"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="font-black text-[#0D1B3D]">
+                      {loan.borrowerName} wants to borrow{" "}
+                      {money(loan.principalCents)}
+                    </p>
+
+                    {loan.borrowerNote ? (
+                      <p className="mt-2 text-sm text-slate-600">
+                        “{loan.borrowerNote}”
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() =>
+                        send({
+                          action: "acceptLoan",
+
+                          loanId: loan.id,
+                        })
+                      }
+                      className="rounded-xl bg-emerald-600 px-4 py-2 font-black text-white"
+                    >
+                      ACCEPT
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() =>
+                        send({
+                          action: "declineLoan",
+
+                          loanId: loan.id,
+                        })
+                      }
+                      className="rounded-xl bg-slate-200 px-4 py-2 font-black text-slate-700"
+                    >
+                      DECLINE
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {borrowedLoans.length ? (
+        <section className="rounded-[30px] border border-red-200 bg-red-50 p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-red-700">
+            Money I Owe
+          </p>
+
+          <div className="mt-5 space-y-3">
+            {borrowedLoans.map((loan) => {
+              const remaining = loan.repaymentCents - loan.amountRepaidCents;
+
+              return (
+                <article key={loan.id} className="rounded-2xl bg-white p-5">
+                  <p className="font-black text-[#0D1B3D]">
+                    You owe {loan.lenderName} {money(remaining)}
+                  </p>
+
+                  <p className="mt-1 text-sm text-slate-500">
+                    Due{" "}
+                    {loan.dueAt
+                      ? new Date(loan.dueAt).toLocaleDateString()
+                      : "soon"}
+                  </p>
+
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      send({
+                        action: "repayLoan",
+
+                        loanId: loan.id,
+                      })
+                    }
+                    className="mt-4 rounded-xl bg-red-700 px-5 py-3 font-black text-white"
+                  >
+                    REPAY LOAN
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {lentLoans.length ? (
+        <section className="rounded-[30px] bg-white p-7 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+            Money I Lent
+          </p>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {lentLoans.map((loan) => (
+              <article
+                key={loan.id}
+                className="rounded-2xl border border-slate-200 p-5"
+              >
+                <p className="font-black text-[#0D1B3D]">{loan.borrowerName}</p>
+
+                <p className="mt-2 text-xl font-black">
+                  {money(loan.repaymentCents - loan.amountRepaidCents)}{" "}
+                  outstanding
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {data.settings?.communityFundsEnabled && data.funds?.length ? (
+        <section className="rounded-[30px] bg-[#FFF8D9] p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Community Fund
+          </p>
+
+          <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+            ❤️ Put money toward something bigger.
+          </h2>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            {data.funds.map((fund) => {
+              const progress =
+                fund.goalCents > 0
+                  ? Math.min(
+                      100,
+                      Math.round((fund.raisedCents / fund.goalCents) * 100),
+                    )
+                  : 0;
+
+              return (
+                <article
+                  key={fund.id}
+                  className="rounded-3xl bg-white p-6 shadow-sm"
+                >
+                  <h3 className="text-2xl font-black text-[#0D1B3D]">
+                    {fund.title}
+                  </h3>
+
+                  <p className="mt-2 leading-6 text-slate-600">{fund.story}</p>
+
+                  <div className="mt-5 flex justify-between text-sm font-black">
+                    <span>{money(fund.raisedCents)} raised</span>
+
+                    <span>{progress}%</span>
+                  </div>
+
+                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-[#F2B705]"
+                      style={{
+                        width: `${progress}%`,
+                      }}
+                    />
+                  </div>
+
+                  <p className="mt-3 text-sm text-slate-500">
+                    Goal: {money(fund.goalCents)}
+                    {" · "}
+                    You gave: {money(fund.myContributionCents)}
+                  </p>
+
+                  {fund.matchingEnabled ? (
+                    <p className="mt-2 font-black text-emerald-700">
+                      ⚡ Matching money available
+                    </p>
+                  ) : null}
+
+                  <div className="mt-5 flex gap-2">
+                    <input
+                      type="number"
+                      min="1"
+                      value={fundAmount}
+                      onChange={(event) => setFundAmount(event.target.value)}
+                      className="w-28 rounded-xl border border-slate-300 px-3 py-2 font-black"
+                    />
+
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() =>
+                        send({
+                          action: "contributeFund",
+
+                          fundId: fund.id,
+
+                          amount: Number(fundAmount),
+                        })
+                      }
+                      className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+                    >
+                      CONTRIBUTE
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          ← Life Account
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/money-life`}
+          className="rounded-xl bg-emerald-600 px-5 py-3 font-black text-white"
+        >
+          💳 My Money Life
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/leaderboard`}
+          className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          🏆 Leaderboard
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white/10 p-5">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-300">
+        {label}
+      </p>
+
+      <p className="mt-2 text-2xl font-black">{value}</p>
+    </div>
+  );
+}

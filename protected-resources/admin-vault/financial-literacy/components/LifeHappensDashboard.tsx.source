@@ -1,0 +1,370 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type Choice = {
+  key: string;
+  label: string;
+  description: string;
+};
+
+type Event = {
+  key: string;
+  emoji: string;
+  category: string;
+  title: string;
+  story: string;
+  amountCents: number;
+  lesson: string;
+  choices: Choice[];
+  resolved: boolean;
+};
+
+type Data = {
+  enabled: boolean;
+  weekNumber?: number;
+
+  account?: {
+    checkingCents: number;
+    savingsCents: number;
+    emergencyCents: number;
+    trustScore: number;
+  };
+
+  events?: Event[];
+
+  error?: string;
+};
+
+function money(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default function LifeHappensDashboard({
+  studentId,
+}: {
+  studentId: string;
+}) {
+  const [data, setData] = useState<Data | null>(null);
+
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  const [saving, setSaving] = useState(false);
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function load() {
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/life-happens`,
+        {
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load Life Happens.");
+      }
+
+      setData(result);
+    } catch (error) {
+      setData({
+        enabled: false,
+
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to load Life Happens.",
+      });
+    }
+  }
+
+  useEffect(() => {
+    load();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
+
+  async function choose(choice: string) {
+    if (!selectedEvent) {
+      return;
+    }
+
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambassador/economy/student/${studentId}/life-happens`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            eventKey: selectedEvent.key,
+
+            choice,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to make decision.");
+      }
+
+      setMessage(`🔊 ${result.response} ${result.lesson}`);
+
+      setSelectedEvent(null);
+
+      await load();
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to make decision.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!data) {
+    return <div className="p-8">Loading Life Happens™...</div>;
+  }
+
+  if (!data.enabled) {
+    return (
+      <div className="rounded-3xl bg-white p-8">
+        {data.error ?? "Life Happens™ is not active."}
+      </div>
+    );
+  }
+
+  const openEvents = data.events?.filter((event) => !event.resolved) ?? [];
+
+  const resolvedEvents = data.events?.filter((event) => event.resolved) ?? [];
+
+  return (
+    <div className="space-y-7">
+      <section className="rounded-[34px] bg-[#0D1B3D] p-8 text-white shadow-xl md:p-10">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
+          Week {data.weekNumber}
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black md:text-5xl">
+          🎲 Life Happens™
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
+          You had a plan. Life did not ask. What are you going to do now?
+        </p>
+
+        <div className="mt-7 grid gap-4 sm:grid-cols-4">
+          <Stat
+            label="Checking"
+            value={money(data.account?.checkingCents ?? 0)}
+          />
+
+          <Stat
+            label="Savings"
+            value={money(data.account?.savingsCents ?? 0)}
+          />
+
+          <Stat
+            label="Emergency"
+            value={money(data.account?.emergencyCents ?? 0)}
+          />
+
+          <Stat
+            label="Trust Score"
+            value={`${data.account?.trustScore ?? 0}/100`}
+          />
+        </div>
+      </section>
+
+      {message ? (
+        <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF8D9] p-6 font-black leading-7 text-[#0D1B3D]">
+          {message}
+        </section>
+      ) : null}
+
+      <section>
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+          Decision Lab
+        </p>
+
+        <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
+          Pick your problem.
+        </h2>
+
+        <p className="mt-2 text-slate-600">
+          There may be more than one reasonable answer. The point is
+          understanding what each answer costs.
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {openEvents.map((event) => (
+            <button
+              type="button"
+              key={event.key}
+              onClick={() => {
+                setMessage(null);
+
+                setSelectedEvent(event);
+              }}
+              className="rounded-[26px] border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-[#F2B705]"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <span className="text-4xl">{event.emoji}</span>
+
+                <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-700">
+                  {money(event.amountCents)}
+                </span>
+              </div>
+
+              <p className="mt-5 text-xs font-black uppercase tracking-wider text-slate-500">
+                {event.category}
+              </p>
+
+              <h3 className="mt-1 text-xl font-black text-[#0D1B3D]">
+                {event.title}
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {event.story}
+              </p>
+
+              <p className="mt-5 font-black text-[#0D1B3D]">
+                WHAT DO YOU DO? →
+              </p>
+            </button>
+          ))}
+        </div>
+
+        {!openEvents.length ? (
+          <div className="mt-6 rounded-3xl bg-emerald-50 p-7">
+            <h3 className="text-2xl font-black text-emerald-900">
+              ✅ You handled this week's Life Happens™ decisions.
+            </h3>
+
+            <p className="mt-2 text-emerald-800">
+              Next week brings another chance to see what your money habits can
+              handle.
+            </p>
+          </div>
+        ) : null}
+      </section>
+
+      {selectedEvent ? (
+        <section className="rounded-[30px] border-2 border-[#F2B705] bg-[#FFFDF4] p-7 shadow-lg">
+          <div className="flex items-start justify-between gap-5">
+            <div>
+              <div className="text-5xl">{selectedEvent.emoji}</div>
+
+              <h2 className="mt-4 text-3xl font-black text-[#0D1B3D]">
+                {selectedEvent.title}
+              </h2>
+
+              <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-700">
+                {selectedEvent.story}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setSelectedEvent(null)}
+              className="rounded-full bg-white px-4 py-2 font-black text-slate-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          <p className="mt-7 text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            Your move
+          </p>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {selectedEvent.choices.map((choice) => (
+              <button
+                key={choice.key}
+                type="button"
+                disabled={saving}
+                onClick={() => choose(choice.key)}
+                className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:border-[#F2B705] hover:bg-[#FFF8D9] disabled:opacity-50"
+              >
+                <p className="font-black text-[#0D1B3D]">{choice.label}</p>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {choice.description}
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {resolvedEvents.length ? (
+        <section className="rounded-[30px] bg-slate-100 p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+            Already Handled
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {resolvedEvents.map((event) => (
+              <span
+                key={event.key}
+                className="rounded-full bg-white px-4 py-2 text-sm font-black text-slate-600"
+              >
+                ✓ {event.emoji} {event.title}
+              </span>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account`}
+          className="rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        >
+          ← Life Account
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/money-life`}
+          className="rounded-xl bg-emerald-600 px-5 py-3 font-black text-white"
+        >
+          💳 My Money Life
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${studentId}/life-account/friday`}
+          className="rounded-xl bg-[#F2B705] px-5 py-3 font-black text-[#0D1B3D]"
+        >
+          Future Ready Friday™
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white/10 p-5">
+      <p className="text-xs font-black uppercase tracking-wider text-slate-300">
+        {label}
+      </p>
+
+      <p className="mt-2 text-2xl font-black">{value}</p>
+    </div>
+  );
+}

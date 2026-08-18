@@ -1,0 +1,148 @@
+import {
+  ensureLifeAccount,
+  postCheckingTransaction,
+} from "@/lib/economy/life-economy";
+import { prisma } from "@/lib/prisma";
+
+function nextDueDate(
+  current: Date,
+  frequency: "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "QUARTERLY" | "ONE_TIME",
+) {
+  const next = new Date(current);
+
+  if (frequency === "WEEKLY") {
+    next.setDate(next.getDate() + 7);
+  } else if (frequency === "BIWEEKLY") {
+    next.setDate(next.getDate() + 14);
+  } else if (frequency === "MONTHLY") {
+    next.setMonth(next.getMonth() + 1);
+  } else if (frequency === "QUARTERLY") {
+    next.setMonth(next.getMonth() + 3);
+  }
+
+  return next;
+}
+
+export async function processDueBills(studentId: string, cohortId: string) {
+  const settings = await prisma.economySettings.findUnique({
+    where: {
+      cohortId,
+    },
+  });
+
+  if (!settings?.enabled || !settings.billsEnabled) {
+    return {
+      processed: 0,
+      cents: 0,
+    };
+  }
+
+  const account = await ensureLifeAccount({
+    studentId,
+    cohortId,
+  });
+
+  const now = new Date();
+
+  const bills = await prisma.economyBill.findMany({
+    where: {
+      cohortId,
+      active: true,
+
+      nextDueAt: {
+        lte: now,
+      },
+
+      OR: [
+        {
+          studentId,
+        },
+        {
+          studentId: null,
+        },
+      ],
+    },
+
+    orderBy: {
+      nextDueAt: "asc",
+    },
+  });
+
+  let processed = 0;
+  let cents = 0;
+
+  for (const bill of bills) {
+    const dueKey = bill.nextDueAt
+      ? bill.nextDueAt.toISOString().slice(0, 10)
+      : "initial";
+
+    const idempotencyKey = `economy:bill:${bill.id}:${studentId}:${dueKey}`;
+
+    const existing = await prisma.lifeTransaction.findUnique({
+      where: {
+        idempotencyKey,
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+    if (existing) {
+      continue;
+    }
+
+    await postCheckingTransaction({
+      accountId: account.id,
+
+      type: "BILL_PAYMENT",
+
+      direction: "DEBIT",
+
+      amountCents: bill.amountCents,
+
+      title: `Bill Due · ${bill.title}`,
+
+      description:
+        bill.description ?? `${bill.frequency.toLowerCase()} simulated bill`,
+
+      sourceType: "EconomyBill",
+
+      sourceId: bill.id,
+
+      idempotencyKey,
+
+      automated: true,
+    });
+
+    processed += 1;
+    cents += bill.amountCents;
+
+    if (bill.frequency === "ONE_TIME") {
+      await prisma.economyBill.update({
+        where: {
+          id: bill.id,
+        },
+
+        data: {
+          active: false,
+        },
+      });
+    } else {
+      await prisma.economyBill.update({
+        where: {
+          id: bill.id,
+        },
+
+        data: {
+          nextDueAt: nextDueDate(bill.nextDueAt ?? now, bill.frequency),
+        },
+      });
+    }
+  }
+
+  return {
+    processed,
+    cents,
+  };
+}
