@@ -2,15 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
-import {
-  setSessionCookie,
-  type SessionUser,
-} from "@/lib/auth/session";
+import { setSessionCookie, type SessionUser } from "@/lib/auth/session";
 
-function destinationForRole(
-  role: SessionUser["role"],
-  studentId?: string
-) {
+function destinationForRole(role: SessionUser["role"], studentId?: string) {
   switch (role) {
     case "SUPER_ADMIN":
       return "/ambassador/admin";
@@ -29,8 +23,8 @@ function destinationForRole(
 
     case "STUDENT":
       return studentId
-        ? `/student-portal/${studentId}`
-        : "/student-portal";
+        ? `/ambassador/student-portal/${studentId}`
+        : "/ambassador";
 
     case "MENTOR":
       return "/partner-portal";
@@ -40,31 +34,23 @@ function destinationForRole(
   }
 }
 
-export async function POST(
-  request: NextRequest
-) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     const email =
-      typeof body.email === "string"
-        ? body.email.trim().toLowerCase()
-        : "";
+      typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
 
-    const password =
-      typeof body.password === "string"
-        ? body.password
-        : "";
+    const password = typeof body.password === "string" ? body.password : "";
 
     if (!email || !password) {
       return NextResponse.json(
         {
-          error:
-            "Email and password are required.",
+          error: "Email and password are required.",
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
@@ -108,64 +94,45 @@ export async function POST(
       },
     });
 
-    if (
-      !user ||
-      user.status !== "ACTIVE" ||
-      !user.passwordHash
-    ) {
+    if (!user || user.status !== "ACTIVE" || !user.passwordHash) {
       return NextResponse.json(
         {
-          error:
-            "Incorrect email or password.",
+          error: "Incorrect email or password.",
         },
         {
           status: 401,
-        }
+        },
       );
     }
 
-    const validPassword =
-      await bcrypt.compare(
-        password,
-        user.passwordHash
-      );
+    const validPassword = await bcrypt.compare(password, user.passwordHash);
 
     if (!validPassword) {
       return NextResponse.json(
         {
-          error:
-            "Incorrect email or password.",
+          error: "Incorrect email or password.",
         },
         {
           status: 401,
-        }
+        },
       );
     }
 
     const sessionUser: SessionUser = {
       id: user.id,
       email: user.email,
-      name:
-        user.displayName ??
-        `${user.firstName} ${user.lastName}`.trim(),
+      name: user.displayName ?? `${user.firstName} ${user.lastName}`.trim(),
       role: user.role,
 
-      organizationId:
-        user.organizations[0]
-          ?.organizationId,
+      organizationId: user.organizations[0]?.organizationId,
 
-      schoolId:
-        user.facilitator?.schoolId ??
-        user.schools[0]?.schoolId,
+      schoolId: user.facilitator?.schoolId ?? user.schools[0]?.schoolId,
 
-      studentId:
-        user.student?.id,
+      studentId: user.student?.id,
 
-      facilitatorId:
-        user.facilitator?.id,
+      facilitatorId: user.facilitator?.id,
 
-      employerId:
-        user.employerUser?.employerId,
+      employerId: user.employerUser?.employerId,
     };
 
     await setSessionCookie(sessionUser);
@@ -186,26 +153,18 @@ export async function POST(
         name: sessionUser.name,
         role: sessionUser.role,
       },
-      destination:
-        destinationForRole(
-          sessionUser.role,
-          sessionUser.studentId
-        ),
+      destination: destinationForRole(sessionUser.role, sessionUser.studentId),
     });
   } catch (error) {
-    console.error(
-      "Login failed:",
-      error
-    );
+    console.error("Login failed:", error);
 
     return NextResponse.json(
       {
-        error:
-          "Unable to complete login.",
+        error: "Unable to complete login.",
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

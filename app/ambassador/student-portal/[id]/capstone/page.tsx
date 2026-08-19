@@ -390,50 +390,57 @@ export default async function StudentCapstonePage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-          ONE SIMPLE PATH
-        </p>
+      <details className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <summary className="cursor-pointer list-none p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+                HOW MY CAPSTONE WORKS
+              </p>
 
-        <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          Experience → Notice → Keep What Matters
-        </h2>
+              <p className="mt-1 font-black text-[#0D1B3D]">
+                Experience → Notice → Keep What Matters
+              </p>
+            </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl bg-slate-50 p-5">
-            <p className="font-black text-[#0D1B3D]">1 · Experience</p>
-
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Learn, meet people, try things, listen, lead, struggle, succeed,
-              and live your life.
-            </p>
+            <span className="shrink-0 rounded-full bg-slate-100 px-3 py-2 text-xs font-black text-[#0D1B3D]">
+              View ▾
+            </span>
           </div>
+        </summary>
 
-          <div className="rounded-2xl bg-slate-50 p-5">
-            <p className="font-black text-[#0D1B3D]">2 · Notice</p>
+        <div className="border-t border-slate-200 bg-slate-50 p-5">
+          <div className="space-y-3 text-sm leading-6 text-slate-600">
+            <p>
+              <strong className="text-[#0D1B3D]">1 · Experience:</strong> Learn,
+              meet people, try things, listen, lead, struggle, succeed, and live
+              your life.
+            </p>
 
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Pay attention to what shows you something about your strengths,
+            <p>
+              <strong className="text-[#0D1B3D]">2 · Notice:</strong> Pay
+              attention to what teaches you something about your strengths,
               values, interests, people, goals, or growth.
             </p>
-          </div>
 
-          <div className="rounded-2xl bg-slate-50 p-5">
-            <p className="font-black text-[#0D1B3D]">3 · Keep It</p>
-
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Save the thoughts, words, quotes, people, experiences, and
-              evidence that help you explain who you are.
+            <p>
+              <strong className="text-[#0D1B3D]">3 · Keep It:</strong> Save the
+              thoughts, words, quotes, people, experiences, and evidence that
+              help tell your story.
             </p>
           </div>
-        </div>
 
-        <p className="mt-5 rounded-xl bg-[#EAFBFB] p-4 text-sm font-bold leading-6 text-[#0D1B3D]">
-          Stuck while writing? Use the <strong>Help me think</strong> tools
-          inside your class reflections. They will help you find words and think
-          deeper without writing your story for you.
-        </p>
-      </section>
+          <p className="mt-4 rounded-xl bg-[#EAFBFB] p-4 text-sm font-bold leading-6 text-[#0D1B3D]">
+            Stuck? Use <strong>Help me think</strong> while reflecting. It helps
+            you find your words without writing your story for you.
+          </p>
+        </div>
+      </details>
+
+      <CapstoneBrainMap
+        studentId={student.id}
+        readOnly={session.role !== "STUDENT"}
+      />
 
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
@@ -456,31 +463,10 @@ export default async function StudentCapstonePage({ params }: PageProps) {
         </div>
       </section>
 
-      <CapstoneBrainMap
-        studentId={student.id}
-        readOnly={session.role !== "STUDENT"}
-      />
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-          KEEP GOING
-        </p>
-
-        <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          Your Story Will Keep Changing
-        </h2>
-
-        <p className="mt-3 max-w-4xl leading-7 text-slate-600">
-          You are allowed to change your mind. Your goals may change. New people
-          may influence you. You may discover strengths, interests, passions, or
-          possibilities you do not know about yet. That is part of the point.
-        </p>
-
-        <p className="mt-4 max-w-4xl font-bold leading-7 text-[#0D1B3D]">
-          This book is not about having your whole life figured out. It is about
-          learning how to know yourself well enough to keep moving forward.
-        </p>
-      </section>
+      <p className="px-2 text-center text-sm font-bold leading-6 text-slate-500">
+        Your story can change as you do. You do not need to have your whole
+        future figured out.
+      </p>
     </main>
   );
 }

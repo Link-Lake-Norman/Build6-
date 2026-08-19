@@ -4,8 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletion";
 import StudentAppliedLearningLab from "@/components/student/StudentAppliedLearningLab";
-import StudentDailyCapstone from "@/components/student/StudentDailyCapstone";
-import StudentAssignments from "@/components/student/StudentAssignments";
 import type { StudentAppliedLearningAsset } from "@/components/student/StudentAppliedLearningLab";
 import { getAppliedLearningForWeek } from "@/content/applied-learning";
 
@@ -351,13 +349,41 @@ export default async function StudentLessonPage({ params }: PageProps) {
         />
       ) : null}
 
-      <StudentAssignments studentId={student.id} lessonId={lesson.id} />
+      <section className="grid gap-4 md:grid-cols-2">
+        <Link
+          href={`/ambassador/student-portal/${student.id}/assignments`}
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        >
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#725500]">
+            ASSIGNMENTS
+          </p>
 
-      <StudentDailyCapstone
-        studentId={student.id}
-        lessonId={lesson.id}
-        weekNumber={lesson.weekNumber}
-      />
+          <h2 className="mt-2 text-xl font-black text-[#0D1B3D]">
+            Finish My Work →
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Complete the work your facilitator assigned for this lesson.
+          </p>
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${student.id}/capstone`}
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        >
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#4B2265]">
+            CAPSTONE
+          </p>
+
+          <h2 className="mt-2 text-xl font-black text-[#0D1B3D]">
+            Continue My Story →
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Keep what this experience helped you learn about yourself.
+          </p>
+        </Link>
+      </section>
 
       <LessonCompletion
         week={lesson.weekNumber}

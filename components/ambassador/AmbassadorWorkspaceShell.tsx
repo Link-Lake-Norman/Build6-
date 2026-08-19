@@ -177,38 +177,43 @@ function studentItems(pathname: string): NavItem[] {
   return [
     {
       href: `/ambassador/student-portal/${studentId}`,
-      label: "My Dashboard",
-      description: "What matters right now",
+      label: "Dashboard",
+      description: "Quick look",
     },
     {
       href: `/ambassador/student-portal/${studentId}/assessment`,
-      label: "My Assessment",
-      description: "Learn more about yourself",
+      label: "Assessment",
+      description: "My starting point",
     },
     {
-      href: `/ambassador/student-portal/${studentId}/capstone`,
-      label: "Build My Story",
-      description: "Reflect, grow and build your I Am story",
+      href: `/ambassador/student-portal/${studentId}/assignments`,
+      label: "Assignments",
+      description: "What I need to finish",
     },
     {
       href: `/ambassador/student-portal/${studentId}/career-pathways`,
-      label: "Explore What Fits Me",
-      description: "Careers and opportunities",
+      label: "Career Discovery",
+      description: "Explore what fits me",
     },
     {
-      href: `/ambassador/student-passport/${studentId}`,
-      label: "My Growth",
-      description: "Skills, evidence and progress",
+      href: `/ambassador/student-portal/${studentId}/capstone`,
+      label: "Capstone",
+      description: "My story",
+    },
+    {
+      href: "/ai-coach",
+      label: "AI Coach",
+      description: "Help me think",
+    },
+    {
+      href: `/ambassador/student-portal/${studentId}/profile`,
+      label: "Profile",
+      description: "About me",
     },
     {
       href: "/ambassador/messages",
       label: "Messages",
-      description: "Messages from your program",
-    },
-    {
-      href: "/ambassador/calendar",
-      label: "Month Ahead",
-      description: "Topics, speakers and experiences",
+      description: "Program communication",
     },
   ];
 }
