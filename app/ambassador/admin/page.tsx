@@ -227,6 +227,13 @@ export default async function AmbassadorAdminPage() {
           />
 
           <AdminCard
+            title="Assessment Results"
+            description="Review Day 1 readiness scores and student responses in one class sheet."
+            href="/ambassador/facilitator/assessments"
+            action="View Assessments"
+          />
+
+          <AdminCard
             title="Command Center"
             description="Open the Ambassador operational command center."
             href="/ambassador/admin/command-center"
