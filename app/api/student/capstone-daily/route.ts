@@ -36,15 +36,11 @@ function parseResponse(response: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const studentId =
-    request.nextUrl.searchParams.get("studentId")?.trim() ?? "";
+  const studentId = request.nextUrl.searchParams.get("studentId")?.trim() ?? "";
 
-  const lessonId =
-    request.nextUrl.searchParams.get("lessonId")?.trim() ?? "";
+  const lessonId = request.nextUrl.searchParams.get("lessonId")?.trim() ?? "";
 
-  const weekNumber = Number(
-    request.nextUrl.searchParams.get("weekNumber"),
-  );
+  const weekNumber = Number(request.nextUrl.searchParams.get("weekNumber"));
 
   if (!studentId || !lessonId || !Number.isInteger(weekNumber)) {
     return NextResponse.json(
@@ -70,16 +66,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const enrollment =
-    await prisma.enrollment.findFirst({
-      where: {
-        studentId,
-        status: "ACTIVE",
-      },
-      select: {
-        cohortId: true,
-      },
-    });
+  const enrollment = await prisma.enrollment.findFirst({
+    where: {
+      studentId,
+      status: "ACTIVE",
+    },
+    select: {
+      cohortId: true,
+    },
+  });
 
   const directions = enrollment
     ? await prisma.lessonPlanTask.findMany({
@@ -99,37 +94,39 @@ export async function GET(request: NextRequest) {
       })
     : [];
 
-  const reflections =
-    await prisma.reflection.findMany({
-      where: {
-        studentId,
-        lessonId,
-        prompt: {
-          startsWith: `Capstone Build · Week ${weekNumber} · Day `,
-        },
+  const reflections = await prisma.reflection.findMany({
+    where: {
+      studentId,
+      lessonId,
+      prompt: {
+        startsWith: `Capstone Build · Week ${weekNumber} · Day `,
       },
-      orderBy: {
-        createdAt: "asc",
-      },
-      select: {
-        id: true,
-        prompt: true,
-        response: true,
-        updatedAt: true,
-      },
-    });
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      id: true,
+      prompt: true,
+      response: true,
+      status: true,
+      updatedAt: true,
+    },
+  });
 
   const entries = reflections
     .map((reflection) => {
-      const match =
-        reflection.prompt.match(/Day (\d+)$/);
+      const match = reflection.prompt.match(/Day (\d+)$/);
 
-      if (!match) return null;
+      if (!match) {
+        return null;
+      }
 
       return {
         id: reflection.id,
         dayNumber: Number(match[1]),
         ...parseResponse(reflection.response),
+        status: reflection.status,
         updatedAt: reflection.updatedAt.toISOString(),
       };
     })
@@ -145,19 +142,12 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   const studentId =
-    typeof body.studentId === "string"
-      ? body.studentId.trim()
-      : "";
+    typeof body.studentId === "string" ? body.studentId.trim() : "";
 
   const lessonId =
-    typeof body.lessonId === "string"
-      ? body.lessonId.trim()
-      : "";
+    typeof body.lessonId === "string" ? body.lessonId.trim() : "";
 
-  const weekNumber =
-    Number.isInteger(body.weekNumber)
-      ? body.weekNumber
-      : null;
+  const weekNumber = Number.isInteger(body.weekNumber) ? body.weekNumber : null;
 
   const dayNumber =
     Number.isInteger(body.dayNumber) &&
@@ -190,31 +180,41 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const learning =
-    typeof body.learning === "string"
-      ? body.learning.trim()
-      : "";
-
-  const skillEvidence =
-    typeof body.skillEvidence === "string"
-      ? body.skillEvidence.trim()
-      : "";
-
-  const growth =
-    typeof body.growth === "string"
-      ? body.growth.trim()
-      : "";
-
-  if (!learning || !skillEvidence || !growth) {
+  if (
+    access.session.role !== "STUDENT" ||
+    access.session.studentId !== studentId
+  ) {
     return NextResponse.json(
       {
-        error: "Complete all three Capstone prompts before saving.",
+        error: "Only the student may edit this Capstone reflection.",
+      },
+      {
+        status: 403,
+      },
+    );
+  }
+
+  const learning =
+    typeof body.learning === "string" ? body.learning.trim() : "";
+
+  const skillEvidence =
+    typeof body.skillEvidence === "string" ? body.skillEvidence.trim() : "";
+
+  const growth = typeof body.growth === "string" ? body.growth.trim() : "";
+
+  if (!learning && !skillEvidence && !growth) {
+    return NextResponse.json(
+      {
+        error: "Add at least one thought before saving.",
       },
       {
         status: 400,
       },
     );
   }
+
+  const complete =
+    Boolean(learning) && Boolean(skillEvidence) && Boolean(growth);
 
   const prompt = promptFor(weekNumber, dayNumber);
 
@@ -224,14 +224,13 @@ export async function POST(request: NextRequest) {
     `Vision / Goal / Next Step:\n${growth}`,
   ].join("\n\n");
 
-  const existing =
-    await prisma.reflection.findFirst({
-      where: {
-        studentId,
-        lessonId,
-        prompt,
-      },
-    });
+  const existing = await prisma.reflection.findFirst({
+    where: {
+      studentId,
+      lessonId,
+      prompt,
+    },
+  });
 
   const reflection = existing
     ? await prisma.reflection.update({
@@ -240,8 +239,8 @@ export async function POST(request: NextRequest) {
         },
         data: {
           response,
-          status: "SUBMITTED",
-          submittedAt: new Date(),
+          status: complete ? "SUBMITTED" : "DRAFT",
+          submittedAt: complete ? new Date() : null,
         },
       })
     : await prisma.reflection.create({
@@ -250,13 +249,14 @@ export async function POST(request: NextRequest) {
           lessonId,
           prompt,
           response,
-          status: "SUBMITTED",
-          submittedAt: new Date(),
+          status: complete ? "SUBMITTED" : "DRAFT",
+          submittedAt: complete ? new Date() : null,
         },
       });
 
   return NextResponse.json({
     success: true,
+    status: reflection.status,
     reflection,
   });
 }
