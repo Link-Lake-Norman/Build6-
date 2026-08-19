@@ -201,15 +201,16 @@ export default function StudentAssignments({
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
       <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-        TODAY&apos;S WORK
+        PUT IT INTO PRACTICE
       </p>
 
       <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-        My Assignments
+        What I Need to Do
       </h2>
 
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-        Save your work as you go. You can leave and come back before submitting.
+        Focus on the work your facilitator has opened for you. Save as you go
+        and submit when you are finished.
       </p>
 
       <div className="mt-6 space-y-5">
@@ -263,7 +264,7 @@ export default function StudentAssignments({
                     htmlFor={`assignment-${assignment.id}`}
                     className="text-sm font-black text-[#0D1B3D]"
                   >
-                    My Work
+                    My Response
                   </label>
 
                   <textarea
@@ -277,7 +278,7 @@ export default function StudentAssignments({
                         [assignment.id]: event.target.value,
                       }))
                     }
-                    placeholder="Complete your work here..."
+                    placeholder="Start with what you know. You can save and come back."
                     className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-4 text-sm leading-6 text-[#0D1B3D] outline-none focus:border-[#0D1B3D] disabled:bg-slate-100"
                   />
                 </div>
@@ -288,7 +289,7 @@ export default function StudentAssignments({
                   htmlFor={`note-${assignment.id}`}
                   className="text-sm font-black text-[#0D1B3D]"
                 >
-                  My Notes
+                  Anything I Want to Remember
                 </label>
 
                 <textarea
@@ -302,22 +303,29 @@ export default function StudentAssignments({
                       [assignment.id]: event.target.value,
                     }))
                   }
-                  placeholder="Add anything you want to remember..."
+                  placeholder="A thought, question, quote, idea, or reminder..."
                   className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-4 text-sm leading-6 text-[#0D1B3D] outline-none focus:border-[#0D1B3D] disabled:bg-slate-100"
                 />
               </div>
+
+              {assignment.portfolioEligible ? (
+                <div className="mt-4 rounded-xl border border-[#F2B705]/40 bg-[#FFF9DF] p-3 text-xs font-bold leading-5 text-[#725500]">
+                  This work can become part of your Future Ready™ record and
+                  evidence of what you are building.
+                </div>
+              ) : null}
 
               {assignment.allowPrint || assignment.allowUpload ? (
                 <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
                   {assignment.allowPrint ? (
                     <span className="rounded-full bg-white px-3 py-2">
-                      Print option available
+                      Printable version available
                     </span>
                   ) : null}
 
                   {assignment.allowUpload ? (
                     <span className="rounded-full bg-white px-3 py-2">
-                      File upload supported
+                      You can upload a file
                     </span>
                   ) : null}
                 </div>
@@ -326,7 +334,7 @@ export default function StudentAssignments({
               {assignment.submission?.feedback ? (
                 <div className="mt-4 rounded-xl border border-[#00A6A6]/30 bg-[#EAFBFB] p-4">
                   <p className="text-xs font-black uppercase tracking-wide text-[#007C7C]">
-                    Facilitator Feedback
+                    Feedback From My Facilitator
                   </p>
 
                   <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#0D1B3D]">
