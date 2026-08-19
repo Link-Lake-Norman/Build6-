@@ -164,11 +164,11 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
     <main className="space-y-8">
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white shadow-sm">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
-          Career + Opportunity Intelligence
+          EXPLORE WHAT FITS ME
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
-          {studentName}&apos;s Opportunity Map
+          {studentName}&apos;s Career + Opportunity Map
         </h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
@@ -180,11 +180,11 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
 
       <section className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-          My Career Profile
+          What I Know About Myself
         </p>
 
         <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          What Future Ready™ Is Learning About Me
+          What Is Learning About Me
         </h2>
 
         {strengths.length > 0 ? (
@@ -224,12 +224,13 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
         {strengths.length === 0 && interests.length === 0 ? (
           <div className="mt-6 rounded-2xl bg-[#FFF9DF] p-5">
             <p className="font-black text-[#0D1B3D]">
-              Your Opportunity Map will get smarter as you build your profile.
+              Your Career + Opportunity Map will get smarter as you build your
+              profile.
             </p>
 
             <p className="mt-2 leading-7 text-slate-600">
-              Add your strengths, interests, values, and goals so Future Ready™
-              can connect your profile to more relevant career ideas.
+              Add your strengths, interests, values, and goals so can connect
+              your profile to more relevant career ideas.
             </p>
 
             <Link
@@ -278,17 +279,29 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
       <section>
         <div className="mb-6">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-            Career Ideas
+            Ideas Worth Exploring
           </p>
 
           <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-            Careers to Explore
+            Careers + Opportunities to Explore
           </h2>
 
           <p className="mt-3 max-w-3xl leading-7 text-slate-600">
             Read what each career actually involves. If something catches your
             attention, save it so you can come back to it as you continue
             building your Passport.
+          </p>
+        </div>
+
+        <div className="mb-5 rounded-2xl border border-[#00A6A6]/25 bg-[#EAFBFB] p-5">
+          <p className="font-black text-[#0D1B3D]">
+            These are starting points, not answers.
+          </p>
+          <p className="mt-2 leading-7 text-slate-600">
+            Your recommendations grow as you complete assessments, reflect,
+            identify strengths and values, build skills, save interests, and
+            gain real experiences. Explore broadly and pay attention to what
+            makes you curious.
           </p>
         </div>
 
@@ -323,17 +336,17 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
 
                 <div className="mt-6 grid gap-6 lg:grid-cols-3">
                   <CareerList
-                    title="Why This Might Fit You"
+                    title="Why It May Fit Me"
                     items={pathway.whyItFits}
                   />
 
                   <CareerList
-                    title="Skills to Develop"
+                    title="Skills I Can Build"
                     items={pathway.skillsToDevelop}
                   />
 
                   <CareerList
-                    title="Experiences to Try"
+                    title="Ways I Can Test It"
                     items={pathway.experiencesToTry}
                   />
                 </div>

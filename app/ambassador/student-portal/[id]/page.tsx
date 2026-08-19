@@ -188,14 +188,14 @@ export default async function AmbassadorStudentPortalPage({
 
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white shadow-sm">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Student Experience
+          Student Experience
         </p>
 
         <h1 className="mt-3 text-4xl font-black">Welcome, {studentName}</h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Build your skills, capture your growth, complete your Future Ready™
-          work, and prepare for what comes next.
+          Build your skills, capture your growth, complete your work, and
+          prepare for what comes next.
         </p>
 
         <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold">
@@ -235,7 +235,7 @@ export default async function AmbassadorStudentPortalPage({
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-                My Future Ready™ Story
+                My Story
               </h2>
 
               <p className="mt-2 text-lg font-bold text-[#4B2265]">
@@ -244,10 +244,9 @@ export default async function AmbassadorStudentPortalPage({
 
               <p className="mt-4 max-w-3xl leading-7 text-slate-600">
                 Your Capstone grows from your reflections, experiences, skills,
-                values, goals, and discoveries throughout Future Ready™. Every
-                week, you will collect pieces of your story, experiences,
-                skills, reflections, people, challenges, accomplishments, and
-                future direction.
+                values, goals, and discoveries throughout. Every week, you will
+                collect pieces of your story, experiences, skills, reflections,
+                people, challenges, accomplishments, and future direction.
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
@@ -269,7 +268,7 @@ export default async function AmbassadorStudentPortalPage({
               href={`/ambassador/student-portal/${student.id}/capstone`}
               className="shrink-0 rounded-xl bg-[#0D1B3D] px-7 py-4 text-center text-lg font-black text-white shadow-lg transition hover:bg-[#162A59]"
             >
-              Open My Capstone →
+              Open Build My Story →
             </Link>
           </div>
         </section>
@@ -284,7 +283,7 @@ export default async function AmbassadorStudentPortalPage({
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-                Start with your Future Ready™ Assessment
+                Start by learning more about yourself
               </h2>
 
               <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
@@ -298,14 +297,14 @@ export default async function AmbassadorStudentPortalPage({
               href={`/ambassador/student-portal/${student.id}/assessment`}
               className="shrink-0 rounded-xl bg-[#0D1B3D] px-7 py-4 text-center font-black text-white shadow-lg"
             >
-              Take Day 1 Assessment →
+              Take My Assessment →
             </Link>
           </div>
         </section>
       ) : (
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6">
           <p className="font-black text-emerald-900">
-            ✓ Day 1 Future Ready™ baseline complete
+            ✓ Day 1 baseline complete
           </p>
           <p className="mt-2 text-sm leading-6 text-emerald-800">
             Your readiness score now reflects your real starting point.
@@ -329,7 +328,7 @@ export default async function AmbassadorStudentPortalPage({
         <StatCard
           label="Readiness"
           value={`${Math.round(Number(student.readinessScore))}%`}
-          detail="Future Ready™ score"
+          detail="score"
         />
 
         <StatCard
@@ -352,8 +351,8 @@ export default async function AmbassadorStudentPortalPage({
               </h2>
 
               <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
-                Your current Future Ready™ lesson is ready. Open the lesson to
-                complete your activity, reflection, and required work.
+                Your current lesson is ready. Open the lesson to complete your
+                activity, reflection, and required work.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3">
@@ -384,10 +383,67 @@ export default async function AmbassadorStudentPortalPage({
         </section>
       )}
 
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
+          MY JOURNEY
+        </p>
+
+        <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+          Keep It Simple
+        </h2>
+
+        <p className="mt-2 max-w-3xl leading-7 text-slate-600">
+          Focus on what you need today, learn something about yourself, build
+          your story, and explore what may fit you next.
+        </p>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href={`/ambassador/student-portal/${student.id}/assessment`}
+            className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
+          >
+            <p className="font-black text-[#0D1B3D]">Know Myself</p>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Assessment + self-awareness
+            </p>
+          </Link>
+
+          <Link
+            href={`/ambassador/student-portal/${student.id}/capstone`}
+            className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
+          >
+            <p className="font-black text-[#0D1B3D]">Build My Story</p>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Reflections → “I Am…” story
+            </p>
+          </Link>
+
+          <Link
+            href={`/ambassador/student-portal/${student.id}/career-pathways`}
+            className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
+          >
+            <p className="font-black text-[#0D1B3D]">Explore What Fits Me</p>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Careers + opportunities
+            </p>
+          </Link>
+
+          <Link
+            href={`/ambassador/student-passport/${student.id}`}
+            className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
+          >
+            <p className="font-black text-[#0D1B3D]">See My Growth</p>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Skills + evidence + progress
+            </p>
+          </Link>
+        </div>
+      </section>
+
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <StudentActionCard
           title="My Growth"
-          description="Your complete Future Ready™ record, progress, evidence, and achievements."
+          description="Your complete record, progress, evidence, and achievements."
           href={`/ambassador/student-passport/${student.id}`}
           action="See My Progress"
         />
@@ -401,7 +457,7 @@ export default async function AmbassadorStudentPortalPage({
 
         <StudentActionCard
           title="Build My Story"
-          description="Your Future Ready™ graduation reflection book — who you are beyond your role, what has shaped you, and who you are becoming."
+          description="Your graduation reflection book — who you are beyond your role, what has shaped you, and who you are becoming."
           href={`/ambassador/student-portal/${student.id}/capstone`}
           action="Continue My Story"
         />
@@ -428,7 +484,7 @@ export default async function AmbassadorStudentPortalPage({
         />
 
         <StudentActionCard
-          title="Reflection Journal"
+          title="My Reflections"
           description="Capture what you are learning and how you are growing throughout the program."
           href={`/ambassador/student-passport/${student.id}/reflections`}
           action="Open Journal"
@@ -436,7 +492,7 @@ export default async function AmbassadorStudentPortalPage({
 
         <StudentActionCard
           title="Messages"
-          description="Connect with your Future Ready™ facilitator and program team."
+          description="Connect with your facilitator and program team."
           href="/ambassador/messages"
           action="Open Messages"
         />
@@ -449,13 +505,13 @@ export default async function AmbassadorStudentPortalPage({
           </p>
 
           <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-            {program?.name ?? "Future Ready™"}
+            {program?.name ?? ""}
           </h2>
 
           <p className="mt-4 leading-7 text-slate-600">
             {totalWeeks > 0
-              ? `You are enrolled in the ${totalWeeks}-week Future Ready™ experience.`
-              : "Your active Future Ready™ program will appear here."}
+              ? `You are enrolled in the ${totalWeeks}-week experience.`
+              : "Your active program will appear here."}
           </p>
 
           <div className="mt-6 h-3 overflow-hidden rounded-full bg-slate-200">
@@ -498,7 +554,7 @@ export default async function AmbassadorStudentPortalPage({
         </p>
 
         <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-          💰 My Future Ready™ Life Account
+          💰 My Life Account
         </h2>
 
         <p className="mt-3 max-w-2xl leading-7 text-slate-700">
