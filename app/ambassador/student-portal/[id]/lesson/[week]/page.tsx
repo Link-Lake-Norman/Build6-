@@ -5,6 +5,7 @@ import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletion";
 import StudentAppliedLearningLab from "@/components/student/StudentAppliedLearningLab";
 import StudentDailyCapstone from "@/components/student/StudentDailyCapstone";
+import StudentAssignments from "@/components/student/StudentAssignments";
 import type { StudentAppliedLearningAsset } from "@/components/student/StudentAppliedLearningLab";
 import { getAppliedLearningForWeek } from "@/content/applied-learning";
 
@@ -349,6 +350,8 @@ export default async function StudentLessonPage({ params }: PageProps) {
           assets={studentAppliedLearningAssets}
         />
       ) : null}
+
+      <StudentAssignments studentId={student.id} lessonId={lesson.id} />
 
       <StudentDailyCapstone
         studentId={student.id}
