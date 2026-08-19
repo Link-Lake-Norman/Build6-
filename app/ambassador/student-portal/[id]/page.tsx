@@ -142,6 +142,32 @@ export default async function AmbassadorStudentPortalPage({
 
   const programId = program?.id ?? null;
 
+  const releasedLessons =
+    programId && cohort
+      ? await prisma.lesson.findMany({
+          where: {
+            module: {
+              programId,
+            },
+            status: "ACTIVE",
+            deliverySettings: {
+              some: {
+                cohortId: cohort.id,
+                releasedToStudents: true,
+              },
+            },
+          },
+          select: {
+            id: true,
+            weekNumber: true,
+            title: true,
+          },
+          orderBy: {
+            weekNumber: "asc",
+          },
+        })
+      : [];
+
   const programProgress = programId
     ? student.lessonProgress.filter(
         (progress) => progress.lesson.module.programId === programId,
@@ -152,13 +178,20 @@ export default async function AmbassadorStudentPortalPage({
     (progress) => progress.completedAt !== null || progress.percent >= 100,
   ).length;
 
-  const currentWeek =
-    programProgress.length > 0
-      ? Math.max(
-          1,
-          ...programProgress.map((progress) => progress.lesson.weekNumber),
-        )
-      : 1;
+  const currentReleasedLesson =
+    releasedLessons.find((releasedLesson) => {
+      const progress = programProgress.find(
+        (item) => item.lessonId === releasedLesson.id,
+      );
+
+      return (
+        !progress || (progress.completedAt === null && progress.percent < 100)
+      );
+    }) ??
+    releasedLessons[releasedLessons.length - 1] ??
+    null;
+
+  const currentWeek = currentReleasedLesson?.weekNumber ?? null;
 
   const totalWeeks = program?.totalWeeks ?? 0;
 
@@ -338,7 +371,7 @@ export default async function AmbassadorStudentPortalPage({
         />
       </section>
 
-      {program && (
+      {program && currentReleasedLesson && currentWeek !== null && (
         <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF9DF] p-7 shadow-sm">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -347,12 +380,12 @@ export default async function AmbassadorStudentPortalPage({
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-                Week {currentWeek}: Ready to Learn
+                Week {currentWeek}: {currentReleasedLesson.title}
               </h2>
 
               <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
-                Your current lesson is ready. Open the lesson to complete your
-                activity, reflection, and required work.
+                Your facilitator has released this lesson for you. Open it when
+                you are ready to complete the work that has been assigned.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3">
