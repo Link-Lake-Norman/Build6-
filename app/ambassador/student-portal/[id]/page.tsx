@@ -393,20 +393,22 @@ export default async function AmbassadorStudentPortalPage({
         </h2>
 
         <p className="mt-2 max-w-3xl leading-7 text-slate-600">
-          Focus on what you need today, learn something about yourself, build
-          your story, and explore what may fit you next.
+          Your dashboard stays simple. Complete only what has been opened for
+          you, build your story over time, and explore what may fit you next.
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            href={`/ambassador/student-portal/${student.id}/assessment`}
-            className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
-          >
-            <p className="font-black text-[#0D1B3D]">Know Myself</p>
-            <p className="mt-1 text-sm leading-6 text-slate-600">
-              Assessment + self-awareness
-            </p>
-          </Link>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {!student.readinessProfile?.completedAt ? (
+            <Link
+              href={`/ambassador/student-portal/${student.id}/assessment`}
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-[#F2B705]"
+            >
+              <p className="font-black text-[#0D1B3D]">Know Myself</p>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Assessment + self-awareness
+              </p>
+            </Link>
+          ) : null}
 
           <Link
             href={`/ambassador/student-portal/${student.id}/capstone`}
@@ -438,64 +440,6 @@ export default async function AmbassadorStudentPortalPage({
             </p>
           </Link>
         </div>
-      </section>
-
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <StudentActionCard
-          title="My Growth"
-          description="Your complete record, progress, evidence, and achievements."
-          href={`/ambassador/student-passport/${student.id}`}
-          action="See My Progress"
-        />
-
-        <StudentActionCard
-          title="My Profile"
-          description="Build and hard-save your strengths, values, interests, goals, and future direction."
-          href={`/ambassador/student-portal/${student.id}/profile`}
-          action={student.profileComplete ? "View Profile" : "Build Profile"}
-        />
-
-        <StudentActionCard
-          title="Build My Story"
-          description="Your graduation reflection book — who you are beyond your role, what has shaped you, and who you are becoming."
-          href={`/ambassador/student-portal/${student.id}/capstone`}
-          action="Continue My Story"
-        />
-
-        <StudentActionCard
-          title="Digital Portfolio"
-          description="Save projects, documents, presentations, certificates, and evidence of growth."
-          href={`/ambassador/student-passport/${student.id}/portfolio`}
-          action="Open Portfolio"
-        />
-
-        <StudentActionCard
-          title="Explore What Fits Me"
-          description="Explore career ideas connected to your strengths, interests, skills, and future goals — then save careers you want to investigate."
-          href={`/ambassador/student-portal/${student.id}/career-pathways`}
-          action="View Opportunities"
-        />
-
-        <StudentActionCard
-          title="Month Ahead"
-          description="See upcoming class topics, speakers, experiences, and important program dates."
-          href="/ambassador/calendar"
-          action="View Calendar"
-        />
-
-        <StudentActionCard
-          title="My Reflections"
-          description="Capture what you are learning and how you are growing throughout the program."
-          href={`/ambassador/student-passport/${student.id}/reflections`}
-          action="Open Journal"
-        />
-
-        <StudentActionCard
-          title="Messages"
-          description="Connect with your facilitator and program team."
-          href="/ambassador/messages"
-          action="Open Messages"
-        />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
@@ -600,30 +544,6 @@ function StatCard({
       <p className="mt-3 text-4xl font-black text-[#0D1B3D]">{value}</p>
 
       <p className="mt-2 text-sm font-semibold text-slate-500">{detail}</p>
-    </article>
-  );
-}
-
-function StudentActionCard({
-  title,
-  description,
-  href,
-  action,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  action: string;
-}) {
-  return (
-    <article className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="text-xl font-black text-[#0D1B3D]">{title}</h2>
-
-      <p className="mt-3 flex-1 leading-7 text-slate-600">{description}</p>
-
-      <Link href={href} className="mt-6 inline-flex font-black text-[#0D1B3D]">
-        {action} →
-      </Link>
     </article>
   );
 }
