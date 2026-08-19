@@ -19,74 +19,202 @@ type NavItem = {
   description?: string;
 };
 
-const primaryNavigation: NavItem[] = [
+type WorkspaceMode = "ADMIN" | "STAFF" | "STUDENT" | null;
+
+const staffPrimary: NavItem[] = [
   {
     href: "/ambassador/facilitator",
     label: "Dashboard",
-    description: "Your cohort operating center",
+    description: "Today and your cohort",
   },
   {
     href: "/ambassador/curriculum",
     label: "Lesson Plans",
-    description: "Follow the 16-week Future Ready™ plan",
+    description: "Teach and prepare",
   },
 ];
 
-const classNavigation: NavItem[] = [
+const staffTeaching: NavItem[] = [
   {
     href: "/ambassador/lesson-builder",
     label: "AI Activity Generator",
-    description: "Generate optional classroom activities",
+    description: "Optional classroom activities",
   },
   {
     href: "/ambassador/resources",
     label: "Teaching Resources",
-    description: "Preview, download and add lesson assets",
+    description: "Preview, edit and download",
   },
   {
     href: "/ambassador/calendar",
     label: "Calendar",
-    description: "Month-ahead topics, speakers and preparation",
+    description: "Topics, speakers and preparation",
   },
   {
     href: "/ambassador/experiences",
     label: "Experiences",
-    description: "Speakers, field trips and employer experiences",
+    description: "Speakers, field trips and employers",
   },
 ];
 
-const studentNavigation: NavItem[] = [
+const staffStudents: NavItem[] = [
   {
     href: "/ambassador/facilitator/students",
     label: "Students",
-    description: "Roster, Passport, portfolio and Capstone",
+    description: "Roster and student progress",
   },
   {
     href: "/ambassador/facilitator/assessments",
     label: "Assessments",
-    description: "Readiness and student assessment progress",
+    description: "Assessment progress",
   },
   {
     href: "/ambassador/facilitator/attendance",
     label: "Attendance",
-    description: "Record class attendance",
+    description: "Record attendance",
   },
   {
     href: "/ambassador/messages",
     label: "Messages",
-    description: "Student and program communication",
+    description: "Program communication",
   },
   {
     href: "/ambassador/facilitator/analytics",
     label: "Analytics",
-    description: "Cohort progress, readiness and evidence",
+    description: "Progress and evidence",
   },
 ];
 
-const insightNavigation: NavItem[] = [];
+const adminItems: NavItem[] = [
+  {
+    href: "/ambassador/admin",
+    label: "Admin Dashboard",
+    description: "Program overview",
+  },
+  {
+    href: "/ambassador/admin/command-center",
+    label: "Command Center",
+    description: "Program operations",
+  },
+  {
+    href: "/ambassador/admin/cohorts",
+    label: "Cohorts",
+    description: "Manage cohorts",
+  },
+  {
+    href: "/ambassador/admin/facilitators",
+    label: "Facilitators",
+    description: "Manage staff access",
+  },
+  {
+    href: "/ambassador/admin/password-resets",
+    label: "Password Help",
+    description: "Student reset requests",
+  },
+  {
+    href: "/ambassador/admin/permissions",
+    label: "Permissions",
+    description: "Platform access controls",
+  },
+  {
+    href: "/ambassador/admin/asset-vault",
+    label: "Asset Vault",
+    description: "Program assets",
+  },
+];
 
-function isWorkspacePath(pathname: string) {
-  return (
+function studentIdFromPath(pathname: string) {
+  const portalMatch = pathname.match(/^\/ambassador\/student-portal\/([^/]+)/);
+
+  if (portalMatch?.[1]) {
+    return portalMatch[1];
+  }
+
+  const passportMatch = pathname.match(
+    /^\/ambassador\/student-passport\/([^/]+)/,
+  );
+
+  if (passportMatch?.[1]) {
+    return passportMatch[1];
+  }
+
+  const studentMatch = pathname.match(/^\/ambassador\/student\/([^/]+)/);
+
+  return studentMatch?.[1] ?? null;
+}
+
+function studentItems(pathname: string): NavItem[] {
+  const studentId = studentIdFromPath(pathname);
+
+  if (!studentId) {
+    return [];
+  }
+
+  return [
+    {
+      href: `/ambassador/student-portal/${studentId}`,
+      label: "My Dashboard",
+      description: "What matters right now",
+    },
+    {
+      href: `/ambassador/student-portal/${studentId}/assessment`,
+      label: "My Assessment",
+      description: "Learn more about yourself",
+    },
+    {
+      href: `/ambassador/student-portal/${studentId}/capstone`,
+      label: "Build My Story",
+      description: "Reflect, grow and build your I Am story",
+    },
+    {
+      href: `/ambassador/student-portal/${studentId}/career-pathways`,
+      label: "Explore What Fits Me",
+      description: "Careers and opportunities",
+    },
+    {
+      href: `/ambassador/student-passport/${studentId}`,
+      label: "My Growth",
+      description: "Skills, evidence and progress",
+    },
+    {
+      href: "/ambassador/calendar",
+      label: "Month Ahead",
+      description: "Topics, speakers and experiences",
+    },
+  ];
+}
+
+function workspaceMode(
+  pathname: string,
+  session: SessionUser | null,
+): WorkspaceMode {
+  if (!session) {
+    return null;
+  }
+
+  if (
+    pathname === "/ambassador/login" ||
+    pathname === "/ambassador/register" ||
+    pathname === "/ambassador/forgot-password"
+  ) {
+    return null;
+  }
+
+  if (
+    pathname === "/ambassador/admin" ||
+    pathname.startsWith("/ambassador/admin/")
+  ) {
+    return "ADMIN";
+  }
+
+  if (
+    pathname.startsWith("/ambassador/student-portal/") ||
+    pathname.startsWith("/ambassador/student-passport/")
+  ) {
+    return "STUDENT";
+  }
+
+  if (
     pathname === "/ambassador/facilitator" ||
     pathname.startsWith("/ambassador/facilitator/") ||
     pathname === "/ambassador/curriculum" ||
@@ -103,125 +231,79 @@ function isWorkspacePath(pathname: string) {
     pathname.startsWith("/ambassador/experiences/") ||
     pathname === "/ambassador/messages" ||
     pathname.startsWith("/ambassador/messages/")
-  );
+  ) {
+    return "STAFF";
+  }
+
+  return null;
 }
 
 function isActive(pathname: string, href: string) {
+  if (pathname === href) {
+    return true;
+  }
+
+  if (href === "/ambassador/admin") {
+    return pathname === href;
+  }
+
   if (href === "/ambassador/facilitator") {
     return pathname === href;
   }
 
-  if (href === "/ambassador/curriculum") {
-    return (
-      pathname === "/ambassador/curriculum" ||
-      pathname.startsWith("/ambassador/curriculum/")
-    );
-  }
-
-  if (href === "/ambassador/planner") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  if (href === "/ambassador/lesson-builder") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  if (href === "/ambassador/facilitator/students") {
-    return (
-      pathname === href ||
-      pathname.startsWith("/ambassador/facilitator/students/")
-    );
-  }
-
-  if (href === "/ambassador/facilitator/attendance") {
-    return pathname === href;
-  }
-
-  if (href === "/ambassador/facilitator/assessments") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  if (href === "/ambassador/facilitator/analytics") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  if (href === "/ambassador/resources") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  if (href === "/ambassador/experiences") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-
-  if (href === "/ambassador/messages") {
-    return pathname === href || pathname.startsWith(`${href}/`);
-  }
-
-  return false;
+  return pathname.startsWith(`${href}/`);
 }
 
-export default function AmbassadorWorkspaceShell({
-  session,
-  children,
-}: Props) {
+export default function AmbassadorWorkspaceShell({ session, children }: Props) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const canUseFacilitatorWorkspace =
-    session?.role === "FACILITATOR" ||
-    session?.role === "SCHOOL_ADMIN" ||
-    session?.role === "ORGANIZATION_ADMIN" ||
-    session?.role === "SUPER_ADMIN";
-
-  const facilitatorWorkspace =
-    canUseFacilitatorWorkspace &&
-    isWorkspacePath(pathname);
+  const mode = workspaceMode(pathname, session);
 
   const canAccessAdmin =
     session?.role === "SCHOOL_ADMIN" ||
     session?.role === "ORGANIZATION_ADMIN" ||
     session?.role === "SUPER_ADMIN";
 
-  if (!facilitatorWorkspace) {
+  if (!mode) {
     return (
       <div className="min-h-screen bg-[#F5F7FA]">
         <PlatformHeader session={session} />
         <PageHistoryControls />
 
-        <div className="mx-auto w-full max-w-7xl px-6 py-8">
-          {children}
-        </div>
+        <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>
       </div>
     );
   }
 
+  const title =
+    mode === "ADMIN"
+      ? "Administration"
+      : mode === "STUDENT"
+        ? "Student Workspace"
+        : "Facilitator Workspace";
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      {/* WORKSPACE TOP BAR */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
-        <div className="flex min-h-[72px] items-center justify-between gap-4 px-4 md:px-6">
+        <div className="flex min-h-[68px] items-center justify-between gap-4 px-4 md:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileOpen((current) => !current)}
               className="rounded-xl border border-slate-200 px-3 py-2 text-lg font-black text-[#0D1B3D] lg:hidden"
-              aria-label="Open facilitator navigation"
+              aria-label="Open navigation"
             >
               ☰
             </button>
 
-            <Link
-              href="/ambassador/facilitator"
-              className="text-decoration-none"
-            >
+            <div>
               <p className="text-lg font-black text-[#0D1B3D]">
-                Future Ready™
+                Ambassador Program
               </p>
-              <p className="text-xs font-bold text-slate-500">
-                Ambassador Facilitator Workspace
-              </p>
-            </Link>
+
+              <p className="text-xs font-bold text-slate-500">{title}</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -229,17 +311,27 @@ export default function AmbassadorWorkspaceShell({
               <p className="text-sm font-black text-[#0D1B3D]">
                 {session?.name}
               </p>
-              <p className="text-xs font-bold text-[#4B2265]">
+
+              <p className="text-xs font-bold text-slate-500">
                 Ambassador Christian School
               </p>
             </div>
 
-            {canAccessAdmin ? (
+            {canAccessAdmin && mode !== "ADMIN" ? (
               <Link
                 href="/ambassador/admin"
                 className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-[#0D1B3D]"
               >
-                Admin ↗
+                Admin
+              </Link>
+            ) : null}
+
+            {canAccessAdmin && mode === "ADMIN" ? (
+              <Link
+                href="/ambassador/facilitator"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-[#0D1B3D]"
+              >
+                Teaching
               </Link>
             ) : null}
 
@@ -256,15 +348,14 @@ export default function AmbassadorWorkspaceShell({
       </header>
 
       <div className="flex">
-        {/* DESKTOP SIDEBAR */}
-        <aside className="sticky top-[72px] hidden h-[calc(100vh-72px)] w-[260px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white lg:block">
+        <aside className="sticky top-[68px] hidden h-[calc(100vh-68px)] w-[250px] shrink-0 overflow-y-auto border-r border-slate-200 bg-white lg:block">
           <WorkspaceSidebar
             pathname={pathname}
+            mode={mode}
             canAccessAdmin={canAccessAdmin}
           />
         </aside>
 
-        {/* MOBILE SIDEBAR */}
         {mobileOpen ? (
           <div className="fixed inset-0 z-50 lg:hidden">
             <button
@@ -276,9 +367,7 @@ export default function AmbassadorWorkspaceShell({
 
             <aside className="relative h-full w-[290px] overflow-y-auto bg-white shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-200 p-4">
-                <strong className="text-[#0D1B3D]">
-                  Facilitator Workspace
-                </strong>
+                <strong className="text-[#0D1B3D]">{title}</strong>
 
                 <button
                   type="button"
@@ -291,6 +380,7 @@ export default function AmbassadorWorkspaceShell({
 
               <WorkspaceSidebar
                 pathname={pathname}
+                mode={mode}
                 canAccessAdmin={canAccessAdmin}
                 onNavigate={() => setMobileOpen(false)}
               />
@@ -298,7 +388,6 @@ export default function AmbassadorWorkspaceShell({
           </div>
         ) : null}
 
-        {/* PAGE CONTENT */}
         <main className="min-w-0 flex-1">
           <div className="mx-auto w-full max-w-[1500px] px-4 py-5 md:px-6 lg:px-8">
             {children}
@@ -311,74 +400,130 @@ export default function AmbassadorWorkspaceShell({
 
 function WorkspaceSidebar({
   pathname,
+  mode,
   canAccessAdmin,
   onNavigate,
 }: {
   pathname: string;
+  mode: Exclude<WorkspaceMode, null>;
   canAccessAdmin: boolean;
   onNavigate?: () => void;
 }) {
+  if (mode === "STUDENT") {
+    return (
+      <nav className="p-4">
+        <CohortCard />
+
+        <SidebarGroup
+          title="MY JOURNEY"
+          items={studentItems(pathname)}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+      </nav>
+    );
+  }
+
+  if (mode === "ADMIN") {
+    return (
+      <nav className="p-4">
+        <CohortCard />
+
+        <SidebarGroup
+          title="ADMINISTRATION"
+          items={adminItems}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+
+        <SidebarGroup
+          title="PROGRAM"
+          items={[
+            {
+              href: "/ambassador/facilitator",
+              label: "Teaching Dashboard",
+            },
+            {
+              href: "/ambassador/curriculum",
+              label: "Lesson Plans",
+            },
+            {
+              href: "/ambassador/calendar",
+              label: "Calendar",
+            },
+            {
+              href: "/ambassador/experiences",
+              label: "Experiences",
+            },
+            {
+              href: "/ambassador/resources",
+              label: "Resources",
+            },
+            {
+              href: "/ambassador/facilitator/students",
+              label: "Students",
+            },
+          ]}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+      </nav>
+    );
+  }
+
   return (
     <nav className="p-4">
-      <div className="mb-5 rounded-2xl bg-[#0D1B3D] p-4 text-white">
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#F2B705]">
-          ACTIVE COHORT
-        </p>
-
-        <p className="mt-2 text-sm font-black">
-          Ambassador Christian School
-        </p>
-
-        <p className="mt-1 text-xs leading-5 text-slate-300">
-          Pilot 2026–2027
-        </p>
-      </div>
+      <CohortCard />
 
       <SidebarGroup
         title="TODAY"
-        items={primaryNavigation}
+        items={staffPrimary}
         pathname={pathname}
         onNavigate={onNavigate}
       />
 
       <SidebarGroup
         title="TEACHING TOOLS"
-        items={classNavigation}
+        items={staffTeaching}
         pathname={pathname}
         onNavigate={onNavigate}
       />
 
       <SidebarGroup
         title="STUDENTS + CLASS"
-        items={studentNavigation}
+        items={staffStudents}
         pathname={pathname}
         onNavigate={onNavigate}
       />
 
       {canAccessAdmin ? (
-        <div className="mt-6 border-t border-slate-200 pt-5">
-          <p className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-            ADMINISTRATION
-          </p>
-
-          <Link
-            href="/ambassador/admin"
-            onClick={onNavigate}
-            className="block rounded-xl px-3 py-3 text-sm font-black text-slate-600 hover:bg-slate-100"
-          >
-            Admin Center ↗
-          </Link>
-
-          <Link
-            href="/ambassador/admin/asset-vault"
-            onClick={onNavigate}
-            className="mt-1 block rounded-xl px-3 py-3 text-sm font-black text-slate-600 hover:bg-slate-100"
-          >
-            Asset Vault ↗
-          </Link>
-        </div>
+        <SidebarGroup
+          title="ADMIN"
+          items={[
+            {
+              href: "/ambassador/admin",
+              label: "Administration",
+            },
+          ]}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
       ) : null}
     </nav>
+  );
+}
+
+function CohortCard() {
+  return (
+    <div className="mb-5 rounded-2xl bg-[#0D1B3D] p-4 text-white">
+      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#F2B705]">
+        ACTIVE COHORT
+      </p>
+
+      <p className="mt-2 text-sm font-black">Ambassador Christian School</p>
+
+      <p className="mt-1 text-xs leading-5 text-slate-300">Pilot 2026–2027</p>
+    </div>
   );
 }
 
@@ -393,6 +538,10 @@ function SidebarGroup({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <div className="mb-6">
       <p className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
@@ -408,24 +557,16 @@ function SidebarGroup({
               key={item.href}
               href={item.href}
               onClick={onNavigate}
-              className={`block rounded-xl border px-3 py-3 transition ${
+              className={`block rounded-xl px-3 py-3 transition ${
                 active
-                  ? "border-[#F2B705] bg-[#FFF7D6]"
-                  : "border-transparent hover:bg-slate-100"
+                  ? "bg-[#FFF3BF] text-[#0D1B3D]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-[#0D1B3D]"
               }`}
             >
-              <p
-                className={`text-sm font-black ${
-                  active
-                    ? "text-[#0D1B3D]"
-                    : "text-slate-700"
-                }`}
-              >
-                {item.label}
-              </p>
+              <p className="text-sm font-black">{item.label}</p>
 
               {item.description ? (
-                <p className="mt-1 text-[11px] leading-4 text-slate-500">
+                <p className="mt-1 text-xs leading-5 text-slate-500">
                   {item.description}
                 </p>
               ) : null}

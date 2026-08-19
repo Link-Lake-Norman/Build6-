@@ -243,10 +243,11 @@ export default async function AmbassadorStudentPortalPage({
               </p>
 
               <p className="mt-4 max-w-3xl leading-7 text-slate-600">
-                Your Capstone is the reflection book you will build throughout
-                Future Ready™. Every week, you will collect pieces of your
-                story, experiences, skills, reflections, people, challenges,
-                accomplishments, and future direction.
+                Your Capstone grows from your reflections, experiences, skills,
+                values, goals, and discoveries throughout Future Ready™. Every
+                week, you will collect pieces of your story, experiences,
+                skills, reflections, people, challenges, accomplishments, and
+                future direction.
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
@@ -385,10 +386,10 @@ export default async function AmbassadorStudentPortalPage({
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <StudentActionCard
-          title="My Passport"
+          title="My Growth"
           description="Your complete Future Ready™ record, progress, evidence, and achievements."
           href={`/ambassador/student-passport/${student.id}`}
-          action="Open Passport"
+          action="See My Progress"
         />
 
         <StudentActionCard
@@ -399,10 +400,10 @@ export default async function AmbassadorStudentPortalPage({
         />
 
         <StudentActionCard
-          title="My Capstone"
+          title="Build My Story"
           description="Your Future Ready™ graduation reflection book — who you are beyond your role, what has shaped you, and who you are becoming."
           href={`/ambassador/student-portal/${student.id}/capstone`}
-          action="Open My Capstone"
+          action="Continue My Story"
         />
 
         <StudentActionCard
@@ -413,10 +414,10 @@ export default async function AmbassadorStudentPortalPage({
         />
 
         <StudentActionCard
-          title="Career Exploration"
+          title="Explore What Fits Me"
           description="Explore career ideas connected to your strengths, interests, skills, and future goals — then save careers you want to investigate."
           href={`/ambassador/student-portal/${student.id}/career-pathways`}
-          action="Explore Careers"
+          action="View Opportunities"
         />
 
         <StudentActionCard

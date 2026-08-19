@@ -51,7 +51,12 @@ export default async function AmbassadorAdminPage() {
     },
   });
 
-  const [totalStudents, totalFacilitators, totalCohorts] = await Promise.all([
+  const [
+    totalStudents,
+    totalFacilitators,
+    totalCohorts,
+    pendingPasswordResets,
+  ] = await Promise.all([
     prisma.student.count({
       where: {
         deletedAt: null,
@@ -67,6 +72,11 @@ export default async function AmbassadorAdminPage() {
     prisma.cohort.count({
       where: {
         deletedAt: null,
+      },
+    }),
+    prisma.passwordResetRequest.count({
+      where: {
+        status: "PENDING",
       },
     }),
   ]);
@@ -110,6 +120,15 @@ export default async function AmbassadorAdminPage() {
         />
 
         <Metric label="Cohorts" value={totalCohorts} detail="Program cohorts" />
+        <Metric
+          label="Password Help"
+          value={pendingPasswordResets}
+          detail={
+            pendingPasswordResets === 1
+              ? "Reset request needs attention"
+              : "Reset requests need attention"
+          }
+        />
 
         <Metric
           label="Pilot Students"
@@ -174,6 +193,25 @@ export default async function AmbassadorAdminPage() {
         </h2>
 
         <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <AdminCard
+            title={
+              pendingPasswordResets > 0
+                ? `Password Help · ${pendingPasswordResets}`
+                : "Password Help"
+            }
+            description={
+              pendingPasswordResets > 0
+                ? "A student has requested help getting back into their account."
+                : "Review student password-reset requests."
+            }
+            href="/ambassador/admin/password-resets"
+            action={
+              pendingPasswordResets > 0
+                ? "Review Requests"
+                : "Open Password Help"
+            }
+          />
+
           <AdminCard
             title="Cohorts"
             description="View classes, enrollment codes, student counts, and create future cohorts."

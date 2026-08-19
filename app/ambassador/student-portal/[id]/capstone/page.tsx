@@ -86,43 +86,90 @@ export default async function StudentCapstonePage({ params }: PageProps) {
           href={`/ambassador/student-passport/${student.id}/portfolio`}
           className="rounded-xl border border-[#0D1B3D] px-4 py-2 text-sm font-black text-[#0D1B3D]"
         >
-          {session.role === "STUDENT"
-            ? "My Evidence"
-            : "Student Evidence"}{" "}
-          · {evidenceCount}
+          {session.role === "STUDENT" ? "My Evidence" : "Student Evidence"} ·{" "}
+          {evidenceCount}
         </Link>
       </div>
 
       <section className="overflow-hidden rounded-3xl bg-[#0D1B3D] p-7 text-white md:p-10">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          FUTURE READY™ GRADUATION PROJECT
+          MY CAPSTONE · MY STORY
         </p>
 
         <h1 className="mt-3 text-4xl font-black md:text-5xl">
-          {futureReadyCapstone.title}
+          Who Am I Becoming?
         </h1>
 
-        <p className="mt-2 text-xl font-bold text-slate-200">
-          {futureReadyCapstone.subtitle}
-        </p>
-
-        <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-200">
-          {futureReadyCapstone.purpose}
+        <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
+          This is not another assignment. It is the story you will build from
+          everything you learn about yourself: your strengths, skills, values,
+          attributes, experiences, opportunities, goals, maturity, choices,
+          challenges, relationships, and vision for what comes next.
         </p>
 
         <div className="mt-7 rounded-2xl border border-white/20 bg-white/10 p-5">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#F2B705]">
-            THE QUESTION YOU WILL KEEP COMING BACK TO
+            THE QUESTION WE ARE BUILDING TOWARD
           </p>
 
-          <p className="mt-2 text-2xl font-black">
-            {futureReadyCapstone.essentialQuestion}
+          <p className="mt-2 text-2xl font-black">“I am…”</p>
+
+          <p className="mt-3 max-w-3xl leading-7 text-slate-200">
+            By the end, you should be able to explain who you are beyond a
+            sport, title, grade, or label — what you bring, what matters to you,
+            what you have learned, and where you want to go.
           </p>
         </div>
+      </section>
 
-        <p className="mt-6 font-bold text-white">
-          {futureReadyCapstone.promise}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 md:p-8">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
+          ONE SIMPLE PATH
         </p>
+
+        <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+          Reflect → Notice → Build Your Story
+        </h2>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="rounded-2xl bg-slate-50 p-5">
+            <p className="font-black text-[#0D1B3D]">1 · Reflect</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              What happened and what did you learn?
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-slate-50 p-5">
+            <p className="font-black text-[#0D1B3D]">2 · Notice</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              What does it reveal about your skills, values, strengths, choices,
+              interests, or growth?
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-slate-50 p-5">
+            <p className="font-black text-[#0D1B3D]">3 · Build</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Keep the pieces that help you explain: “I am…”
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href="/ai-coach"
+            className="rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white"
+          >
+            Help Me Think Deeper
+          </Link>
+
+          <Link
+            href={`/ambassador/student-passport/${student.id}/reflections`}
+            className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-[#0D1B3D]"
+          >
+            See My Reflections
+          </Link>
+        </div>
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
@@ -158,7 +205,7 @@ export default async function StudentCapstonePage({ params }: PageProps) {
         </p>
 
         <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          Your Capstone Grows With You
+          Your Story Grows With You
         </h2>
 
         <div className="mt-5 grid gap-4 md:grid-cols-4">
@@ -181,7 +228,7 @@ export default async function StudentCapstonePage({ params }: PageProps) {
             [
               "4",
               "TELL YOUR STORY",
-              "Use those pieces to build the graduation reflection book only you can create.",
+              "Use those pieces to build an authentic story only you can tell.",
             ],
           ].map(([number, title, description]) => (
             <div

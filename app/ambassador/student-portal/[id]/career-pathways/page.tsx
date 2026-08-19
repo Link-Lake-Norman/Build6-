@@ -14,9 +14,7 @@ type PageProps = {
   }>;
 };
 
-function splitProfileValue(
-  value: string | null | undefined
-): string[] {
+function splitProfileValue(value: string | null | undefined): string[] {
   if (!value) return [];
 
   return value
@@ -25,111 +23,137 @@ function splitProfileValue(
     .filter(Boolean);
 }
 
-export default async function CareerPathwaysPage({
-  params,
-}: PageProps) {
+export default async function CareerPathwaysPage({ params }: PageProps) {
   const { id } = await params;
 
-  const authorization =
-    await authorizeStudentAccess(id);
+  const authorization = await authorizeStudentAccess(id);
 
   if (!authorization.allowed) {
     notFound();
   }
 
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        id,
+  const student = await prisma.student.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      careerSummary: true,
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          displayName: true,
+        },
       },
-      select: {
-        id: true,
-        careerSummary: true,
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            displayName: true,
-          },
+      profile: {
+        select: {
+          strengths: true,
+          values: true,
+          careerInterests: true,
+          futureGoals: true,
+          skillsToBuild: true,
         },
-        profile: {
-          select: {
-            strengths: true,
-            values: true,
-            careerInterests: true,
-            futureGoals: true,
-            skillsToBuild: true,
-          },
-        },
-        studentSkills: {
-          select: {
-            skill: {
-              select: {
-                name: true,
-              },
+      },
+      studentSkills: {
+        select: {
+          skill: {
+            select: {
+              name: true,
             },
           },
         },
-        careerInterests: {
-          orderBy: {
-            updatedAt: "desc",
-          },
-          select: {
-            id: true,
-            careerName: true,
-            industry: true,
-            interest: true,
-            notes: true,
-          },
+      },
+      careerInterests: {
+        orderBy: {
+          updatedAt: "desc",
+        },
+        select: {
+          id: true,
+          careerName: true,
+          industry: true,
+          interest: true,
+          notes: true,
         },
       },
-    });
+    },
+  });
 
   if (!student) {
     notFound();
   }
 
-  const strengths =
-    splitProfileValue(
-      student.profile?.strengths
-    );
+  const strengths = splitProfileValue(student.profile?.strengths);
 
-  const interests =
-    splitProfileValue(
-      student.profile?.careerInterests
-    );
+  const interests = splitProfileValue(student.profile?.careerInterests);
 
-  const goals =
-    splitProfileValue(
-      student.profile?.futureGoals
-    );
+  const goals = splitProfileValue(student.profile?.futureGoals);
+
+  const values = splitProfileValue(student.profile?.values);
+
+  const skillsToBuild = splitProfileValue(student.profile?.skillsToBuild);
+
+  const careerSummarySignals = splitProfileValue(student.careerSummary);
 
   const skills = student.studentSkills.map(
-    (studentSkill) =>
-      studentSkill.skill.name
+    (studentSkill) => studentSkill.skill.name,
   );
+
+  const savedCareerSignals = student.careerInterests.flatMap((career) =>
+    [career.careerName, career.industry].filter((item): item is string =>
+      Boolean(item),
+    ),
+  );
+
+  const unique = (items: string[]) =>
+    Array.from(new Set(items.map((item) => item.trim()).filter(Boolean)));
 
   const profile: StudentCareerProfile = {
     studentId: student.id,
-    strengths:
-      strengths.length > 0
-        ? strengths
-        : skills,
-    interests: [
+    strengths: unique([...strengths, ...skills, ...values]),
+    interests: unique([
       ...interests,
       ...goals,
-    ],
-    industries: interests,
+      ...values,
+      ...skillsToBuild,
+      ...savedCareerSignals,
+      ...careerSummarySignals,
+    ]),
+    industries: unique([
+      ...interests,
+      ...student.careerInterests
+        .map((career) => career.industry)
+        .filter((item): item is string => Boolean(item)),
+    ]),
   };
 
+  const generatedPathways = generateCareerPathways(profile);
+
   const pathways =
-    generateCareerPathways(profile);
+    generatedPathways.length > 0
+      ? generatedPathways
+      : generateCareerPathways({
+          ...profile,
+          interests: [
+            ...profile.interests,
+            "business",
+            "healthcare",
+            "technology",
+            "skilled trades",
+            "government",
+            "community",
+          ],
+          industries: [
+            ...profile.industries,
+            "business",
+            "healthcare",
+            "technology",
+            "skilled trades",
+          ],
+        });
 
   const savedCareerNames = new Set(
-    student.careerInterests.map(
-      (career) =>
-        career.careerName.toLowerCase()
-    )
+    student.careerInterests.map((career) => career.careerName.toLowerCase()),
   );
 
   const studentName =
@@ -140,7 +164,7 @@ export default async function CareerPathwaysPage({
     <main className="space-y-8">
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white shadow-sm">
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
-          Future Ready™ Career Intelligence
+          Career + Opportunity Intelligence
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -148,11 +172,9 @@ export default async function CareerPathwaysPage({
         </h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Explore careers connected to your
-          strengths, interests, skills, and
-          future goals. These are opportunities
-          to investigate — not limits on what
-          you can become.
+          Explore careers connected to your strengths, interests, skills, and
+          future goals. These are opportunities to investigate — not limits on
+          what you can become.
         </p>
       </section>
 
@@ -162,15 +184,12 @@ export default async function CareerPathwaysPage({
         </p>
 
         <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          What Future Ready™ Is Learning
-          About Me
+          What Future Ready™ Is Learning About Me
         </h2>
 
         {strengths.length > 0 ? (
           <div className="mt-6">
-            <p className="font-black text-slate-700">
-              Strengths
-            </p>
+            <p className="font-black text-slate-700">Strengths</p>
 
             <div className="mt-3 flex flex-wrap gap-2">
               {strengths.map((strength) => (
@@ -187,9 +206,7 @@ export default async function CareerPathwaysPage({
 
         {interests.length > 0 ? (
           <div className="mt-6">
-            <p className="font-black text-slate-700">
-              Career Interests
-            </p>
+            <p className="font-black text-slate-700">Career Interests</p>
 
             <div className="mt-3 flex flex-wrap gap-2">
               {interests.map((interest) => (
@@ -204,19 +221,15 @@ export default async function CareerPathwaysPage({
           </div>
         ) : null}
 
-        {strengths.length === 0 &&
-        interests.length === 0 ? (
+        {strengths.length === 0 && interests.length === 0 ? (
           <div className="mt-6 rounded-2xl bg-[#FFF9DF] p-5">
             <p className="font-black text-[#0D1B3D]">
-              Your Opportunity Map will get
-              smarter as you build your profile.
+              Your Opportunity Map will get smarter as you build your profile.
             </p>
 
             <p className="mt-2 leading-7 text-slate-600">
-              Add your strengths, interests,
-              values, and goals so Future Ready™
-              can connect your profile to more
-              relevant career ideas.
+              Add your strengths, interests, values, and goals so Future Ready™
+              can connect your profile to more relevant career ideas.
             </p>
 
             <Link
@@ -240,29 +253,24 @@ export default async function CareerPathwaysPage({
           </h2>
 
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            {student.careerInterests.map(
-              (career) => (
-                <div
-                  key={career.id}
-                  className="rounded-2xl bg-white p-5 shadow-sm"
-                >
-                  <p className="font-black text-[#0D1B3D]">
-                    {career.careerName}
-                  </p>
+            {student.careerInterests.map((career) => (
+              <div
+                key={career.id}
+                className="rounded-2xl bg-white p-5 shadow-sm"
+              >
+                <p className="font-black text-[#0D1B3D]">{career.careerName}</p>
 
-                  {career.industry ? (
-                    <p className="mt-1 text-sm font-bold text-slate-500">
-                      {career.industry}
-                    </p>
-                  ) : null}
-                </div>
-              )
-            )}
+                {career.industry ? (
+                  <p className="mt-1 text-sm font-bold text-slate-500">
+                    {career.industry}
+                  </p>
+                ) : null}
+              </div>
+            ))}
           </div>
 
           <p className="mt-5 text-sm font-bold text-emerald-800">
-            ✓ These interests are saved to your
-            Future Ready™ student record.
+            ✓ These interests are saved to your student record.
           </p>
         </section>
       ) : null}
@@ -278,20 +286,17 @@ export default async function CareerPathwaysPage({
           </h2>
 
           <p className="mt-3 max-w-3xl leading-7 text-slate-600">
-            Read what each career actually
-            involves. If something catches your
-            attention, save it so you can come
-            back to it as you continue building
-            your Future Ready™ Passport.
+            Read what each career actually involves. If something catches your
+            attention, save it so you can come back to it as you continue
+            building your Passport.
           </p>
         </div>
 
         <div className="space-y-6">
           {pathways.map((pathway) => {
-            const initiallySaved =
-              savedCareerNames.has(
-                pathway.title.toLowerCase()
-              );
+            const initiallySaved = savedCareerNames.has(
+              pathway.title.toLowerCase(),
+            );
 
             return (
               <article
@@ -324,16 +329,12 @@ export default async function CareerPathwaysPage({
 
                   <CareerList
                     title="Skills to Develop"
-                    items={
-                      pathway.skillsToDevelop
-                    }
+                    items={pathway.skillsToDevelop}
                   />
 
                   <CareerList
                     title="Experiences to Try"
-                    items={
-                      pathway.experiencesToTry
-                    }
+                    items={pathway.experiencesToTry}
                   />
                 </div>
 
@@ -342,12 +343,8 @@ export default async function CareerPathwaysPage({
                     studentId={student.id}
                     careerName={pathway.title}
                     industry={pathway.industry}
-                    description={
-                      pathway.description
-                    }
-                    initiallySaved={
-                      initiallySaved
-                    }
+                    description={pathway.description}
+                    initiallySaved={initiallySaved}
                   />
                 </div>
               </article>
@@ -358,19 +355,15 @@ export default async function CareerPathwaysPage({
 
       <section className="rounded-3xl bg-[#FFF9DF] p-7">
         <h2 className="text-2xl font-black text-[#0D1B3D]">
-          Career exploration is not about
-          choosing your entire future today.
+          Career exploration is not about choosing your entire future today.
         </h2>
 
         <p className="mt-3 max-w-4xl leading-7 text-slate-700">
-          Your job is to explore. Save careers
-          that make you curious, learn what the
-          work actually looks like, talk with
-          people doing that work, and keep
-          building evidence about what fits you.
-          Your interests may change as you gain
-          new experiences — that is part of
-          becoming Future Ready™.
+          Your job is to explore. Save careers that make you curious, learn what
+          the work actually looks like, talk with people doing that work, and
+          keep building evidence about what fits you. Your interests may change
+          as you gain new experiences — that is part of building what comes
+          next.
         </p>
       </section>
 
@@ -393,28 +386,15 @@ export default async function CareerPathwaysPage({
   );
 }
 
-function CareerList({
-  title,
-  items,
-}: {
-  title: string;
-  items: string[];
-}) {
+function CareerList({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
-      <h3 className="font-black text-[#0D1B3D]">
-        {title}
-      </h3>
+      <h3 className="font-black text-[#0D1B3D]">{title}</h3>
 
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
-          <li
-            key={item}
-            className="flex gap-2 leading-6 text-slate-600"
-          >
-            <span className="font-black text-[#F2B705]">
-              •
-            </span>
+          <li key={item} className="flex gap-2 leading-6 text-slate-600">
+            <span className="font-black text-[#F2B705]">•</span>
             <span>{item}</span>
           </li>
         ))}

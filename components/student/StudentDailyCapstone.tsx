@@ -47,9 +47,7 @@ export default function StudentDailyCapstone({
       const response = await fetch(
         `/api/student/capstone-daily?studentId=${encodeURIComponent(
           studentId,
-        )}&lessonId=${encodeURIComponent(
-          lessonId,
-        )}&weekNumber=${weekNumber}`,
+        )}&lessonId=${encodeURIComponent(lessonId)}&weekNumber=${weekNumber}`,
         {
           cache: "no-store",
         },
@@ -58,18 +56,14 @@ export default function StudentDailyCapstone({
       const body = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          body.error ?? "Unable to load Capstone progress.",
-        );
+        throw new Error(body.error ?? "Unable to load Capstone progress.");
       }
 
       const nextDirections = Array.isArray(body.directions)
         ? body.directions
         : [];
 
-      const nextEntries = Array.isArray(body.entries)
-        ? body.entries
-        : [];
+      const nextEntries = Array.isArray(body.entries) ? body.entries : [];
 
       setDirections(nextDirections);
       setEntries(nextEntries);
@@ -78,8 +72,7 @@ export default function StudentDailyCapstone({
         nextDirections.find(
           (direction: Direction) =>
             !nextEntries.some(
-              (entry: Entry) =>
-                entry.dayNumber === direction.dayNumber,
+              (entry: Entry) => entry.dayNumber === direction.dayNumber,
             ),
         )?.dayNumber ??
         nextDirections[0]?.dayNumber ??
@@ -102,19 +95,12 @@ export default function StudentDailyCapstone({
   }, [studentId, lessonId, weekNumber]);
 
   const savedEntry = useMemo(
-    () =>
-      entries.find(
-        (entry) => entry.dayNumber === dayNumber,
-      ),
+    () => entries.find((entry) => entry.dayNumber === dayNumber),
     [entries, dayNumber],
   );
 
   const directionsForDay = useMemo(
-    () =>
-      directions.find(
-        (direction) =>
-          direction.dayNumber === dayNumber,
-      ),
+    () => directions.find((direction) => direction.dayNumber === dayNumber),
     [directions, dayNumber],
   );
 
@@ -130,34 +116,29 @@ export default function StudentDailyCapstone({
     setMessage(null);
 
     try {
-      const response = await fetch(
-        "/api/student/capstone-daily",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            studentId,
-            lessonId,
-            weekNumber,
-            dayNumber,
-            learning,
-            skillEvidence,
-            growth,
-          }),
+      const response = await fetch("/api/student/capstone-daily", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          studentId,
+          lessonId,
+          weekNumber,
+          dayNumber,
+          learning,
+          skillEvidence,
+          growth,
+        }),
+      });
 
       const body = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          body.error ?? "Unable to save Capstone progress.",
-        );
+        throw new Error(body.error ?? "Unable to save Capstone progress.");
       }
 
-      setMessage("Capstone progress saved.");
+      setMessage("Reflection saved to your growing Capstone story.");
       await load();
     } catch (error) {
       setMessage(
@@ -175,17 +156,16 @@ export default function StudentDailyCapstone({
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-            AFTER CLASS · BUILD YOUR CAPSTONE
+            REFLECT → BUILD MY STORY
           </p>
 
           <h2 className="mt-1 text-2xl font-black text-[#0D1B3D]">
-            Turn Today Into Progress
+            What Did Today Show Me About Myself?
           </h2>
 
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-            Capture what you learned while it is fresh. These daily
-            reflections build your ideas, skills, goals, evidence, and
-            direction over time.
+            Capture what you learned while it is fresh. These daily reflections
+            build your ideas, skills, goals, evidence, and direction over time.
           </p>
         </div>
 
@@ -193,15 +173,13 @@ export default function StudentDailyCapstone({
           href={`/ambassador/student-portal/${studentId}/capstone`}
           className="shrink-0 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
         >
-          Open My Capstone →
+          See My Story So Far →
         </Link>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {[1, 2, 3, 4, 5].map((day) => {
-          const complete = entries.some(
-            (entry) => entry.dayNumber === day,
-          );
+          const complete = entries.some((entry) => entry.dayNumber === day);
 
           return (
             <button
@@ -242,22 +220,22 @@ export default function StudentDailyCapstone({
       ) : (
         <div className="mt-5 space-y-4">
           <Prompt
-            label="1 · LEARNING + IDEAS"
-            prompt="What did you learn today? What idea, possibility, interest, or insight became clearer?"
+            label="1 · WHAT DID I NOTICE?"
+            prompt="What happened today that taught you something about yourself? What mattered, surprised you, challenged you, interested you, or made you think differently?"
             value={learning}
             onChange={setLearning}
           />
 
           <Prompt
-            label="2 · SKILL EVIDENCE"
-            prompt="What skill did you practice today? What did you do that proves you are developing it?"
+            label="2 · WHAT DID I SHOW?"
+            prompt="What did you actually DO today? Name a skill, strength, value, or personal attribute you showed. What is the evidence that proves it?"
             value={skillEvidence}
             onChange={setSkillEvidence}
           />
 
           <Prompt
-            label="3 · VISION + GOAL + NEXT STEP"
-            prompt="How did today change or strengthen your thinking about your future? What goal, decision, or next step should you take?"
+            label="3 · WHAT DOES THIS SAY ABOUT ME?"
+            prompt="What does today tell you about who you are becoming? Connect it to a value, opportunity, career, relationship, goal, or next step. Finish this thought: Today I realized I am someone who..."
             value={growth}
             onChange={setGrowth}
           />
@@ -272,14 +250,12 @@ export default function StudentDailyCapstone({
               {saving
                 ? "Saving..."
                 : savedEntry
-                  ? "Update Today's Capstone"
-                  : "Save Today's Capstone"}
+                  ? "Update My Reflection"
+                  : "Save to My Story"}
             </button>
 
             {message ? (
-              <p className="text-sm font-bold text-slate-600">
-                {message}
-              </p>
+              <p className="text-sm font-bold text-slate-600">{message}</p>
             ) : null}
           </div>
         </div>
@@ -311,9 +287,7 @@ function Prompt({
 
       <textarea
         value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
+        onChange={(event) => onChange(event.target.value)}
         rows={3}
         className="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-6 text-[#0D1B3D] outline-none focus:border-[#F2B705]"
       />

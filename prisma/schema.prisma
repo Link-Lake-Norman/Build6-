@@ -1722,3 +1722,19 @@ model PlatformMessage {
   @@index([threadId, createdAt])
   @@index([senderId, createdAt])
 }
+
+model PasswordResetRequest {
+  id          String    @id @default(cuid())
+  email       String
+  userId      String?
+  status      String    @default("PENDING")
+  requestedAt DateTime  @default(now())
+  handledAt   DateTime?
+  handledById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, requestedAt])
+  @@index([email, status])
+  @@index([userId, status])
+}

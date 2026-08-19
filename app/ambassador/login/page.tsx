@@ -198,6 +198,15 @@ export default function AmbassadorLoginPage() {
               </div>
             </label>
 
+            <div className="text-right">
+              <Link
+                href="/ambassador/forgot-password"
+                className="text-sm font-black text-[#4B2265]"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
             {error && (
               <div
                 role="alert"
