@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import PlatformHeader from "@/components/PlatformHeader";
 import PageHistoryControls from "@/components/navigation/PageHistoryControls";
@@ -17,9 +17,20 @@ type NavItem = {
   href: string;
   label: string;
   description?: string;
+  badge?: number;
 };
 
 type WorkspaceMode = "ADMIN" | "STAFF" | "STUDENT" | null;
+
+type AttentionCounts = {
+  unreadMessages: number;
+  pendingPasswordResets: number;
+};
+
+const emptyAttention: AttentionCounts = {
+  unreadMessages: 0,
+  pendingPasswordResets: 0,
+};
 
 const staffPrimary: NavItem[] = [
   {
@@ -92,6 +103,16 @@ const adminItems: NavItem[] = [
     description: "Program overview",
   },
   {
+    href: "/ambassador/messages",
+    label: "Messages",
+    description: "Student and program communication",
+  },
+  {
+    href: "/ambassador/admin/password-resets",
+    label: "Password Help",
+    description: "Student reset requests",
+  },
+  {
     href: "/ambassador/admin/command-center",
     label: "Command Center",
     description: "Program operations",
@@ -107,11 +128,6 @@ const adminItems: NavItem[] = [
     description: "Manage staff access",
   },
   {
-    href: "/ambassador/admin/password-resets",
-    label: "Password Help",
-    description: "Student reset requests",
-  },
-  {
     href: "/ambassador/admin/permissions",
     label: "Permissions",
     description: "Platform access controls",
@@ -122,6 +138,14 @@ const adminItems: NavItem[] = [
     description: "Program assets",
   },
 ];
+
+function isAdminRole(role: SessionUser["role"] | undefined) {
+  return (
+    role === "SCHOOL_ADMIN" ||
+    role === "ORGANIZATION_ADMIN" ||
+    role === "SUPER_ADMIN"
+  );
+}
 
 function studentIdFromPath(pathname: string) {
   const portalMatch = pathname.match(/^\/ambassador\/student-portal\/([^/]+)/);
@@ -177,6 +201,11 @@ function studentItems(pathname: string): NavItem[] {
       description: "Skills, evidence and progress",
     },
     {
+      href: "/ambassador/messages",
+      label: "Messages",
+      description: "Messages from your program",
+    },
+    {
       href: "/ambassador/calendar",
       label: "Month Ahead",
       description: "Topics, speakers and experiences",
@@ -198,6 +227,27 @@ function workspaceMode(
     pathname === "/ambassador/forgot-password"
   ) {
     return null;
+  }
+
+  /*
+   * Messages are shared by multiple roles.
+   * Keep each user inside their own workspace
+   * rather than forcing everyone into the
+   * facilitator navigation.
+   */
+  if (
+    pathname === "/ambassador/messages" ||
+    pathname.startsWith("/ambassador/messages/")
+  ) {
+    if (session.role === "STUDENT") {
+      return "STUDENT";
+    }
+
+    if (isAdminRole(session.role)) {
+      return "ADMIN";
+    }
+
+    return "STAFF";
   }
 
   if (
@@ -228,9 +278,7 @@ function workspaceMode(
     pathname === "/ambassador/calendar" ||
     pathname.startsWith("/ambassador/calendar/") ||
     pathname === "/ambassador/experiences" ||
-    pathname.startsWith("/ambassador/experiences/") ||
-    pathname === "/ambassador/messages" ||
-    pathname.startsWith("/ambassador/messages/")
+    pathname.startsWith("/ambassador/experiences/")
   ) {
     return "STAFF";
   }
@@ -254,21 +302,106 @@ function isActive(pathname: string, href: string) {
   return pathname.startsWith(`${href}/`);
 }
 
+function applyAttention(
+  items: NavItem[],
+  attention: AttentionCounts,
+): NavItem[] {
+  return items.map((item) => {
+    if (item.href === "/ambassador/messages") {
+      return {
+        ...item,
+        badge: attention.unreadMessages,
+      };
+    }
+
+    if (item.href === "/ambassador/admin/password-resets") {
+      return {
+        ...item,
+        badge: attention.pendingPasswordResets,
+      };
+    }
+
+    return item;
+  });
+}
+
 export default function AmbassadorWorkspaceShell({ session, children }: Props) {
   const pathname = usePathname();
+
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [attention, setAttention] = useState<AttentionCounts>(emptyAttention);
 
   const mode = workspaceMode(pathname, session);
 
-  const canAccessAdmin =
-    session?.role === "SCHOOL_ADMIN" ||
-    session?.role === "ORGANIZATION_ADMIN" ||
-    session?.role === "SUPER_ADMIN";
+  const canAccessAdmin = isAdminRole(session?.role);
+
+  useEffect(() => {
+    if (!session) {
+      setAttention(emptyAttention);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadAttention() {
+      try {
+        const response = await fetch("/api/ambassador/attention", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const result = await response.json();
+
+        if (!cancelled) {
+          setAttention({
+            unreadMessages:
+              typeof result.unreadMessages === "number"
+                ? result.unreadMessages
+                : 0,
+            pendingPasswordResets:
+              typeof result.pendingPasswordResets === "number"
+                ? result.pendingPasswordResets
+                : 0,
+          });
+        }
+      } catch {
+        /*
+         * Attention indicators are helpful,
+         * but should never block the platform.
+         */
+      }
+    }
+
+    void loadAttention();
+
+    const interval = window.setInterval(loadAttention, 30000);
+
+    function refreshWhenVisible() {
+      if (document.visibilityState === "visible") {
+        void loadAttention();
+      }
+    }
+
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
+    return () => {
+      cancelled = true;
+
+      window.clearInterval(interval);
+
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+    };
+  }, [session, pathname]);
 
   if (!mode) {
     return (
       <div className="min-h-screen bg-[#F5F7FA]">
         <PlatformHeader session={session} />
+
         <PageHistoryControls />
 
         <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>
@@ -283,6 +416,10 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
         ? "Student Workspace"
         : "Facilitator Workspace";
 
+  const attentionTotal =
+    attention.unreadMessages +
+    (canAccessAdmin ? attention.pendingPasswordResets : 0);
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
@@ -291,10 +428,16 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
             <button
               type="button"
               onClick={() => setMobileOpen((current) => !current)}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-lg font-black text-[#0D1B3D] lg:hidden"
+              className="relative rounded-xl border border-slate-200 px-3 py-2 text-lg font-black text-[#0D1B3D] lg:hidden"
               aria-label="Open navigation"
             >
               ☰
+              {attentionTotal > 0 ? (
+                <span
+                  aria-label={`${attentionTotal} items need attention`}
+                  className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600"
+                />
+              ) : null}
             </button>
 
             <div>
@@ -316,6 +459,24 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
                 Ambassador Christian School
               </p>
             </div>
+
+            {attention.unreadMessages > 0 ? (
+              <Link
+                href="/ambassador/messages"
+                className="hidden rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700 md:inline-flex"
+              >
+                Messages · {attention.unreadMessages}
+              </Link>
+            ) : null}
+
+            {canAccessAdmin && attention.pendingPasswordResets > 0 ? (
+              <Link
+                href="/ambassador/admin/password-resets"
+                className="hidden rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700 md:inline-flex"
+              >
+                Password Help · {attention.pendingPasswordResets}
+              </Link>
+            ) : null}
 
             {canAccessAdmin && mode !== "ADMIN" ? (
               <Link
@@ -353,6 +514,7 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
             pathname={pathname}
             mode={mode}
             canAccessAdmin={canAccessAdmin}
+            attention={attention}
           />
         </aside>
 
@@ -382,6 +544,7 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
                 pathname={pathname}
                 mode={mode}
                 canAccessAdmin={canAccessAdmin}
+                attention={attention}
                 onNavigate={() => setMobileOpen(false)}
               />
             </aside>
@@ -402,11 +565,13 @@ function WorkspaceSidebar({
   pathname,
   mode,
   canAccessAdmin,
+  attention,
   onNavigate,
 }: {
   pathname: string;
   mode: Exclude<WorkspaceMode, null>;
   canAccessAdmin: boolean;
+  attention: AttentionCounts;
   onNavigate?: () => void;
 }) {
   if (mode === "STUDENT") {
@@ -416,7 +581,7 @@ function WorkspaceSidebar({
 
         <SidebarGroup
           title="MY JOURNEY"
-          items={studentItems(pathname)}
+          items={applyAttention(studentItems(pathname), attention)}
           pathname={pathname}
           onNavigate={onNavigate}
         />
@@ -431,7 +596,7 @@ function WorkspaceSidebar({
 
         <SidebarGroup
           title="ADMINISTRATION"
-          items={adminItems}
+          items={applyAttention(adminItems, attention)}
           pathname={pathname}
           onNavigate={onNavigate}
         />
@@ -491,7 +656,7 @@ function WorkspaceSidebar({
 
       <SidebarGroup
         title="STUDENTS + CLASS"
-        items={staffStudents}
+        items={applyAttention(staffStudents, attention)}
         pathname={pathname}
         onNavigate={onNavigate}
       />
@@ -563,7 +728,15 @@ function SidebarGroup({
                   : "text-slate-600 hover:bg-slate-50 hover:text-[#0D1B3D]"
               }`}
             >
-              <p className="text-sm font-black">{item.label}</p>
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black">{item.label}</p>
+
+                {item.badge && item.badge > 0 ? (
+                  <span className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-red-600 px-2 py-1 text-[10px] font-black leading-none text-white">
+                    {item.badge > 99 ? "99+" : item.badge}
+                  </span>
+                ) : null}
+              </div>
 
               {item.description ? (
                 <p className="mt-1 text-xs leading-5 text-slate-500">
