@@ -1,0 +1,308 @@
+const stages = [
+  {
+    number: "01",
+    title: "DISCOVER",
+    text: "Build who you are.",
+  },
+  {
+    number: "02",
+    title: "DEVELOP",
+    text: "Build the skills that matter.",
+  },
+  {
+    number: "03",
+    title: "EXPLORE",
+    text: "Build awareness of what’s possible.",
+  },
+  {
+    number: "04",
+    title: "CONNECT",
+    text: "Build relationships that open doors.",
+    featured: true,
+  },
+  {
+    number: "05",
+    title: "EXPERIENCE",
+    text: "Build through the real world.",
+  },
+  {
+    number: "06",
+    title: "LAUNCH",
+    text: "Build your next move.",
+  },
+];
+
+const audiences = [
+  {
+    title: "Students",
+    text: "Discover strengths, build confidence, meet professionals, explore possibilities, gain experience, and create evidence of growth.",
+  },
+  {
+    title: "Educators",
+    text: "Guide meaningful development with structured experiences, reflections, resources, and tools—without having to become workforce experts.",
+  },
+  {
+    title: "Employers",
+    text: "Engage earlier through career conversations, mentoring, workplace visits, projects, job shadows, workshops, and authentic experiences.",
+  },
+  {
+    title: "Partners & Communities",
+    text: "Connect schools, employers, mentors, nonprofits, and community leaders around meaningful opportunities for students.",
+  },
+];
+
+export default function Home() {
+  return (
+    <main>
+      <header className="site-header">
+        <a href="#top" className="brand" aria-label="BUILD6 home">
+          <span className="brand-build">BUILD</span>
+          <span className="brand-six">6</span>
+        </a>
+
+        <nav className="main-nav" aria-label="Main navigation">
+          <a href="#journey">The Journey</a>
+          <a href="#difference">Why BUILD6</a>
+          <a href="#ecosystem">The Ecosystem</a>
+          <a href="#schools">For Schools</a>
+        </nav>
+
+        <a href="#schools" className="header-button">
+          Bring BUILD6 to Your School
+        </a>
+      </header>
+
+      <section id="top" className="hero">
+        <div className="hero-glow hero-glow-one" />
+        <div className="hero-glow hero-glow-two" />
+
+        <div className="hero-copy">
+          <p className="eyebrow">THE BUILD6 EXPERIENCE</p>
+
+          <div className="hero-brand">
+            <span>BUILD</span>
+            <strong>6</strong>
+          </div>
+
+          <h1>BUILD WHAT&apos;S NEXT.</h1>
+
+          <h2>
+            Students don&apos;t discover what&apos;s possible from a workbook
+            alone.
+          </h2>
+
+          <p className="hero-description">
+            BUILD6 connects students with the people, skills, experiences,
+            relationships, and opportunities that help them move from
+            possibility to action.
+          </p>
+
+          <div className="hero-actions">
+            <a href="#journey" className="button button-gold">
+              Explore BUILD6
+            </a>
+
+            <a href="#schools" className="button button-outline">
+              Bring BUILD6 to Your School
+            </a>
+          </div>
+
+          <div className="hero-proof">
+            <span>REAL CONNECTIONS.</span>
+            <span>REAL EXPERIENCES.</span>
+            <span>REAL IMPACT.</span>
+          </div>
+        </div>
+
+        <div className="hero-art">
+          <div className="six-mark" aria-label="BUILD6 compass">
+            <div className="six-top" />
+            <div className="six-ring">
+              <div className="segment segment-one" />
+              <div className="segment segment-two" />
+              <div className="segment segment-three" />
+              <div className="segment segment-four" />
+              <div className="segment segment-five" />
+              <div className="segment segment-six" />
+
+              <div className="compass">
+                <span className="compass-n">N</span>
+                <span className="compass-e">E</span>
+                <span className="compass-s">S</span>
+                <span className="compass-w">W</span>
+                <div className="needle">▲</div>
+              </div>
+            </div>
+          </div>
+
+          <p className="compass-message">
+            Six stages.
+            <br />
+            One connected experience.
+          </p>
+        </div>
+      </section>
+
+      <section id="journey" className="section journey">
+        <div className="section-heading">
+          <p className="section-label">THE BUILD6 JOURNEY</p>
+          <h2>6 stages. One connected experience.</h2>
+          <p>
+            BUILD6 is not six modules to complete. It is a progression that
+            helps students know themselves, build capability, connect with
+            people, experience the real world, and make their next move.
+          </p>
+        </div>
+
+        <div className="stage-grid">
+          {stages.map((stage) => (
+            <article
+              key={stage.number}
+              className={`stage-card ${stage.featured ? "featured" : ""}`}
+            >
+              <span>{stage.number}</span>
+              <h3>{stage.title}</h3>
+              <p>{stage.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="difference" className="difference">
+        <div className="difference-copy">
+          <p className="section-label light">WHAT MAKES BUILD6 DIFFERENT</p>
+
+          <h2>The difference is the connection.</h2>
+
+          <p className="large-copy">
+            BUILD6 isn&apos;t designed to keep students inside a platform.
+          </p>
+
+          <h3>It&apos;s designed to move them beyond it.</h3>
+
+          <p>
+            Technology provides structure, captures progress, and helps
+            students build evidence of growth.
+          </p>
+
+          <p className="gold-copy">
+            Relationships create exposure, confidence, context, and
+            opportunity.
+          </p>
+
+          <p>
+            Students practice conversations with adults. Meet professionals.
+            Explore industries. Visit workplaces. Hear real stories. Solve real
+            problems. Build relationships. Reflect on what they learn. And
+            discover possibilities they may never have encountered otherwise.
+          </p>
+        </div>
+
+        <div className="ecosystem-visual">
+          <div className="ecosystem-ring ring-one" />
+          <div className="ecosystem-ring ring-two" />
+
+          <div className="ecosystem-center">
+            <strong>STUDENT</strong>
+            <span>at the center</span>
+          </div>
+
+          <div className="ecosystem-node node-educator">EDUCATOR</div>
+          <div className="ecosystem-node node-employer">EMPLOYER</div>
+          <div className="ecosystem-node node-community">COMMUNITY</div>
+          <div className="ecosystem-node node-mentor">MENTOR</div>
+        </div>
+      </section>
+
+      <section id="ecosystem" className="section audiences">
+        <div className="section-heading">
+          <p className="section-label">BUILT AROUND RELATIONSHIPS</p>
+          <h2>One ecosystem. Different roles. Shared impact.</h2>
+          <p>
+            BUILD6 gives the people around students a meaningful way to
+            participate in their development.
+          </p>
+        </div>
+
+        <div className="audience-grid">
+          {audiences.map((audience) => (
+            <article className="audience-card" key={audience.title}>
+              <div className="card-line" />
+              <h3>{audience.title}</h3>
+              <p>{audience.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="platform">
+        <div className="platform-heading">
+          <p className="section-label">THE PLATFORM SUPPORTS THE EXPERIENCE</p>
+          <h2>
+            Technology captures the journey.
+            <br />
+            <span>Relationships make it meaningful.</span>
+          </h2>
+        </div>
+
+        <div className="platform-items">
+          <span>Student Dashboard</span>
+          <span>BUILD6 Passport</span>
+          <span>Reflection Journal</span>
+          <span>Digital Portfolio</span>
+          <span>Career Exploration</span>
+          <span>Skills & Progress</span>
+          <span>Capstone</span>
+          <span>Opportunities</span>
+          <span>Facilitator Tools</span>
+        </div>
+      </section>
+
+      <section className="outcome">
+        <p className="section-label">THE OUTCOME</p>
+
+        <h2>
+          From <span>&ldquo;I don&apos;t know.&rdquo;</span>
+          <br />
+          to <strong>&ldquo;I know how to find out.&rdquo;</strong>
+        </h2>
+
+        <p>
+          BUILD6 doesn&apos;t tell students what their future should be. It
+          helps them develop the self-awareness, capabilities, relationships,
+          experience, and agency to navigate what comes next.
+        </p>
+      </section>
+
+      <section id="schools" className="final-cta">
+        <div>
+          <p className="section-label light">BUILD6</p>
+          <h2>Build more than readiness.</h2>
+          <p>
+            Build confident students. Build stronger relationships. Build
+            real-world experience. Build what&apos;s next.
+          </p>
+        </div>
+
+        <div className="final-actions">
+          <a href="mailto:hello@build6.education" className="button button-gold">
+            Bring BUILD6 to Your School
+          </a>
+
+          <a href="mailto:hello@build6.education" className="text-link">
+            Become a BUILD6 Partner →
+          </a>
+        </div>
+      </section>
+
+      <footer>
+        <div className="footer-brand">
+          <strong>BUILD<span>6</span></strong>
+          <p>BUILD WHAT&apos;S NEXT.</p>
+        </div>
+
+        <p>© 2026 BUILD6. All Rights Reserved.</p>
+      </footer>
+    </main>
+  );
+}
