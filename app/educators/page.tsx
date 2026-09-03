@@ -22,9 +22,9 @@ export default function EducatorsPage() {
             experience—without asking teachers to become workforce experts.
           </p>
 
-          <a href="mailto:hello@build6.education" className="audience-button">
+          <Link href="/interest?for=school" className="audience-button">
             BRING BUILD6™ TO YOUR SCHOOL →
-          </a>
+          </Link>
         </div>
       </section>
 

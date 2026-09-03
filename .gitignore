@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Local BUILD6 development backups
 .build6-backups/
+
+# Local environment secrets
+.env.local

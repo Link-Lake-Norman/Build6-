@@ -33,10 +33,69 @@ const pathways = [
 export default function ConnectPage() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSubmitting(true);
+    setSubmitError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const payload = {
+      connectionType: String(formData.get("connectionType") ?? ""),
+      firstName: String(formData.get("firstName") ?? ""),
+      lastName: String(formData.get("lastName") ?? ""),
+      organization: String(formData.get("organization") ?? ""),
+      title: String(formData.get("title") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      linkedin: String(formData.get("linkedin") ?? ""),
+      website: String(formData.get("website") ?? ""),
+      engagementTitle: String(formData.get("engagementTitle") ?? ""),
+      description: String(formData.get("description") ?? ""),
+      studentOutcome: String(formData.get("studentOutcome") ?? ""),
+      pathway: String(formData.get("pathway") ?? ""),
+      format: String(formData.get("format") ?? ""),
+      dateStatus: String(formData.get("dateStatus") ?? ""),
+      proposedDate: String(formData.get("proposedDate") ?? ""),
+      proposedTime: String(formData.get("proposedTime") ?? ""),
+      location: String(formData.get("location") ?? ""),
+      availability: String(formData.get("availability") ?? ""),
+      bio: String(formData.get("bio") ?? ""),
+      notes: String(formData.get("notes") ?? ""),
+      companyFax: String(formData.get("companyFax") ?? ""),
+      consent: formData.get("consent") === "on",
+    };
+
+    try {
+      const response = await fetch("/api/contributors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.ok) {
+        throw new Error(
+          result.error || "We could not save your information right now."
+        );
+      }
+
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "We could not save your information right now."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -52,9 +111,7 @@ export default function ConnectPage() {
             <h1>THANK YOU FOR CONNECTING.</h1>
 
             <p>
-              Your information has been prepared for BUILD6™ review. Once the
-              secure BUILD6™ data layer is connected, submissions will be saved
-              directly to the contributor relationship system.
+              Your information has been securely submitted to BUILD6™ for review. We&apos;ll use the details you provided to coordinate this opportunity and follow up with next steps.
             </p>
 
             <a href="/" className="connect-primary">
@@ -103,6 +160,15 @@ export default function ConnectPage() {
 
       <section className="connect-form-section">
         <form className="connect-form" onSubmit={handleSubmit}>
+          <label className="connect-honeypot" aria-hidden="true">
+            Company Fax
+            <input
+              name="companyFax"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </label>
           <fieldset>
             <legend>1. HOW WOULD YOU LIKE TO CONNECT?</legend>
 
@@ -318,7 +384,7 @@ export default function ConnectPage() {
             </div>
 
             <label className="consent-row">
-              <input type="checkbox" required />
+              <input name="consent" type="checkbox" required />
               <span>
                 I confirm that the information provided is accurate and I
                 authorize BUILD6™ to contact me regarding this inquiry or
@@ -327,9 +393,15 @@ export default function ConnectPage() {
             </label>
           </fieldset>
 
+          {submitError && (
+            <p className="connect-submit-error" role="alert">
+              {submitError}
+            </p>
+          )}
+
           <div className="connect-submit-row">
-            <button type="submit" className="connect-primary">
-              SUBMIT TO BUILD6™ →
+            <button type="submit" className="connect-primary" disabled={submitting}>
+              {submitting ? "SAVING..." : "SUBMIT TO BUILD6™ →"}
             </button>
 
             <p>
