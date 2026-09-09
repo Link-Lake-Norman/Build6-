@@ -1,5 +1,7 @@
 "use client";
 
+import { packagedResources } from "@/lib/ambassador/packaged-resources";
+
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import AppliedLearningTeachingHub from "@/components/ambassador/AppliedLearningTeachingHub";
@@ -193,6 +195,15 @@ export default function AmbassadorCurriculumPage() {
   // Ambassador pilot is currently on Week 1, with Day 1 completed.
   // Open the teaching workspace on the next class instead of the calendar weekday.
   const [selectedDay, setSelectedDay] = useState(2);
+  const [closingWeek, setClosingWeek] = useState(false);
+  const [weekProgressError, setWeekProgressError] = useState<string | null>(null);
+  const [weekStatuses, setWeekStatuses] = useState<
+    Array<{
+      week: number;
+      completedDays: number[];
+      closed: boolean;
+    }>
+  >([]);
   const [activeTab, setActiveTab] = useState<HubTab>("overview");
   const [showFullTools, setShowFullTools] = useState(false);
   const [assigningResourceId, setAssigningResourceId] =
@@ -306,6 +317,30 @@ export default function AmbassadorCurriculumPage() {
   }, [selectedWeek]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+
+    const queryWeek = Number(params.get("week") || "0");
+    const storedWeek = Number(
+      window.sessionStorage.getItem("future-ready-facilitator-week") || "0",
+    );
+
+    const restoredWeek =
+      queryWeek >= 1 && queryWeek <= 16
+        ? queryWeek
+        : storedWeek >= 1 && storedWeek <= 16
+          ? storedWeek
+          : 1;
+
+    setSelectedWeek(restoredWeek);
+  }, []);
+
+  useEffect(() => {
+    loadFacilitatorWeekStatuses();
+  }, []);
+
+  useEffect(() => {
     const currentDirections = data?.planTasks.find(
       (task) =>
         task.dayNumber === selectedDay &&
@@ -314,6 +349,124 @@ export default function AmbassadorCurriculumPage() {
 
     setDailyDirections(currentDirections?.instructions ?? "");
   }, [data, selectedDay]);
+
+  async function loadFacilitatorWeekStatuses() {
+    setWeekProgressError(null);
+
+    try {
+      const results = await Promise.all(
+        Array.from({ length: 16 }, async (_, index) => {
+          const week = index + 1;
+
+          const response = await fetch(
+            `/api/ambassador/day-completion?cohortCode=PILOT-2026-2027&week=${week}`,
+          );
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              result.error || `Unable to load Week ${week} progress.`,
+            );
+          }
+
+          const completedDays = Array.isArray(result.completions)
+            ? result.completions
+                .map((item: { dayNumber?: number }) => item.dayNumber)
+                .filter(
+                  (dayNumber: unknown): dayNumber is number =>
+                    typeof dayNumber === "number" &&
+                    dayNumber >= 1 &&
+                    dayNumber <= 5,
+                )
+            : [];
+
+          return {
+            week,
+            completedDays,
+            closed: completedDays.length >= 5,
+          };
+        }),
+      );
+
+      setWeekStatuses(results);
+    } catch (caughtError) {
+      setWeekProgressError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to load facilitator week status.",
+      );
+    }
+  }
+
+  async function closeCurrentWeek() {
+    if (closingWeek || selectedWeek === 15) return;
+
+    const currentStatus = weekStatuses.find(
+      (item) => item.week === selectedWeek,
+    );
+
+    if (currentStatus?.closed) {
+      if (selectedWeek < 16) {
+        changeWeek(selectedWeek + 1);
+      }
+      return;
+    }
+
+    setClosingWeek(true);
+    setWeekProgressError(null);
+
+    try {
+      const alreadyCompleted = new Set(
+        currentStatus?.completedDays ?? [],
+      );
+
+      const missingDays = [1, 2, 3, 4, 5].filter(
+        (dayNumber) => !alreadyCompleted.has(dayNumber),
+      );
+
+      for (const dayNumber of missingDays) {
+        const response = await fetch(
+          "/api/ambassador/day-completion",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              cohortCode: "PILOT-2026-2027",
+              week: selectedWeek,
+              dayNumber,
+              facilitatorNote:
+                "Week closed by facilitator. Student access and existing student work remain unchanged.",
+            }),
+          },
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || `Unable to close Week ${selectedWeek}.`,
+          );
+        }
+      }
+
+      await loadFacilitatorWeekStatuses();
+
+      if (selectedWeek < 16) {
+        changeWeek(selectedWeek + 1);
+      }
+    } catch (caughtError) {
+      setWeekProgressError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Unable to close this week.",
+      );
+    } finally {
+      setClosingWeek(false);
+    }
+  }
 
   async function patchDelivery(
     update: Record<string, unknown>,
@@ -488,10 +641,27 @@ export default function AmbassadorCurriculumPage() {
     setSelectedWeek(week);
     setActiveTab("overview");
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        "future-ready-facilitator-week",
+        String(week),
+      );
+
+      const params = new URLSearchParams(window.location.search);
+      params.set("week", String(week));
+      params.set("day", "1");
+
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}?${params.toString()}`,
+      );
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   }
 
   async function addResourceToTodaysLesson(
@@ -1672,6 +1842,164 @@ export default function AmbassadorCurriculumPage() {
                       </p>
                     </div>
                   )}
+
+                  <div className="mb-5 rounded-2xl border-2 border-[#00A6A6]/30 bg-[#F7FFFF] p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#007C7C]">
+                          PROTECTED RESOURCE LIBRARY
+                        </p>
+
+                        <p className="mt-1 text-sm font-black text-[#0D1B3D]">
+                          {selectedWeek === 4
+                            ? "Week 4 · SEG Systems Student Work"
+                            : selectedWeek === 15
+                              ? "Professional Experience Toolkit"
+                              : selectedWeek >= 5
+                                ? `Week ${selectedWeek} Worksheet + Professional Experience Toolkit`
+                                : "Professional Experience Toolkit"}
+                        </p>
+
+                        <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">
+                          {selectedWeek === 4
+                            ? "Use the Week 4 SEG Systems student work across preparation, the workplace experience and Friday reflection. The reusable experience toolkit remains preserved for other professional experiences."
+                            : "Open or download the protected student materials you need. Assigning a resource uses the existing Future Ready™ assignment system and does not replace the weekly lesson."}
+                        </p>
+                      </div>
+
+                      <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-[#007C7C] shadow-sm">
+                        {selectedWeek === 15
+                          ? "NO REQUIRED WEEKLY WORK"
+                          : "FACILITATOR READY"}
+                      </span>
+                    </div>
+
+                    {selectedWeek === 15 && (
+                      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                        <p className="text-xs font-black text-amber-900">
+                          WEEK 15 · THANKSGIVING BREAK
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-amber-800">
+                          No required Week 15 worksheet or assignment. The reusable
+                          toolkit remains available if the facilitator needs it.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="mt-4 grid gap-3 md:grid-cols-2">
+                      {packagedResources
+                        .filter(
+                          (resource) =>
+                            resource.visibleToFacilitator &&
+                            (
+                              (
+                                selectedWeek !== 4 &&
+                                resource.category ===
+                                  "PROFESSIONAL_EXPERIENCE"
+                              ) ||
+                              (
+                                resource.category === "WEEK_RESOURCE" &&
+                                resource.week === selectedWeek
+                              )
+                            )
+                        )
+                        .map((resource) => {
+                          const openUrl =
+                            `/api/ambassador/packaged/${resource.relativePath}`;
+
+                          const downloadUrl =
+                            `${openUrl}?download=1`;
+
+                          const assignmentKey =
+                            `packaged-${resource.title}-${resource.format}`;
+
+                          const isWeeklyResource =
+                            resource.category === "WEEK_RESOURCE";
+
+                          return (
+                            <div
+                              key={resource.id}
+                              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#007C7C]">
+                                    {isWeeklyResource
+                                      ? `WEEK ${resource.week} STUDENT WORK`
+                                      : "REUSABLE EXPERIENCE TOOL"}
+                                  </p>
+
+                                  <p className="mt-1 text-sm font-black text-[#0D1B3D]">
+                                    {resource.shortTitle}
+                                  </p>
+
+                                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                                    {isWeeklyResource
+                                      ? "Protected weekly worksheet with explicit directions, submission guidance, portfolio evidence and Capstone Connection."
+                                      : "Protected reusable preparation, observation, reflection or follow-up resource for real-world experiences."}
+                                  </p>
+                                </div>
+
+                                <span className="shrink-0 rounded-full bg-[#EAFBFB] px-2 py-1 text-[9px] font-black text-[#007C7C]">
+                                  {resource.format}
+                                </span>
+                              </div>
+
+                              <div className="mt-4 flex flex-wrap gap-2">
+                                <a
+                                  href={openUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[11px] font-black text-[#0D1B3D]"
+                                >
+                                  Open
+                                </a>
+
+                                <a
+                                  href={downloadUrl}
+                                  className="rounded-lg border border-slate-300 px-3 py-2 text-[11px] font-black text-slate-700"
+                                >
+                                  Download / Print
+                                </a>
+
+                                <button
+                                  type="button"
+                                  disabled={
+                                    assigningResourceId === assignmentKey
+                                  }
+                                  onClick={() =>
+                                    assignPackagedAssetToStudents(
+                                      {
+                                        label: resource.title,
+                                        format: resource.format,
+                                        openUrl,
+                                        portfolioEligible:
+                                          isWeeklyResource,
+                                      },
+                                      "BOTH"
+                                    )
+                                  }
+                                  className="rounded-lg bg-[#00A6A6] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50"
+                                >
+                                  {assigningResourceId === assignmentKey
+                                    ? "Assigning..."
+                                    : "Assign to Students"}
+                                </button>
+                              </div>
+
+                              {isWeeklyResource && (
+                                <p className="mt-3 text-[10px] font-bold leading-4 text-slate-500">
+                                  Suggested curriculum day: Day{" "}
+                                  {resource.dayNumber ?? 3}. Assignment is added
+                                  to the currently selected facilitator day so you
+                                  remain in control of delivery.
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
 
                   {data.resources.filter(
                     (resource) =>
@@ -3440,28 +3768,58 @@ export default function AmbassadorCurriculumPage() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <button
-          type="button"
-          onClick={previousWeek}
-          disabled={selectedWeek === 1 || loading}
-          className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-black text-[#0D1B3D] disabled:opacity-40"
-        >
-          ← Previous Week
-        </button>
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            onClick={previousWeek}
+            disabled={selectedWeek === 1 || loading}
+            className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-black text-[#0D1B3D] disabled:opacity-40"
+          >
+            ← Previous Week
+          </button>
 
-        <p className="text-center text-sm font-bold text-slate-500">
-          Week {selectedWeek} of 16
-        </p>
+          <p className="text-center text-sm font-bold text-slate-500">
+            Week {selectedWeek} of 16
+          </p>
 
-        <button
-          type="button"
-          onClick={nextWeek}
-          disabled={selectedWeek === 16 || loading}
-          className="rounded-xl bg-[#0D1B3D] px-5 py-3 text-sm font-black text-white disabled:opacity-40"
-        >
-          Next Week →
-        </button>
+          <button
+            type="button"
+            onClick={nextWeek}
+            disabled={selectedWeek === 16 || loading}
+            className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-black text-[#0D1B3D] disabled:opacity-40"
+          >
+            Next Week →
+          </button>
+        </div>
+
+        <div className="mt-4 border-t border-slate-200 pt-4">
+          <button
+            type="button"
+            onClick={closeCurrentWeek}
+            disabled={closingWeek || selectedWeek === 15}
+            className="w-full rounded-xl bg-[#0D1B3D] px-5 py-4 text-sm font-black text-white shadow-sm transition hover:bg-[#162a58] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {selectedWeek === 15
+              ? "THANKSGIVING · NO CLASS"
+              : closingWeek
+                ? "Closing Week..."
+                : selectedWeek === 16
+                  ? "Close Week 16"
+                  : `Close Week ${selectedWeek} & Continue →`}
+          </button>
+
+          <p className="mt-2 text-center text-xs leading-5 text-slate-500">
+            Closing the week records facilitator progress only. Student access,
+            assignments, reflections, uploads, portfolio evidence and prior work remain unchanged.
+          </p>
+
+          {weekProgressError ? (
+            <p className="mt-2 text-center text-xs font-bold text-red-700">
+              {weekProgressError}
+            </p>
+          ) : null}
+        </div>
       </section>
     </main>
   );

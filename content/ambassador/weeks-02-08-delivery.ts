@@ -134,14 +134,20 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What have you learned about how other people experience you?",
-        "What careers or industries are beginning to interest you?",
-        "What do you still need to explore?",
+        "What do you already know about SEG Systems?",
+        "What do you think makes a workplace reliable?",
+        "Where do people, systems and technology depend on one another?",
       ],
       organizationTasks: [
-        "Review personal brand evidence.",
-        "Organize career notes.",
-        "Start a career curiosity list.",
+        "Research SEG Systems.",
+        "Identify roles you may see.",
+        "Prepare workplace observation questions.",
+      ],
+      projectWork: [
+        "Begin Week 4 SEG Systems student work.",
+      ],
+      capstoneWork: [
+        "Preserve one early example of how your understanding of work is changing.",
       ],
     },
 
@@ -150,45 +156,46 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-04-two-paths",
-        "week-04-career-conversation",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What does this person actually do?",
-          "What skills do they use most?",
-          "How did they enter the field?",
-          "What would they recommend a student explore now?",
+          "What should you notice about people, workflow, systems and technology?",
+          "What professional behaviors will help you learn from the experience?",
+          "What question do you want answered while you are there?",
         ],
         duringExperience: [
-          "Ask a career-path question.",
-          "Ask one follow-up question.",
-          "Listen for an unexpected career turn.",
+          "Observe people and roles.",
+          "Notice workflow and handoffs.",
+          "Notice where technology supports the work.",
+          "Watch how reliability and professionalism affect the system.",
+          "Ask thoughtful questions.",
         ],
         debriefQuestions: [
           "What surprised you?",
-          "What pathway did you learn about?",
-          "What do you want to research next?",
+          "Where did you see people and systems depend on one another?",
+          "What did the experience change about how you think about work?",
         ],
-        portfolioEvidence: "Career conversation reflection.",
+        portfolioEvidence:
+          "SEG Systems workplace observation + professionalism reflection.",
       },
+
       classroom: {
-        title: "Two Good Opportunities",
+        title: "SEG Systems Experience",
         description:
-          "Students compare realistic career tradeoffs and defend a decision.",
-        appliedLearningAssetIds: ["week-04-two-paths"],
+          "Students investigate how people, roles, systems, technology, workflow and professional reliability operate together in a real workplace.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What opportunity interests you now?",
-        "What tradeoff matters most to you?",
-        "What career question do you still need answered?",
+        "What changed in your understanding of work?",
+        "What human skill mattered?",
+        "What technical or systems skill did you notice?",
+        "What evidence from this experience belongs in your Future Ready™ story?",
       ],
     },
   },
@@ -198,16 +205,21 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What career possibility from last week stayed with you?",
-        "What assumption about careers changed?",
+        "What career possibility are you curious about?",
+        "What assumption about careers has already changed?",
         "Who could help you learn more?",
       ],
       organizationTasks: [
-        "Update Career Exploration Map.",
-        "Save employer or industry research.",
-        "Identify one person or organization to learn from.",
+        "Update your Career Exploration Map.",
+        "Save useful research.",
+        "Identify one person or organization connected to a pathway.",
       ],
-      projectWork: ["Begin Opportunity Map evidence."],
+      projectWork: [
+        "Build Opportunity Map evidence.",
+      ],
+      capstoneWork: [
+        "Preserve one pathway or possibility that expanded your thinking.",
+      ],
     },
 
     tuesday: {
@@ -224,35 +236,40 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
     thursday: {
       experience: {
         preparationQuestions: [
-          "What roles exist inside this organization?",
-          "What entry pathways exist?",
-          "What skills create advancement?",
+          "What roles exist in this industry?",
+          "What pathways lead into the work?",
+          "What skills matter?",
         ],
         duringExperience: [
-          "Identify at least three different roles.",
-          "Ask about entry pathways.",
-          "Observe workplace culture.",
+          "Identify at least three roles.",
+          "Ask how people entered the field.",
+          "Notice workplace culture.",
+          "Listen for multiple pathways.",
         ],
         debriefQuestions: [
-          "What role did you not know existed?",
-          "What pathway seemed realistic?",
-          "What relationship could help you learn more?",
+          "What role did you discover that you did not know existed?",
+          "What pathway felt realistic?",
+          "What relationship could help you keep exploring?",
         ],
         portfolioEvidence: "Industry Opportunity Map update.",
       },
+
       classroom: {
         title: "Ask for the Conversation",
         description:
-          "Students practice professionally creating career-learning opportunities.",
-        appliedLearningAssetIds: ["week-05-ask-for-opportunity"],
+          "Students practice creating opportunity through curiosity, professional communication and thoughtful relationship building.",
+        appliedLearningAssetIds: [
+          "week-05-opportunity-map",
+          "week-05-ask-for-opportunity",
+        ],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What new role did you discover?",
+        "What new role or pathway did you discover?",
         "Who could you professionally reach out to?",
-        "What is your next career-exploration move?",
+        "What is your next exploration move?",
       ],
     },
   },
@@ -262,15 +279,21 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What experiences from the first five weeks prove something about you?",
-        "What evidence should be added to your professional materials?",
+        "What do you think a $45,000 salary feels like in real life?",
+        "What expenses will compete for your income?",
+        "Which financial choices matter most to you?",
       ],
       organizationTasks: [
-        "Organize experience evidence.",
-        "Review resume/profile draft.",
-        "Check naming and file organization.",
+        "Open the Week 6 $45,000 Job student work.",
+        "Separate needs, wants and flexible expenses.",
+        "Prepare to make tradeoffs.",
       ],
-      projectWork: ["Build experience-to-skill statements."],
+      projectWork: [
+        "Build a realistic first-job life and budget.",
+      ],
+      capstoneWork: [
+        "Preserve one money decision that revealed something about your values.",
+      ],
     },
 
     tuesday: {
@@ -278,43 +301,46 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-06-prove-the-skill",
-        "week-06-five-second-profile",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What does this employer notice on a resume?",
-          "What makes a young candidate stand out?",
-          "Which transferable skills matter most?",
+          "What does a $45,000 salary actually have to support?",
+          "Which expenses are needs, wants or flexible?",
+          "Where do you expect the hardest tradeoffs?",
         ],
         duringExperience: [
-          "Listen for hiring language.",
-          "Write down three employer-valued behaviors.",
-          "Ask what evidence makes a candidate credible.",
+          "Build a realistic take-home-pay scenario.",
+          "Make spending choices.",
+          "Separate needs, wants and flexible expenses.",
+          "Respond to an unexpected expense.",
+          "Adjust the plan without ignoring financial reality.",
         ],
         debriefQuestions: [
-          "What would you change on your resume?",
-          "What skill do you need to prove better?",
+          "What surprised you most?",
+          "Which tradeoff was hardest?",
+          "What does financial stability mean to you now?",
         ],
-        portfolioEvidence: "Resume/employer feedback notes.",
+        portfolioEvidence:
+          "First $45,000 Job life, money + tradeoff reflection.",
       },
+
       classroom: {
-        title: "Don't Tell Me. Prove It.",
+        title: "Your First $45,000 Job",
         description:
-          "Students convert school, sport, work and life experiences into evidence employers can understand.",
-        appliedLearningAssetIds: ["week-06-prove-the-skill"],
+          "Students experience the difference between gross income, take-home pay, expenses, priorities, tradeoffs and financial stability.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What skill can you now prove?",
-        "What evidence supports it?",
-        "What professional material improved this week?",
+        "What tradeoff was hardest?",
+        "What expense surprised you?",
+        "What does financial stability mean to you now?",
+        "What question do you want to ask Brad McMillan next week?",
       ],
     },
   },
@@ -324,14 +350,20 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What does your resume now say about you?",
-        "Which experience would you want to discuss in an interview?",
-        "What question makes you nervous?",
+        "What did Week 6 teach you about money?",
+        "What financial decision do you still not understand?",
+        "What question could produce useful advice?",
       ],
       organizationTasks: [
-        "Review resume.",
-        "Prepare interview examples.",
-        "Organize professional clothing/material reminders if relevant.",
+        "Bring forward your Week 6 $45,000 life.",
+        "Build questions for Brad McMillan.",
+        "Choose your three strongest questions.",
+      ],
+      projectWork: [
+        "Prepare a financial question and decision journal.",
+      ],
+      capstoneWork: [
+        "Preserve one financial belief that changed or became clearer.",
       ],
     },
 
@@ -340,43 +372,44 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-07-pressure-interview",
-        "week-07-interview-panel",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What questions could you ask someone who hires young people?",
-          "What makes an interview answer memorable?",
-          "What interview mistakes are recoverable?",
+          "What do you want to understand about earning, spending, saving or financial decisions?",
+          "Which question matters most to your future?",
+          "What advice should you evaluate rather than automatically accept?",
         ],
         duringExperience: [
-          "Listen for employer interview expectations.",
-          "Ask about preparation.",
-          "Notice professional communication.",
+          "Ask thoughtful questions.",
+          "Take notes.",
+          "Listen for principles, not just rules.",
+          "Notice advice that challenges your assumptions.",
+          "Ask a follow-up question.",
         ],
         debriefQuestions: [
-          "What interview advice mattered most?",
-          "What question do you want to practice again?",
+          "What idea changed your thinking?",
+          "What advice will you act on?",
+          "What advice still needs more investigation?",
         ],
-        portfolioEvidence: "Interview preparation feedback.",
+        portfolioEvidence: "Brad McMillan money conversation + action reflection.",
       },
+
       classroom: {
-        title: "Interview Panel",
+        title: "Money, Decisions + Your Future",
         description:
-          "Students practice adapting to multiple interviewer styles and speaking under pressure.",
-        appliedLearningAssetIds: ["week-07-interview-panel"],
+          "Students use a real professional conversation to strengthen financial judgment rather than simply collect advice.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What question challenged you?",
-        "How did you recover?",
-        "What story can you now tell more confidently?",
+        "What is one financial rule you want to carry forward?",
+        "What will you do differently?",
+        "What do you still need to learn?",
       ],
     },
   },
@@ -386,17 +419,21 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What professional skill improved most during Weeks 1–7?",
-        "What financial habit do you already have?",
-        "What money decision do you want to understand better?",
+        "What do you know about Terracon?",
+        "What jobs or pathways do you expect to see?",
+        "What do you want to understand about how the work gets done?",
       ],
       organizationTasks: [
-        "Review Life Account.",
-        "Check savings goal.",
-        "Review any bills, commitments, or Money Circle activity.",
-        "Organize Week 1–7 portfolio evidence.",
+        "Research Terracon.",
+        "Map possible roles.",
+        "Prepare questions about pathways, skills and workplace systems.",
       ],
-      projectWork: ["Midpoint portfolio cleanup."],
+      projectWork: [
+        "Build a role + pathway observation map.",
+      ],
+      capstoneWork: [
+        "Preserve evidence from a real workplace that expands your understanding of careers.",
+      ],
     },
 
     tuesday: {
@@ -404,51 +441,46 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-08-first-big-check",
-        "week-08-athlete-money-move",
-        "week-08-friend-money-boundary",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What money lesson did this professional learn the hard way?",
-          "How do they separate wants, obligations, and goals?",
-          "What financial advice would they give their younger self?",
-          "How do they evaluate financial promises or opportunities?",
+          "What roles will you look for?",
+          "What human and technical skills will you notice?",
+          "Where might people and technology work together?",
         ],
         duringExperience: [
-          "Listen for a real financial decision.",
-          "Ask about a mistake and what changed afterward.",
-          "Ask how they stay organized financially.",
+          "Identify roles and responsibilities.",
+          "Notice workflow and handoffs.",
+          "Notice human and technical skills.",
+          "Ask about career entry pathways.",
+          "Observe professionalism and workplace culture.",
         ],
         debriefQuestions: [
-          "What money lesson felt most realistic?",
-          "What will you apply to your Life Account?",
-          "What financial promise should make you slow down and ask questions?",
+          "What role did you discover?",
+          "What pathway became clearer?",
+          "What human skill mattered?",
+          "What technical skill mattered?",
+          "What did you learn about career fit?",
         ],
-        portfolioEvidence: "Financial decision-making reflection.",
+        portfolioEvidence: "Terracon pathway + workplace observation.",
       },
+
       classroom: {
-        title: "Athlete Money Moves™ + First Big Check",
+        title: "Terracon — Pathways, People + Work in Action",
         description:
-          "Students manage simulated money, evaluate financial promises, communicate boundaries, and experience consequences through Life Economy.",
-        appliedLearningAssetIds: [
-          "week-08-first-big-check",
-          "week-08-athlete-money-move",
-          "week-08-friend-money-boundary",
-        ],
+          "Students investigate a real workplace as a career ecosystem rather than treating the experience as a tour.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What money decision changed after you experienced the consequence?",
-        "What is a promise versus a guarantee?",
-        "What financial boundary did you practice?",
-        "What will you do differently with your next $20?",
+        "What surprised you?",
+        "What role or pathway interests you now?",
+        "What evidence from Terracon belongs in your Future Ready™ story?",
       ],
     },
   },

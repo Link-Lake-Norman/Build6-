@@ -6,18 +6,20 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What financial decision from Week 8 would you make differently now?",
-        "Where are you already using AI?",
-        "What do you trust AI to do well?",
-        "What should still require your judgment?",
+        "What experiences prove what you can do?",
+        "Which skills do you claim but still need evidence for?",
+        "What would an employer understand about you in five seconds?",
       ],
       organizationTasks: [
-        "Complete Week 8 portfolio cleanup.",
-        "Review Life Economy decisions.",
-        "Organize current Future Ready™ evidence.",
+        "Gather experiences from school, athletics, work, family, volunteering, projects and Future Ready™.",
+        "Open your Resume Story Bank.",
+        "Choose evidence for teamwork, leadership, problem solving, reliability, adaptability and communication.",
       ],
       projectWork: [
-        "Choose one piece of work that could be improved with responsible AI assistance.",
+        "Build experience-to-evidence resume stories.",
+      ],
+      capstoneWork: [
+        "Preserve your strongest proof-of-skill examples.",
       ],
     },
 
@@ -26,47 +28,43 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-09-ai-trust-but-verify",
-        "week-09-ai-professional-partner",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "How is AI changing this person's work?",
-          "What still requires human judgment?",
-          "What AI mistake would concern them most?",
-          "How does their organization protect confidential information?",
+          "What makes a resume credible?",
+          "What do employers notice quickly?",
+          "What story should your resume prove?",
         ],
         duringExperience: [
-          "Listen for one productive AI use.",
-          "Identify one human skill that becomes more important with AI.",
-          "Ask one responsible-use question.",
+          "Listen for employer feedback.",
+          "Notice common resume mistakes.",
+          "Capture what creates credibility.",
+          "Ask what young candidates often underestimate.",
         ],
         debriefQuestions: [
-          "Where does AI create value?",
-          "Where does human judgment remain essential?",
-          "What would you verify before acting?",
+          "What did Jennifer Miller change about how you think about resumes?",
+          "What will you revise?",
+          "What evidence is stronger now?",
         ],
-        portfolioEvidence: "AI + Human Judgment workplace reflection.",
+        portfolioEvidence: "Resume Story Bank + Jennifer Miller feedback.",
       },
 
       classroom: {
-        title: "AI Said It. Now What?",
+        title: "Don't Just Claim the Skill — Prove It",
         description:
-          "Students test AI output, identify what requires verification, and practice responsible professional use.",
-        appliedLearningAssetIds: ["week-09-ai-trust-but-verify"],
+          "Students translate real experiences into evidence employers can understand and prepare for Jennifer Miller's employer perspective.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What did AI help you do better?",
-        "What still required your judgment?",
-        "What will you verify before trusting an AI answer?",
-        "What is your responsible-AI rule going forward?",
+        "What story now proves one of your strongest skills?",
+        "What did you revise after feedback?",
+        "What will an employer understand about you faster now?",
       ],
     },
   },
@@ -76,15 +74,20 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "Where did you use good judgment last week?",
-        "What does reliability mean to you now?",
-        "What professional habit needs more work?",
+        "Which Story Bank example are you most confident telling?",
+        "What happens when you receive a question you did not expect?",
+        "How do you recover when you lose your train of thought?",
       ],
       organizationTasks: [
-        "Review calendar and deadlines.",
-        "Clean up unfinished work.",
-        "Check portfolio evidence.",
-        "Review communication follow-through.",
+        "Bring six Story Bank examples.",
+        "Prepare teamwork, leadership, problem-solving, reliability, adaptability and communication stories.",
+        "Practice Situation, Action, Result, Reflection.",
+      ],
+      projectWork: [
+        "Build structured interview answers.",
+      ],
+      capstoneWork: [
+        "Preserve one example of how your communication changes under pressure.",
       ],
     },
 
@@ -93,45 +96,47 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-10-you-said-you-would",
-        "week-10-first-week-work",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What makes a young employee easy to trust?",
-          "What workplace habit causes the most frustration?",
-          "How should employees communicate when something goes wrong?",
+          "Which Story Bank examples are ready to use?",
+          "What interview question makes you least comfortable?",
+          "How will you recover if you need time to think?",
         ],
         duringExperience: [
-          "Listen for expectations that are not written in a job description.",
-          "Ask about reliability.",
-          "Notice how team members communicate.",
+          "Answer structured interview questions.",
+          "Respond to an unexpected question.",
+          "Use Situation, Action, Result, Reflection.",
+          "Practice professional recovery.",
+          "Use clear nonverbal communication.",
+          "Ask a thoughtful employer question.",
+          "Practice a concise professional close.",
         ],
         debriefQuestions: [
-          "What behavior builds trust fastest?",
-          "What workplace expectation surprised you?",
-          "What will you practice?",
+          "Which answer was strongest?",
+          "Where did pressure affect your communication?",
+          "What improved after a second attempt?",
         ],
-        portfolioEvidence: "Workplace Expectations observation.",
+        portfolioEvidence:
+          "Interview Under Pressure response + feedback evidence.",
       },
 
       classroom: {
-        title: "You Said You Would",
+        title: "Interview Under Pressure",
         description:
-          "Students practice accountability, missed-deadline communication, and professional recovery.",
-        appliedLearningAssetIds: ["week-10-you-said-you-would"],
+          "Students practice choosing evidence, answering unexpected questions, recovering professionally and communicating clearly under pressure.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "How did you demonstrate reliability?",
-        "What commitment did you follow through on?",
-        "Where could you communicate earlier?",
+        "Which answer became stronger after a second attempt?",
+        "How did you recover from a difficult question?",
+        "What will you do differently in a real interview?",
       ],
     },
   },
@@ -141,16 +146,21 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "Who has helped you get where you are?",
-        "Who knows something you want to learn?",
-        "How well do you currently follow up with people?",
+        "What happens to your communication when you feel pressure?",
+        "Do you become too quiet, too fast, too defensive or too long?",
+        "What do you want to improve before being on camera?",
       ],
       organizationTasks: [
-        "Review career contacts.",
-        "Update networking notes.",
-        "Identify three people you could learn from.",
+        "Prepare a 60-second point.",
+        "Practice Point, Evidence, Why It Matters, Close.",
+        "Prepare for listening, disagreement and rebuttal.",
       ],
-      projectWork: ["Begin personal Future Ready™ Relationship Map."],
+      projectWork: [
+        "Build a professional speaking + response plan.",
+      ],
+      capstoneWork: [
+        "Preserve evidence of how you use your voice under pressure.",
+      ],
     },
 
     tuesday: {
@@ -158,49 +168,47 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-11-dont-ask-for-a-job",
-        "week-11-mentor-moment",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What makes someone worth staying connected to?",
-          "Who mentored this professional?",
-          "How did relationships create opportunities?",
+          "What point do you want to communicate clearly?",
+          "What happens to your communication under pressure?",
+          "What will help you listen before responding?",
         ],
         duringExperience: [
-          "Introduce yourself.",
-          "Ask one thoughtful question.",
-          "Practice one follow-up.",
-          "Thank the person professionally.",
+          "Deliver a 60-second response.",
+          "Use Point, Evidence, Why It Matters, Close.",
+          "Listen before preparing a rebuttal.",
+          "Practice professional disagreement.",
+          "Respond to a curveball.",
+          "Recover when you do not know exactly what to say.",
+          "Practice camera awareness.",
         ],
         debriefQuestions: [
-          "Who would you like to stay connected to?",
-          "What did you learn from asking a follow-up question?",
-          "What is your next relationship-building action?",
+          "What communication habit became obvious?",
+          "What helped you stay composed?",
+          "What will you intentionally change before being on camera?",
         ],
-        portfolioEvidence: "Networking + Mentor relationship reflection.",
+        portfolioEvidence:
+          "Michelle Boudin preparation + communication-under-pressure evidence.",
       },
 
       classroom: {
-        title: "Build the Relationship",
+        title: "Michelle Boudin Prep — Find Your Voice Under Pressure",
         description:
-          "Students practice networking without immediately asking someone to get them a job.",
-        appliedLearningAssetIds: [
-          "week-11-dont-ask-for-a-job",
-          "week-11-mentor-moment",
-        ],
+          "Students practice clear speaking, listening, professional disagreement, rebuttal, recovery and camera awareness.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "Who did you learn from?",
-        "What relationship should you maintain?",
-        "What follow-up will you make?",
+        "What communication habit do you want to change?",
+        "What helps you stay composed?",
+        "What will you intentionally do differently on camera?",
       ],
     },
   },
@@ -210,17 +218,20 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "Which relationship did you strengthen last week?",
-        "What problem are you currently trying to solve?",
-        "Are you solving the real problem or only reacting to the symptom?",
+        "What communication goal did you set last week?",
+        "What do you want feedback on?",
+        "What will you watch for in your first attempt?",
       ],
       organizationTasks: [
-        "Complete networking follow-up.",
-        "Review unfinished project work.",
-        "Organize evidence from Weeks 9–11.",
+        "Review your Week 11 pre-camera plan.",
+        "Choose one communication goal.",
+        "Prepare to receive feedback and try again.",
       ],
       projectWork: [
-        "Identify one real problem that could become a portfolio case study.",
+        "Capture first-attempt and second-attempt evidence.",
+      ],
+      capstoneWork: [
+        "Preserve visible evidence of growth through feedback and adjustment.",
       ],
     },
 
@@ -229,48 +240,44 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-12-fix-the-real-problem",
-        "week-12-under-pressure",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What problem does this organization solve?",
-          "How do they identify root causes?",
-          "How do teams make decisions when information is incomplete?",
+          "What do you want to communicate clearly?",
+          "What feedback are you ready to receive?",
+          "What adjustment will you be willing to try?",
         ],
         duringExperience: [
-          "Listen for a real business or community problem.",
-          "Ask how the team knew what the real issue was.",
-          "Identify one tradeoff.",
+          "Complete the first attempt.",
+          "Self-assess before receiving feedback.",
+          "Listen to Michelle's feedback.",
+          "Choose one intentional adjustment.",
+          "Complete the second attempt.",
         ],
         debriefQuestions: [
-          "What problem-solving process did you observe?",
-          "What assumption was tested?",
-          "What would you have done?",
+          "What changed between attempt one and attempt two?",
+          "What feedback mattered most?",
+          "What did discomfort teach you about composure?",
         ],
-        portfolioEvidence: "Real-world problem-solving case reflection.",
+        portfolioEvidence: "On-camera first attempt + feedback + second attempt.",
       },
 
       classroom: {
-        title: "Fix the Real Problem",
+        title: "Michelle Boudin — On Camera",
         description:
-          "Students diagnose root causes, test assumptions, make a decision, and adapt when new information appears.",
-        appliedLearningAssetIds: [
-          "week-12-fix-the-real-problem",
-          "week-12-under-pressure",
-        ],
+          "Students experience the full cycle of performance, feedback, intentional adjustment and second attempt.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What assumption did you test?",
-        "When did new information change your decision?",
-        "What problem-solving habit will you keep?",
+        "What changed?",
+        "What evidence proves improvement?",
+        "How will you use feedback differently in the future?",
       ],
     },
   },
@@ -280,19 +287,20 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What professional environment would you like to experience?",
-        "What makes you nervous about entering a workplace?",
-        "What question should you be comfortable asking?",
+        "Who are you beyond athletics?",
+        "Which parts of you would remain if the role disappeared?",
+        "What has adversity taught you about yourself?",
       ],
       organizationTasks: [
-        "Review resume.",
-        "Review professional introduction.",
-        "Check contact information.",
-        "Organize internship-readiness materials.",
+        "Complete identity evidence.",
+        "Translate athletic experiences into transferable skills.",
+        "Prepare questions for Brad McMillan.",
       ],
-      projectWork: ["Build First-Day Internship Readiness checklist."],
+      projectWork: [
+        "Build Who Remains identity + resilience evidence.",
+      ],
       capstoneWork: [
-        "Begin identifying evidence you may want in your final showcase.",
+        "Preserve identity, setback, resilience, reputation and purpose evidence.",
       ],
     },
 
@@ -301,49 +309,44 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-13-internship-first-day",
-        "week-13-workplace-boundary",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What would this workplace expect from an intern?",
-          "What should a student do on the first day?",
-          "What questions should students ask?",
-          "How are safety and boundaries communicated?",
+          "What do you want to ask Brad about identity?",
+          "What do you want to understand about transition?",
+          "What do you want to know about resilience, reputation or purpose?",
         ],
         duringExperience: [
-          "Observe workplace norms.",
-          "Identify who supervises what.",
-          "Ask one internship-readiness question.",
+          "Listen for identity beyond roles.",
+          "Listen for resilience.",
+          "Listen for relationship lessons.",
+          "Listen for reputation and purpose.",
+          "Ask a follow-up question.",
         ],
         debriefQuestions: [
-          "What would make you easier to supervise?",
-          "What workplace expectation became clearer?",
-          "What question would you ask before your first day?",
+          "What will you carry forward?",
+          "What remains when the scoreboard disappears?",
+          "Who belongs on your Decision Team?",
         ],
-        portfolioEvidence: "Internship Readiness experience notes.",
+        portfolioEvidence: "Life After Sports + Who Remains reflection.",
       },
 
       classroom: {
-        title: "First Day + Workplace Boundaries",
+        title: "Brad McMillan — Life After Sports + Who Remains?",
         description:
-          "Students practice uncertainty, clarification, initiative, safety, and professional self-advocacy.",
-        appliedLearningAssetIds: [
-          "week-13-internship-first-day",
-          "week-13-workplace-boundary",
-        ],
+          "Students examine identity beyond athletics, resilience, reputation, purpose, transition and the people they need around important decisions.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What will you do when you do not understand an instruction?",
-        "How will you show initiative?",
-        "What does professional self-advocacy sound like?",
+        "Who remains beyond the role?",
+        "What mindset commitment will you carry forward?",
+        "Who belongs on your Decision Team?",
       ],
     },
   },
@@ -353,17 +356,22 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "Which Future Ready™ experience gives you the best story?",
-        "What evidence demonstrates your growth?",
-        "What part of public speaking still challenges you?",
+        "What do you want to learn next?",
+        "Who could help you learn it?",
+        "Which person from your Decision Team or professional network could offer useful perspective?",
       ],
       organizationTasks: [
-        "Collect presentation evidence.",
-        "Review portfolio artifacts.",
-        "Choose speaking examples.",
+        "Choose a person to learn from.",
+        "Research before reaching out.",
+        "Build a professional introduction.",
+        "Develop at least eight useful questions.",
       ],
-      projectWork: ["Build professional presentation outline."],
-      capstoneWork: ["Begin Future Ready™ Showcase story structure."],
+      projectWork: [
+        "Build an informational conversation plan.",
+      ],
+      capstoneWork: [
+        "Preserve a relationship, piece of advice or realization that may shape your next chapter.",
+      ],
     },
 
     tuesday: {
@@ -371,50 +379,47 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-14-own-the-room",
-        "week-14-panel-hot-seat",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What makes this speaker engaging?",
-          "How do they structure information?",
-          "How do they recover when interrupted or questioned?",
+          "What do you actually want to learn?",
+          "Why is this the right person to ask?",
+          "Which five questions will create the most useful conversation?",
         ],
         duringExperience: [
-          "Observe opening and closing.",
-          "Notice use of examples.",
-          "Notice audience interaction.",
-          "Ask one presentation question if appropriate.",
+          "Introduce yourself professionally.",
+          "Ask thoughtful questions.",
+          "Listen closely.",
+          "Ask genuine follow-up questions.",
+          "Take notes.",
+          "Close professionally.",
         ],
         debriefQuestions: [
-          "What presentation behavior worked?",
-          "What would you borrow?",
-          "What would not fit your style?",
+          "What advice was useful?",
+          "What advice requires your own judgment?",
+          "What action will you take?",
+          "Should this relationship continue?",
         ],
-        portfolioEvidence:
-          "Professional speaker observation + personal speaking adjustment.",
+        portfolioEvidence: "Mentorship conversation + action commitment.",
       },
 
       classroom: {
-        title: "Own the Room + Panel Hot Seat",
+        title: "Mentorship + Informational Conversation",
         description:
-          "Students present, receive unscripted questions, recover, and immediately try again.",
-        appliedLearningAssetIds: [
-          "week-14-own-the-room",
-          "week-14-panel-hot-seat",
-        ],
+          "Students practice networking as curiosity, listening, follow-through and relationship building rather than asking someone to solve their career.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What improved during your second speaking attempt?",
-        "How did you recover from an unexpected question?",
-        "What will you practice before the showcase?",
+        "What did you learn?",
+        "What will you act on?",
+        "How will you follow up?",
+        "What relationship do you want to continue building?",
       ],
     },
   },
@@ -423,22 +428,10 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     week: 15,
 
     monday: {
-      reflectionPrompt: [
-        "Where do you want to go next?",
-        "What must happen during the next 30 days?",
-        "What part of your plan is still vague?",
-      ],
-      organizationTasks: [
-        "Complete portfolio cleanup.",
-        "Review Future Ready™ evidence.",
-        "Update goals and contact list.",
-      ],
-      projectWork: ["Build 30-day action calendar."],
-      capstoneWork: [
-        "Draft final Showcase presentation.",
-        "Select strongest evidence.",
-        "Identify one meaningful growth story.",
-      ],
+      reflectionPrompt: [],
+      organizationTasks: [],
+      projectWork: [],
+      capstoneWork: [],
     },
 
     tuesday: {
@@ -446,50 +439,27 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-15-future-you-board-meeting",
-        "week-15-calendar-your-future",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
-        preparationQuestions: [
-          "What career decision would you ask this person about?",
-          "What changed between their original plan and actual path?",
-          "How did they handle a setback?",
-        ],
-        duringExperience: [
-          "Listen for a plan that changed.",
-          "Identify one relationship or resource that helped.",
-          "Ask about a meaningful next-step decision.",
-        ],
-        debriefQuestions: [
-          "What changed in their path?",
-          "What stayed constant?",
-          "How can your plan remain flexible?",
-        ],
-        portfolioEvidence: "Future Planning professional reflection.",
+        preparationQuestions: [],
+        duringExperience: [],
+        debriefQuestions: [],
+        portfolioEvidence: "No required Week 15 portfolio evidence.",
       },
 
       classroom: {
-        title: "Future You Board Meeting",
+        title: "Thanksgiving Break",
         description:
-          "Students defend their next-step plan, receive curveballs, revise it, and put actions on the calendar.",
-        appliedLearningAssetIds: [
-          "week-15-future-you-board-meeting",
-          "week-15-calendar-your-future",
-        ],
+          "No required Week 15 student work. Existing reusable tools remain available to the facilitator if needed.",
+        appliedLearningAssetIds: [],
       },
     },
 
     friday: {
-      closingQuestions: [
-        "What is your next concrete action?",
-        "When will you do it?",
-        "Who can help?",
-        "What is Plan B if circumstances change?",
-      ],
+      closingQuestions: [],
     },
   },
 
@@ -499,22 +469,23 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     monday: {
       reflectionPrompt: [
         "Who were you when Future Ready™ began?",
-        "What changed?",
+        "What changed this fall?",
         "What evidence proves the change?",
         "What still needs work?",
       ],
       organizationTasks: [
-        "Complete portfolio organization.",
-        "Confirm showcase evidence.",
-        "Review Future Ready™ Passport.",
-        "Finish missing reflections or artifacts.",
+        "Review fall reflections and evidence.",
+        "Review the Future Ready™ Passport.",
+        "Identify your strongest experiences.",
+        "Complete your BEFORE snapshot.",
       ],
-      projectWork: ["Final Showcase preparation."],
+      projectWork: [
+        "Complete Who I Am Becoming — Pre-Internship Statement.",
+      ],
       capstoneWork: [
-        "Rehearse presentation.",
-        "Tighten evidence.",
-        "Practice panel questions.",
-        "Complete final Future Ready™ story.",
+        "Save Week 16 as BEFORE evidence.",
+        "Identify evidence to continue collecting during January-April.",
+        "Do not finalize the Capstone.",
       ],
     },
 
@@ -523,42 +494,38 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
     },
 
     wednesday: {
-      appliedLearningAssetIds: [
-        "week-16-showcase-story",
-        "week-16-youre-on-the-panel",
-      ],
+      appliedLearningAssetIds: [],
     },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What do you want your audience to understand about your growth?",
-          "Which evidence proves readiness?",
-          "What question are you most prepared to answer?",
+          "What strengths will you bring into an internship?",
+          "What growth areas will you practice?",
+          "How do you want to show up professionally?",
         ],
         duringExperience: [
-          "Present professionally.",
-          "Listen to panel questions.",
-          "Use evidence.",
-          "Support classmates.",
-          "Represent Future Ready™ with professionalism.",
+          "Complete the fall evidence map.",
+          "Identify five workplace strengths with evidence.",
+          "Identify three growth areas.",
+          "Set internship goals.",
+          "Complete the BEFORE confidence check.",
+          "Build the January-April evidence plan.",
         ],
         debriefQuestions: [
-          "What are you proud of?",
-          "What did you demonstrate?",
-          "What will you carry forward?",
+          "Who are you becoming?",
+          "What evidence proves your growth?",
+          "What do you want the internship phase to teach you?",
         ],
-        portfolioEvidence: "Launch Ready Showcase presentation.",
+        portfolioEvidence:
+          "Who I Am Becoming pre-internship statement + BEFORE evidence.",
       },
 
       classroom: {
-        title: "Showcase Rehearsal + Pass It Forward",
+        title: "Who I Am Becoming — Before the Next Chapter",
         description:
-          "Students rehearse final stories, answer panel questions, and turn their learning into advice for the students who come next.",
-        appliedLearningAssetIds: [
-          "week-16-showcase-story",
-          "week-16-youre-on-the-panel",
-        ],
+          "Students synthesize fall growth and establish the BEFORE evidence they will later compare with their January-April internship experience.",
+        appliedLearningAssetIds: [],
       },
     },
 
@@ -566,8 +533,8 @@ export const ambassadorWeeks09To16Delivery: AmbassadorWeekDelivery[] = [
       closingQuestions: [
         "What can you now do that you could not confidently do before?",
         "What evidence are you most proud of?",
-        "What did Future Ready™ teach you about yourself?",
-        "What will Future You do next?",
+        "What still needs practice?",
+        "How will you show up in the next chapter?",
       ],
     },
   },
