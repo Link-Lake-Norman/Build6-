@@ -324,7 +324,198 @@ ____________________________________________________
 
 ---
 
-# PART 6 · RELATIONSHIPS CREATE ACCESS
+# PART 6 · PREPARE FOR THE FORMER-ATHLETE CONVERSATION
+
+This week, you will learn directly from former athletes whose paths continued beyond the uniform:
+
+- a former NFL player
+- a former Notre Dame lacrosse player
+
+This conversation is about what you build before, during and beyond an athletic chapter — and how the skills, decisions, relationships and identity you develop now can shape what comes next.
+
+Listen for decisions, sacrifices, setbacks, relationships, pressure, preparation, transferable skills, identity, career pivots, opportunities and lessons learned.
+
+## PRE · BECOMING THE ATHLETE
+
+### What did you believe your future would look like when you were our age?
+
+____________________________________________________
+
+### What sacrifices did you make?
+
+____________________________________________________
+
+### Who influenced your decisions?
+
+____________________________________________________
+
+### Did you have a plan outside your sport?
+
+____________________________________________________
+
+### What do you wish you had started building sooner?
+
+____________________________________________________
+
+### My PRE question:
+
+____________________________________________________
+
+____________________________________________________
+
+## DURING · LIVING THE ATHLETE IDENTITY
+
+### How much did your identity become connected to your sport?
+
+____________________________________________________
+
+### What skills did athletics give you that became valuable outside sports?
+
+____________________________________________________
+
+### What did athletics NOT prepare you for?
+
+____________________________________________________
+
+### How did you handle pressure, failure, injuries, competition or uncertainty?
+
+____________________________________________________
+
+### Who was on your decision team?
+
+____________________________________________________
+
+### My DURING question:
+
+____________________________________________________
+
+____________________________________________________
+
+## POST · WHEN THE UNIFORM CHANGES OR COMES OFF
+
+### When did you realize your athletic chapter was changing?
+
+____________________________________________________
+
+### What was hardest about the transition?
+
+____________________________________________________
+
+### Who were you when you were no longer introduced primarily as an athlete?
+
+____________________________________________________
+
+### Which athletic skills transferred into your next chapter?
+
+____________________________________________________
+
+### What did you have to learn from scratch?
+
+____________________________________________________
+
+### How did relationships or networking affect your next opportunity?
+
+____________________________________________________
+
+### What would you tell an athlete who thinks there is plenty of time to figure this out later?
+
+____________________________________________________
+
+### My POST question:
+
+____________________________________________________
+
+____________________________________________________
+
+# MY QUESTION FOR MY FUTURE
+
+**What is something I should start building now, while I am still an athlete, that my future self will be grateful I built?**
+
+____________________________________________________
+
+____________________________________________________
+
+____________________________________________________
+
+# PART 7 · FORMER-ATHLETE CONVERSATION
+
+## PRE → DURING → POST → WHAT I KNOW NOW
+
+Do not spend the conversation staring at this page.
+
+Listen. Watch. Ask. Capture what matters during a natural pause or immediately afterward.
+
+### Something I heard that surprised me:
+
+____________________________________________________
+
+### A mistake, setback or challenge I can learn from:
+
+____________________________________________________
+
+### A skill athletics built that transfers beyond sport:
+
+____________________________________________________
+
+### Something one speaker wished they had understood or built sooner:
+
+____________________________________________________
+
+### Something I heard about relationships, mentors or networking:
+
+____________________________________________________
+
+### Something I heard about identity beyond athletics:
+
+____________________________________________________
+
+### One statement I want to remember:
+
+____________________________________________________
+
+### One question I still have:
+
+____________________________________________________
+
+# PART 8 · TURN THE CONVERSATION INTO EVIDENCE
+
+### BEFORE THE CONVERSATION...
+
+Something I assumed about life during or after athletics:
+
+____________________________________________________
+
+### AFTER THE CONVERSATION...
+
+Something I understand differently:
+
+____________________________________________________
+
+### One athletic skill I already have that can transfer beyond sports:
+
+____________________________________________________
+
+### Evidence that I have used this skill:
+
+____________________________________________________
+
+### One skill, relationship, habit or part of myself I need to start building now:
+
+____________________________________________________
+
+### Why will this matter later?
+
+____________________________________________________
+
+### One action I can take while I am still an athlete:
+
+____________________________________________________
+
+### One person I could learn from as I build it:
+
+____________________________________________________
+
+# PART 9 · RELATIONSHIPS CREATE ACCESS
 
 You do not have to figure everything out alone.
 
@@ -369,7 +560,7 @@ ____________________________________________________
 
 ---
 
-# PART 7 · ASK FOR THE CONVERSATION
+# PART 10 · ASK FOR THE CONVERSATION
 
 Opportunities often begin because someone is willing to professionally start a conversation.
 
@@ -495,7 +686,7 @@ ____________________________________________________
 
 ---
 
-# PART 8 · MY NEXT CAREER-EXPLORATION MOVE
+# PART 11 · MY NEXT CAREER-EXPLORATION MOVE
 
 Career exploration should lead somewhere.
 

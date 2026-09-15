@@ -114,7 +114,12 @@ export async function GET(request: NextRequest) {
           where: {
             lessonId: lesson.id,
             studentId,
-          },
+                      NOT: {
+              prompt: {
+                startsWith: "Capstone Build ·",
+              },
+            },
+},
           select: {
             id: true,
             lessonId: true,
@@ -321,7 +326,12 @@ export async function POST(request: NextRequest) {
         where: {
           lessonId: lesson.id,
           studentId,
-        },
+                  NOT: {
+            prompt: {
+              startsWith: "Capstone Build ·",
+            },
+          },
+},
         select: {
           id: true,
         },

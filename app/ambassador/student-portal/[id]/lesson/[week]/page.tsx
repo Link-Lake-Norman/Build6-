@@ -6,6 +6,8 @@ import LessonCompletion from "@/app/ambassador/curriculum/[week]/LessonCompletio
 import StudentAppliedLearningLab from "@/components/student/StudentAppliedLearningLab";
 import type { StudentAppliedLearningAsset } from "@/components/student/StudentAppliedLearningLab";
 import { getAppliedLearningForWeek } from "@/content/applied-learning";
+import StudentWeeklyWorkspace from "@/components/student/StudentWeeklyWorkspace";
+import { getStudentWeeklyWorkspace } from "@/content/ambassador/student-weekly-workspaces";
 
 type PageProps = {
   params: Promise<{
@@ -300,24 +302,15 @@ export default async function StudentLessonPage({ params }: PageProps) {
           ) : null}
         </article>
 
-        <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-black uppercase tracking-[0.16em] text-[#725500]">
-            My Reflection
-          </p>
-
-          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-            Think About It
-          </h2>
-
-          <p className="mt-5 text-lg leading-8 text-slate-700">{reflection}</p>
-
-          <Link
-            href={`/ambassador/student-passport/${id}/reflections`}
-            className="mt-6 inline-block rounded-xl border border-[#0D1B3D] px-5 py-3 font-black text-[#0D1B3D]"
-          >
-            Open Reflection Journal →
-          </Link>
-        </article>
+        <StudentWeeklyWorkspace
+          studentId={student.id}
+          lessonId={lesson.id}
+          weekNumber={lesson.weekNumber}
+          lessonTitle={lesson.title}
+          reflectionPrompt={reflection}
+          passportHref={`/ambassador/student-passport/${id}`}
+          workspace={getStudentWeeklyWorkspace(lesson.weekNumber)}
+        />
       </section>
 
       <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">

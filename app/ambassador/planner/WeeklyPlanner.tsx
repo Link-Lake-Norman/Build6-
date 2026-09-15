@@ -530,7 +530,11 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
   const weekCode = String(week).padStart(2, "0");
 
-  const materialsAvailable = week >= 1 && week <= 4;
+  const packagedDownloadMaterialsAvailable = week >= 1 && week <= 4;
+  const protectedWeeklyStudentWorkAvailable =
+    (week >= 5 && week <= 14) || week === 16;
+  const materialsAvailable =
+    packagedDownloadMaterialsAvailable || protectedWeeklyStudentWorkAvailable;
 
   function resourceHref(resource: WeekResource) {
     const filename = `Future-Ready-Week-${weekCode}-${resource.fileSuffix}`;
@@ -2179,7 +2183,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                 )}
               </div>
 
-              {materialsAvailable ? (
+              {packagedDownloadMaterialsAvailable ? (
                 <div className="mt-7 grid gap-7 xl:grid-cols-2">
                   <div>
                     <div className="mb-4 flex items-center justify-between gap-4">
