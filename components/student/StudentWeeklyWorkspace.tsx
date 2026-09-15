@@ -624,10 +624,10 @@ export default function StudentWeeklyWorkspace({
           </Link>
 
           <Link
-            href="/ambassador/student-portal/legacy-book"
+            href={`/ambassador/student-portal/${studentId}/capstone`}
             className="rounded-xl border border-[#F2B705] bg-[#FFF9E5] px-5 py-3 font-black text-[#0D1B3D]"
           >
-            My Legacy Book →
+            Beyond the Game · My Capstone →
           </Link>
 
           <span className="ml-auto text-sm font-bold text-slate-500">

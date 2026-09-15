@@ -217,8 +217,8 @@ export default async function AmbassadorStudentPortalPage({
         <h1 className="mt-3 text-4xl font-black">Welcome, {firstName}</h1>
 
         <p className="mt-3 max-w-2xl text-base leading-7 text-slate-200">
-          See what matters right now, complete what has been opened for you, and
-          then you are done.
+          See what matters right now, continue your weekly work, and build the
+          story of who you are becoming.
         </p>
       </section>
 
@@ -290,7 +290,7 @@ export default async function AmbassadorStudentPortalPage({
               </h2>
 
               <p className="mt-3 max-w-2xl leading-7 text-slate-600">
-                Your facilitator has opened this lesson for you.
+                Continue your Future Ready™ journey and build evidence for what comes next.
               </p>
             </div>
 
@@ -335,8 +335,8 @@ export default async function AmbassadorStudentPortalPage({
 
           <QuickLink
             href={`/ambassador/student-portal/${student.id}/capstone`}
-            title="Capstone"
-            detail="Build my story"
+            title="Beyond the Game"
+            detail="My Capstone · My Story"
           />
 
           <QuickLink

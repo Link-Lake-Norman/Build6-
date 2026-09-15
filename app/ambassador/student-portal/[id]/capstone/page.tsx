@@ -230,25 +230,27 @@ export default async function StudentCapstonePage({ params }: PageProps) {
 
       <section className="overflow-hidden rounded-3xl bg-[#0D1B3D] p-7 text-white md:p-10">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          MY CAPSTONE · MY STORY
+          BEYOND THE GAME · MY CAPSTONE
         </p>
 
         <h1 className="mt-3 text-4xl font-black md:text-5xl">
-          Who Am I Becoming?
+          Who Am I Becoming Beyond the Game?
         </h1>
 
         <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
-          This is not another assignment. This is your book about you — what
-          matters to you, what you are good at, who has shaped you, what you are
-          learning, and the kind of person and life you want to build.
+          This is your Beyond the Game story — built from the work you are already
+          doing. Your reflections, experiences, skills, relationships, challenges
+          and discoveries become evidence of who you are and who you are becoming.
         </p>
 
         <div className="mt-7 rounded-2xl border border-white/20 bg-white/10 p-5">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#F2B705]">
-            THE QUESTION WE ARE BUILDING TOWARD
+            THE LEGACY QUESTION
           </p>
 
-          <p className="mt-2 text-2xl font-black">“I am…”</p>
+          <p className="mt-2 text-2xl font-black">
+            “Who am I becoming beyond the game?”
+          </p>
 
           <p className="mt-3 max-w-3xl leading-7 text-slate-200">
             By the end, you should be able to explain who you are beyond a
