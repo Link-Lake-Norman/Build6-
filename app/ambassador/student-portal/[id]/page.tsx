@@ -148,12 +148,6 @@ export default async function AmbassadorStudentPortalPage({
               programId,
             },
             status: "ACTIVE",
-            deliverySettings: {
-              some: {
-                cohortId: cohort.id,
-                releasedToStudents: true,
-              },
-            },
           },
           select: {
             id: true,
