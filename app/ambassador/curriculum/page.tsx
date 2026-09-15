@@ -2442,7 +2442,7 @@ export default function AmbassadorCurriculumPage() {
 
                   <button
                     type="button"
-                    onClick={openAssignmentManager}
+                    onClick={() => openAssignmentManager()}
                     className="mt-4 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
                     Manage Assignments →
@@ -3089,7 +3089,7 @@ export default function AmbassadorCurriculumPage() {
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex flex-col gap-1">
                   <h3 className="text-lg font-black text-[#0D1B3D]">
-                    {editingAssignmentId ? "Edit Assignment" : "+ {editingAssignmentId ? "Save Changes" : "Add Assignment"}"}
+                    {editingAssignmentId ? "Edit Assignment" : "+ Add Assignment"}
                   </h3>
                   <p className="text-sm text-slate-600">
                     {editingAssignmentId
