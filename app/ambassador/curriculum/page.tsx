@@ -1834,7 +1834,7 @@ export default function AmbassadorCurriculumPage() {
                     </div>
                   )}
 
-                  {selectedWeek > 4 && (
+                  {selectedWeek > 5 && (
                     <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
                       <p className="text-sm font-black text-amber-900">
                         Core packaged downloads for Week {selectedWeek} have not
