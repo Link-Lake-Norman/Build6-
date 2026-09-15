@@ -1036,6 +1036,63 @@ export default function AmbassadorCurriculumPage() {
 
   const homework: string | null = null;
 
+
+  function openAssignmentManager() {
+    setShowFullTools(true);
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-assignments")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 200);
+  }
+
+  async function removeAssignmentFromWeek(
+    taskId: string,
+    title: string,
+  ) {
+    const confirmed = window.confirm(
+      `Remove "${title}" from this week's assignments?\n\nThis removes the facilitator assignment item from the week. It does not delete student portfolio evidence or previously submitted student work.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/ambassador/planner", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cohortCode: "PILOT-2026-2027",
+          taskId,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        window.alert(
+          result?.error ??
+            "Unable to remove this assignment. Please try again."
+        );
+        return;
+      }
+
+      window.location.reload();
+    } catch {
+      window.alert(
+        "Unable to remove this assignment. Please try again."
+      );
+    }
+  }
+
   return (
     <main className="space-y-6">
       <section className="overflow-hidden rounded-3xl border border-[#0D1B3D] bg-white shadow-sm">
@@ -2215,6 +2272,29 @@ export default function AmbassadorCurriculumPage() {
                               <span>• {assignment.estimatedMinutes} min</span>
                               {assignment.portfolioEligible && <span>• PORTFOLIO</span>}
                             </div>
+
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={openAssignmentManager}
+                                className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#0D1B3D]"
+                              >
+                                Edit / Manage
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeAssignmentFromWeek(
+                                    assignment.id,
+                                    assignment.title,
+                                  )
+                                }
+                                className="rounded-lg border border-red-300 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-red-700"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -2245,6 +2325,29 @@ export default function AmbassadorCurriculumPage() {
                               <span>• {assignment.estimatedMinutes} min</span>
                               {assignment.portfolioEligible && <span>• PORTFOLIO</span>}
                             </div>
+
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={openAssignmentManager}
+                                className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#0D1B3D]"
+                              >
+                                Edit / Manage
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeAssignmentFromWeek(
+                                    assignment.id,
+                                    assignment.title,
+                                  )
+                                }
+                                className="rounded-lg border border-red-300 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-red-700"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -2253,19 +2356,7 @@ export default function AmbassadorCurriculumPage() {
 
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowFullTools(true);
-                      setActiveTab("assignments");
-
-                      window.setTimeout(() => {
-                        document
-                          .getElementById("future-ready-assignments")
-                          ?.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                          });
-                      }, 200);
-                    }}
+                    onClick={openAssignmentManager}
                     className="mt-4 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
                     Manage Assignments →
