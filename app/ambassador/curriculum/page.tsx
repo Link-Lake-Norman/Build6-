@@ -236,6 +236,9 @@ export default function AmbassadorCurriculumPage() {
     portfolioEligible: true,
   });
 
+  const [editingAssignmentId, setEditingAssignmentId] =
+    useState<string | null>(null);
+
   const [resourceForm, setResourceForm] = useState({
     title: "",
     description: "",
@@ -1037,7 +1040,27 @@ export default function AmbassadorCurriculumPage() {
   const homework: string | null = null;
 
 
-  function openAssignmentManager() {
+  function openAssignmentManager(assignment?: Assignment) {
+    if (assignment) {
+      setEditingAssignmentId(assignment.id);
+      setAssignmentForm({
+        title: assignment.title,
+        instructions: assignment.instructions,
+        estimatedMinutes: assignment.estimatedMinutes,
+        requirement: assignment.requirement,
+        dueAt: assignment.dueAt
+          ? new Date(assignment.dueAt).toISOString().slice(0, 16)
+          : "",
+        dayNumber: assignment.dayNumber,
+        allowOnline: assignment.allowOnline,
+        allowPrint: assignment.allowPrint,
+        allowUpload: assignment.allowUpload,
+        portfolioEligible: assignment.portfolioEligible,
+      });
+    } else {
+      setEditingAssignmentId(null);
+    }
+
     setShowFullTools(true);
     setActiveTab("assignments");
 
@@ -1048,49 +1071,95 @@ export default function AmbassadorCurriculumPage() {
           behavior: "smooth",
           block: "start",
         });
-    }, 200);
+    }, 100);
   }
 
-  async function removeAssignmentFromWeek(
-    taskId: string,
-    title: string,
-  ) {
-    const confirmed = window.confirm(
-      `Remove "${title}" from this week's assignments?\n\nThis removes the facilitator assignment item from the week. It does not delete student portfolio evidence or previously submitted student work.`
-    );
+  async function saveAssignment() {
+    if (editingAssignmentId) {
+      const saved = await createHubItem(
+        {
+          action: "updateAssignment",
+          assignmentId: editingAssignmentId,
+          ...assignmentForm,
+          dueAt: assignmentForm.dueAt || null,
+        },
+        "Assignment updated.",
+      );
 
-    if (!confirmed) {
+      if (saved) {
+        setEditingAssignmentId(null);
+        setAssignmentForm({
+          title: "",
+          instructions: "",
+          estimatedMinutes: 20,
+          requirement: "REQUIRED",
+          dueAt: "",
+          dayNumber: null,
+          allowOnline: true,
+          allowPrint: true,
+          allowUpload: true,
+          portfolioEligible: true,
+        });
+      }
+
       return;
     }
 
-    try {
-      const response = await fetch("/api/ambassador/planner", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cohortCode: "PILOT-2026-2027",
-          taskId,
-        }),
+    await createAssignment();
+  }
+
+  async function removeAssignmentFromWeek(
+    assignmentId: string,
+    title: string,
+  ) {
+    const confirmed = window.confirm(
+      `Remove "${title}" from this week's assignments?\n\nThis removes the assignment from the facilitator/student lesson plan. This action cannot be undone from this screen.`
+    );
+
+    if (!confirmed) return;
+
+    const removed = await createHubItem(
+      {
+        action: "deleteAssignment",
+        assignmentId,
+      },
+      `"${title}" removed from this week.`,
+    );
+
+    if (removed && editingAssignmentId === assignmentId) {
+      setEditingAssignmentId(null);
+      setAssignmentForm({
+        title: "",
+        instructions: "",
+        estimatedMinutes: 20,
+        requirement: "REQUIRED",
+        dueAt: "",
+        dayNumber: null,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
       });
-
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        window.alert(
-          result?.error ??
-            "Unable to remove this assignment. Please try again."
-        );
-        return;
-      }
-
-      window.location.reload();
-    } catch {
-      window.alert(
-        "Unable to remove this assignment. Please try again."
-      );
     }
+  }
+
+  async function toggleStudentWeekAccess() {
+    if (!delivery) return;
+
+    const opening = !delivery.releasedToStudents;
+
+    if (
+      !opening &&
+      !window.confirm(
+        `Close Week ${selectedWeek} to students?\n\nStudents will no longer be able to start new work in this week until you reopen it.`
+      )
+    ) {
+      return;
+    }
+
+    await updateDelivery({
+      releasedToStudents: opening,
+    });
   }
 
   return (
@@ -1129,6 +1198,23 @@ export default function AmbassadorCurriculumPage() {
               >
                 {delivery?.releasedToStudents ? "OPEN TO STUDENTS" : "CLOSED TO STUDENTS"}
               </span>
+
+              <button
+                type="button"
+                onClick={toggleStudentWeekAccess}
+                disabled={saving || !delivery}
+                className={`rounded-xl px-4 py-2 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                  delivery?.releasedToStudents
+                    ? "border border-white/50 bg-transparent text-white hover:bg-white/10"
+                    : "bg-[#F2B705] text-[#0D1B3D] hover:bg-[#FFD84D]"
+                }`}
+              >
+                {saving
+                  ? "SAVING..."
+                  : delivery?.releasedToStudents
+                    ? `CLOSE WEEK ${selectedWeek}`
+                    : `OPEN WEEK ${selectedWeek}`}
+              </button>
             </div>
           </div>
         </div>
@@ -2276,7 +2362,7 @@ export default function AmbassadorCurriculumPage() {
                             <div className="mt-4 flex flex-wrap gap-2">
                               <button
                                 type="button"
-                                onClick={openAssignmentManager}
+                                onClick={() => openAssignmentManager(assignment)}
                                 className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#0D1B3D]"
                               >
                                 Edit / Manage
@@ -2329,7 +2415,7 @@ export default function AmbassadorCurriculumPage() {
                             <div className="mt-3 flex flex-wrap gap-2">
                               <button
                                 type="button"
-                                onClick={openAssignmentManager}
+                                onClick={() => openAssignmentManager(assignment)}
                                 className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-[10px] font-black uppercase tracking-wide text-[#0D1B3D]"
                               >
                                 Edit / Manage
@@ -3003,11 +3089,12 @@ export default function AmbassadorCurriculumPage() {
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex flex-col gap-1">
                   <h3 className="text-lg font-black text-[#0D1B3D]">
-                    + Add Assignment
+                    {editingAssignmentId ? "Edit Assignment" : "+ {editingAssignmentId ? "Save Changes" : "Add Assignment"}"}
                   </h3>
                   <p className="text-sm text-slate-600">
-                    Create the assignment students will complete for this
-                    lesson.
+                    {editingAssignmentId
+                      ? "Update this assignment, then save your changes."
+                      : "Create the assignment students will complete for this lesson."}
                   </p>
                 </div>
 
@@ -3166,7 +3253,7 @@ export default function AmbassadorCurriculumPage() {
 
                 <button
                   type="button"
-                  onClick={createAssignment}
+                  onClick={saveAssignment}
                   disabled={
                     saving ||
                     !assignmentForm.title.trim() ||

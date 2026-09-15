@@ -744,6 +744,143 @@ export async function POST(
       );
     }
 
+    if (action === "updateAssignment") {
+      const assignmentId =
+        typeof body.assignmentId === "string"
+          ? body.assignmentId.trim()
+          : "";
+
+      const title =
+        typeof body.title === "string"
+          ? body.title.trim()
+          : "";
+
+      const instructions =
+        typeof body.instructions === "string"
+          ? body.instructions.trim()
+          : "";
+
+      if (!assignmentId || !title || !instructions) {
+        return NextResponse.json(
+          { error: "Assignment, title and instructions are required." },
+          { status: 400 },
+        );
+      }
+
+      const existingAssignment = await prisma.assignment.findFirst({
+        where: {
+          id: assignmentId,
+          lessonId,
+          cohortId: AMBASSADOR_COHORT_ID,
+        },
+        select: { id: true },
+      });
+
+      if (!existingAssignment) {
+        return NextResponse.json(
+          { error: "Assignment not found." },
+          { status: 404 },
+        );
+      }
+
+      let dueAt: Date | null = null;
+
+      if (typeof body.dueAt === "string" && body.dueAt.trim()) {
+        const parsedDate = new Date(body.dueAt);
+
+        if (Number.isNaN(parsedDate.getTime())) {
+          return NextResponse.json(
+            { error: "Assignment due date is invalid." },
+            { status: 400 },
+          );
+        }
+
+        dueAt = parsedDate;
+      }
+
+      const assignment = await prisma.assignment.update({
+        where: { id: assignmentId },
+        data: {
+          title,
+          instructions,
+          estimatedMinutes:
+            Number.isInteger(body.estimatedMinutes) &&
+            body.estimatedMinutes > 0
+              ? body.estimatedMinutes
+              : 20,
+          requirement: isRequirementValue(body.requirement)
+            ? body.requirement
+            : "REQUIRED",
+          dueAt,
+          dayNumber:
+            Number.isInteger(body.dayNumber) &&
+            body.dayNumber >= 1 &&
+            body.dayNumber <= 5
+              ? body.dayNumber
+              : null,
+          allowOnline:
+            typeof body.allowOnline === "boolean"
+              ? body.allowOnline
+              : true,
+          allowPrint:
+            typeof body.allowPrint === "boolean"
+              ? body.allowPrint
+              : true,
+          allowUpload:
+            typeof body.allowUpload === "boolean"
+              ? body.allowUpload
+              : true,
+          portfolioEligible:
+            typeof body.portfolioEligible === "boolean"
+              ? body.portfolioEligible
+              : true,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        assignment,
+      });
+    }
+
+    if (action === "deleteAssignment") {
+      const assignmentId =
+        typeof body.assignmentId === "string"
+          ? body.assignmentId.trim()
+          : "";
+
+      if (!assignmentId) {
+        return NextResponse.json(
+          { error: "Assignment is required." },
+          { status: 400 },
+        );
+      }
+
+      const existingAssignment = await prisma.assignment.findFirst({
+        where: {
+          id: assignmentId,
+          lessonId,
+          cohortId: AMBASSADOR_COHORT_ID,
+        },
+        select: { id: true },
+      });
+
+      if (!existingAssignment) {
+        return NextResponse.json(
+          { error: "Assignment not found." },
+          { status: 404 },
+        );
+      }
+
+      await prisma.assignment.delete({
+        where: { id: assignmentId },
+      });
+
+      return NextResponse.json({
+        success: true,
+      });
+    }
+
     if (action === "createAssignment") {
       const title =
         typeof body.title === "string"
