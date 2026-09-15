@@ -13,9 +13,9 @@ const ALLOWED_ROLES = [
 ] as const;
 
 const FILE_PATTERN =
-  /^Future-Ready-Week-(0[1-4])-(Facilitator-Guide\.(?:pdf|docx)|Student-Workbook\.(?:pdf|docx)|Slides\.pptx|Activity-Kit\.(?:pdf|docx)|Assessment-Rubric\.(?:pdf|docx)|Portfolio-Artifact\.(?:pdf|docx)|Badge\.svg)$/;
+  /^Future-Ready-Week-(0[1-5])-(Facilitator-Guide\.(?:pdf|docx)|Student-Workbook\.(?:pdf|docx)|Slides\.pptx|Activity-Kit\.(?:pdf|docx)|Assessment-Rubric\.(?:pdf|docx)|Portfolio-Artifact\.(?:pdf|docx)|Badge\.svg)$/;
 
-const WEEK_PATTERN = /^0[1-4]$/;
+const WEEK_PATTERN = /^0[1-5]$/;
 
 const CONTENT_TYPES: Record<string, string> = {
   ".pdf": "application/pdf",

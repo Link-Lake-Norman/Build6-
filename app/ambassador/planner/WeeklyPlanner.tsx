@@ -530,7 +530,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
   const weekCode = String(week).padStart(2, "0");
 
-  const packagedDownloadMaterialsAvailable = week >= 1 && week <= 4;
+  const packagedDownloadMaterialsAvailable = week >= 1 && week <= 5;
   const protectedWeeklyStudentWorkAvailable =
     (week >= 5 && week <= 14) || week === 16;
   const materialsAvailable =

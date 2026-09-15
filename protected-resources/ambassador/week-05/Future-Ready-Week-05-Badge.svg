@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+<rect width="900" height="900" rx="80" fill="#0d2942"/>
+<circle cx="450" cy="360" r="210" fill="none" stroke="#d5ad56" stroke-width="24"/>
+<path d="M450 190 L500 330 L650 360 L500 405 L450 540 L400 405 L250 360 L400 330 Z" fill="#1f8b89" stroke="#ffffff" stroke-width="10"/>
+<text x="450" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#ffffff">WEEK 5</text>
+<text x="450" y="715" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#d5ad56">FROM POSSIBILITY</text>
+<text x="450" y="760" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#d5ad56">TO OPPORTUNITY</text>
+<text x="450" y="820" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#ffffff">FUTURE READY™</text>
+</svg>

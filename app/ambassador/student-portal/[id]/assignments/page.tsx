@@ -51,7 +51,13 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
                       lessons: {
                         where: {
                           status: "ACTIVE",
-                        },
+                                    deliverySettings: {
+              some: {
+                cohortId: access.cohortIds[0],
+                releasedToStudents: true,
+              },
+            },
+          },
                         orderBy: {
                           weekNumber: "asc",
                         },

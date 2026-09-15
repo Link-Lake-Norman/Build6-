@@ -57,7 +57,13 @@ export default async function AmbassadorStudentPortalPage({
       enrollments: {
         where: {
           status: "ACTIVE",
-        },
+                    deliverySettings: {
+              some: {
+                cohortId: cohort.id,
+                releasedToStudents: true,
+              },
+            },
+          },
         select: {
           cohort: {
             select: {

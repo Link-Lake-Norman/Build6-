@@ -99,7 +99,8 @@ export default async function StudentLessonPage({ params }: PageProps) {
                           deliverySettings: {
                             where: {
                               cohortId: access.cohortIds[0],
-                              },
+                              releasedToStudents: true,
+                            },
 
                             select: {
                               releasedToStudents: true,
@@ -143,7 +144,11 @@ export default async function StudentLessonPage({ params }: PageProps) {
 
   const lesson = program.modules
     .flatMap((module) => module.lessons)
-    .find((item) => item.weekNumber === weekNumber);
+    .find(
+      (item) =>
+        item.weekNumber === weekNumber &&
+        item.deliverySettings.some((setting) => setting.releasedToStudents),
+    );
 
   if (!lesson) {
     return (

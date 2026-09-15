@@ -1070,7 +1070,7 @@ export default function AmbassadorCurriculumPage() {
                     : "bg-amber-100 text-amber-800"
                 }`}
               >
-                {delivery?.releasedToStudents ? "STUDENTS RELEASED" : "NOT YET RELEASED"}
+                {delivery?.releasedToStudents ? "OPEN TO STUDENTS" : "CLOSED TO STUDENTS"}
               </span>
             </div>
           </div>
@@ -1620,7 +1620,7 @@ export default function AmbassadorCurriculumPage() {
                   title="Worksheets, Printables & Media"
                 >
 
-                  {selectedWeek <= 4 && (
+                  {selectedWeek <= 5 && (
                     <div className="mb-5 rounded-2xl border-2 border-[#F2B705] bg-[#FFFDF5] p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -2638,7 +2638,7 @@ export default function AmbassadorCurriculumPage() {
                       : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  {delivery?.releasedToStudents ? "RELEASED" : "NOT RELEASED"}
+                  {delivery?.releasedToStudents ? "OPEN" : "CLOSED"}
                 </span>
               </div>
 
@@ -3625,7 +3625,7 @@ export default function AmbassadorCurriculumPage() {
                         : "bg-amber-100 text-amber-800"
                     }`}
                   >
-                    {delivery?.releasedToStudents ? "Released" : "Not Released"}
+                    {delivery?.releasedToStudents ? "Open" : "Closed"}
                   </span>
                 </div>
               </div>
@@ -3660,8 +3660,8 @@ export default function AmbassadorCurriculumPage() {
                               releasedToStudents: !delivery.releasedToStudents,
                             },
                             delivery.releasedToStudents
-                              ? `Week ${lesson.weekNumber} removed from student release.`
-                              : `Week ${lesson.weekNumber} released to students.`,
+                              ? `Week ${lesson.weekNumber} closed to students.`
+                              : `Week ${lesson.weekNumber} opened to students.`,
                           )
                         }
                         className={`rounded-xl px-5 py-3 text-sm font-black ${
@@ -3673,8 +3673,8 @@ export default function AmbassadorCurriculumPage() {
                         {saving
                           ? "Saving..."
                           : delivery.releasedToStudents
-                            ? "Unrelease Lesson"
-                            : "Release Lesson"}
+                            ? "Close Week"
+                            : "Open Week"}
                       </button>
                     </div>
                   </div>
@@ -3805,13 +3805,12 @@ export default function AmbassadorCurriculumPage() {
               : closingWeek
                 ? "Closing Week..."
                 : selectedWeek === 16
-                  ? "Close Week 16"
-                  : `Close Week ${selectedWeek} & Continue →`}
+                  ? "Finish Week 16"
+                  : `Finish Week ${selectedWeek} & Continue →`}
           </button>
 
           <p className="mt-2 text-center text-xs leading-5 text-slate-500">
-            Closing the week records facilitator progress only. Student access,
-            assignments, reflections, uploads, portfolio evidence and prior work remain unchanged.
+            Finishing the week records facilitator progress only. Student access is controlled separately above. Assignments, reflections, uploads, portfolio evidence and prior work remain unchanged.
           </p>
 
           {weekProgressError ? (
