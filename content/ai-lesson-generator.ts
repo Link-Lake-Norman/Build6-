@@ -45,7 +45,16 @@ export function generateActivityOptions(
 
   const existingTaskTitles = request.existingTaskTitles ?? [];
 
-  let activity = buildActivity(
+  let activity =
+    request.week === 5
+      ? buildWeek5Activity(
+          request.activityType,
+          request.variation ?? 1,
+          request.day,
+          request.availableMinutes ?? 20,
+          request.classSize ?? 20,
+        )
+      : buildActivity(
     request.activityType,
     title,
     objective,
@@ -83,20 +92,29 @@ export function generateActivityOptions(
       break;
     }
 
-    activity = buildActivity(
-      request.activityType,
-      title,
-      objective,
-      workplaceConnection,
-      skills,
-      discussionQuestions,
-      lesson?.studentActivity ?? "",
-      lesson?.portfolioEvidence ?? "",
-      (request.variation ?? 1) + attempt,
-      request.day,
-      request.availableMinutes ?? 20,
-      request.classSize ?? 20,
-    );
+    activity =
+      request.week === 5
+        ? buildWeek5Activity(
+            request.activityType,
+            (request.variation ?? 1) + attempt,
+            request.day,
+            request.availableMinutes ?? 20,
+            request.classSize ?? 20,
+          )
+        : buildActivity(
+            request.activityType,
+            title,
+            objective,
+            workplaceConnection,
+            skills,
+            discussionQuestions,
+            lesson?.studentActivity ?? "",
+            lesson?.portfolioEvidence ?? "",
+            (request.variation ?? 1) + attempt,
+            request.day,
+            request.availableMinutes ?? 20,
+            request.classSize ?? 20,
+          );
   }
 
   activity = {
@@ -112,6 +130,320 @@ export function generateActivityOptions(
 
   return [activity];
 }
+
+
+function buildWeek5Activity(
+  activityType: AIActivityType,
+  variation: number,
+  day: string,
+  availableMinutes: number,
+  classSize: number,
+): AIGeneratedActivity {
+  const options = [
+    {
+      title: "Opportunity Map Challenge",
+      focus:
+        "Students investigate one industry and uncover at least five different roles, showing that one industry contains many possible pathways.",
+      setup:
+        "Place students in teams of three or four. Give each team one industry or let them select one from the Week 5 Opportunity Map.",
+      steps: [
+        "Choose one industry worth investigating.",
+        "Identify at least five different roles inside that industry.",
+        "For each role, identify what the person actually does.",
+        "Identify possible education, training, certification, experience, or entry pathways.",
+        "Circle one role that surprised the team.",
+        "Prepare a 60-second explanation of why that role deserves a closer look.",
+      ],
+      questions: [
+        "Which role did you not know existed?",
+        "Which roles require different kinds of education or training?",
+        "What did this reveal about the idea that an industry equals one job?",
+      ],
+      evidence:
+        "Completed Opportunity Map with at least five roles, pathway notes, and one role selected for further investigation.",
+    },
+    {
+      title: "Pathway Puzzle",
+      focus:
+        "Students compare different routes into careers and challenge the assumption that everyone reaches opportunity through the same path.",
+      setup:
+        "Divide students into small teams. Give each team a fictional career destination and several possible education, training, work, certification, mentorship, or experience routes.",
+      steps: [
+        "Review the career destination.",
+        "Build at least three plausible pathways to reach it.",
+        "Identify the advantages and tradeoffs of each pathway.",
+        "Add one unexpected change such as cost, relocation, injury, a new interest, or a job opportunity.",
+        "Adjust the pathway without abandoning the end goal.",
+        "Defend the team's revised pathway.",
+      ],
+      questions: [
+        "Why can two people reach similar careers differently?",
+        "What matters besides a four-year degree?",
+        "How does adaptability create more options?",
+      ],
+      evidence:
+        "Three-pathway comparison with a revised route after an unexpected change.",
+    },
+    {
+      title: "Question Lab: Ask Better Questions",
+      focus:
+        "Students turn vague networking questions into thoughtful questions that help them learn from professionals.",
+      setup:
+        "Students work in pairs and then rotate. One student plays the professional and the other practices asking questions.",
+      steps: [
+        "Write three questions you could ask a professional about their work.",
+        "Replace questions that can be answered with yes or no.",
+        "Add a question about how the professional got started.",
+        "Add a question about a challenge, mistake, or unexpected turn.",
+        "Add a question about skills or technology changing the work.",
+        "Practice asking the strongest questions naturally rather than reading a list.",
+      ],
+      questions: [
+        "Which questions created the best conversation?",
+        "What makes someone want to keep talking with you?",
+        "What did you learn by listening instead of trying to impress?",
+      ],
+      evidence:
+        "Five-question professional conversation bank including the student's strongest personal question.",
+    },
+    {
+      title: "30-Second Opportunity Ask",
+      focus:
+        "Students practice introducing themselves, explaining what they are curious about, and asking for a realistic next step without asking someone for a job.",
+      setup:
+        "Create pairs or triads. Students rotate through Student, Professional, and Observer roles.",
+      steps: [
+        "State your name and one relevant part of who you are.",
+        "Name an industry, role, problem, or pathway you are curious about.",
+        "Explain briefly why it caught your attention.",
+        "Ask for one realistic next step: advice, a conversation, a resource, an introduction, or something to investigate.",
+        "Observer gives one strength and one improvement.",
+        "Repeat the ask with the improvement.",
+      ],
+      questions: [
+        "What made an opportunity ask sound professional rather than transactional?",
+        "What is the difference between asking for access to learning and asking someone to give you a job?",
+        "What would make a professional remember you positively?",
+      ],
+      evidence:
+        "Written and practiced 30-second opportunity ask plus peer feedback.",
+    },
+    {
+      title: "Professional Conversation Hot Seat",
+      focus:
+        "Students prepare for a former-athlete, employer, mentor, or professional conversation by practicing curiosity, listening, follow-up questions, and professional presence.",
+      setup:
+        "One student takes the professional hot seat while classmates practice opening questions and unscripted follow-up questions.",
+      steps: [
+        "Prepare one strong opening question.",
+        "Listen to the professional's answer without planning the next question while they speak.",
+        "Ask one follow-up based specifically on something you heard.",
+        "Connect the answer to a career, skill, relationship, or decision.",
+        "Close professionally with thanks.",
+        "Write one thing you would investigate after the conversation.",
+      ],
+      questions: [
+        "What did the follow-up question reveal that the prepared question did not?",
+        "How can curiosity make a professional conversation stronger?",
+        "What does good listening look like in a career conversation?",
+      ],
+      evidence:
+        "Speaker/professional question, follow-up question, learning note, and next-step reflection.",
+    },
+    {
+      title: "One Real Next Move",
+      focus:
+        "Students convert career curiosity into one specific action they can actually take after Week 5.",
+      setup:
+        "Students work individually first, then use a partner as an accountability coach.",
+      steps: [
+        "Choose one role, industry, skill, or pathway you want to understand better.",
+        "Write what you still need to learn.",
+        "Identify one person, organization, program, experience, or resource that could help.",
+        "Choose one action you can take next.",
+        "Give the action a realistic deadline.",
+        "Tell a partner exactly what you will do and why.",
+      ],
+      questions: [
+        "What is the difference between being interested and taking initiative?",
+        "Which next move is completely within your control?",
+        "What could stop you, and how will you respond?",
+      ],
+      evidence:
+        "Week 5 Next Move statement naming one curiosity, one action, one resource or relationship, and one deadline.",
+    },
+  ];
+
+  const selected = options[Math.abs(variation - 1) % options.length];
+
+  const roleSets: Record<string, { role: string; responsibility: string }[]> = {
+    "Role Play": [
+      {
+        role: "Student",
+        responsibility:
+          "Practice the conversation, question, or opportunity ask.",
+      },
+      {
+        role: "Professional",
+        responsibility:
+          "Respond realistically and ask the student a follow-up question.",
+      },
+      {
+        role: "Observer",
+        responsibility:
+          "Listen for curiosity, clarity, professionalism, and a specific next step.",
+      },
+    ],
+    "Case Scenario": [
+      {
+        role: "Decision Team",
+        responsibility:
+          "Evaluate the available pathways and defend a next move.",
+      },
+      {
+        role: "Challenge Team",
+        responsibility:
+          "Introduce a realistic obstacle or alternative perspective.",
+      },
+      {
+        role: "Reporter",
+        responsibility:
+          "Explain the team's decision and supporting evidence.",
+      },
+    ],
+  };
+
+  const defaultRoles = [
+    {
+      role: "Explorer",
+      responsibility:
+        "Investigate possibilities and identify useful evidence.",
+    },
+    {
+      role: "Connector",
+      responsibility:
+        "Look for people, relationships, resources, and next steps.",
+    },
+    {
+      role: "Reporter",
+      responsibility:
+        "Share the team's strongest discovery and why it matters.",
+    },
+  ];
+
+  const typeDirections: Record<string, string> = {
+    "Role Play":
+      "Run this as a professional-conversation role play with coaching and an immediate second attempt.",
+    "Case Scenario":
+      "Introduce a realistic career decision or obstacle and require students to defend their response.",
+    "Improv":
+      "Keep students on their feet. Introduce new information during the activity and require them to adapt professionally.",
+    "Team Building":
+      "Make the investigation collaborative. Every student must contribute one discovery before the team can present.",
+    "Pop Quiz":
+      "Use rapid questions to challenge career assumptions, then require students to explain the reasoning behind each answer.",
+    "Reflection":
+      "Give students quiet individual thinking time before partner discussion and a written next move.",
+    "Career Connection":
+      "Center the activity on discovering roles, pathways, people, and realistic ways to gain access to learning.",
+    "Media Practice":
+      "Have students explain a career discovery or opportunity ask clearly in a concise on-camera style response.",
+    "Capstone Workshop":
+      "Capture the student's strongest Week 5 discovery as evidence for Beyond the Game · My Capstone.",
+    "Guest Speaker Preparation":
+      "Prepare students to ask strong questions, listen actively, follow up naturally, and turn the conversation into evidence.",
+  };
+
+  const minutes = Math.max(15, Math.min(35, availableMinutes));
+
+  return {
+    title: `${selected.title} · ${day} · ${variation}`,
+    activityType,
+    lessonConnection: "FROM POSSIBILITY TO OPPORTUNITY",
+    learningObjective:
+      "Students expand career possibilities, investigate pathways, build professional relationship skills, and identify one real next move.",
+    whyThisMatters:
+      "Career exploration is not about choosing one permanent job. Students learn how to investigate possibilities, understand different pathways, learn from people, and take initiative.",
+    facilitatorBackground:
+      "Week 5 moves students from passive curiosity to active exploration. The goal is not a final career choice. Students should leave with more possibilities, better questions, stronger professional curiosity, and one concrete next move.",
+    classroomSetup: `${selected.setup} Designed for approximately ${classSize} students and ${minutes} minutes.`,
+    materials: [
+      "Week 5 Student Workbook",
+      "Opportunity Map",
+      "Paper or index cards",
+      "Pen or pencil",
+      "Timer if useful",
+    ],
+    teachingPoints: [
+      "One industry can contain many different roles.",
+      "People can reach similar careers through different pathways.",
+      "Career exploration begins with curiosity, not certainty.",
+      "Relationships can create access to information and opportunity.",
+      "Strong professional questions are more useful than trying to sound impressive.",
+      "Initiative means converting curiosity into a specific next move.",
+    ],
+    openingConversation: [
+      "What is one career or industry you know very little about?",
+      "How many different jobs do you think could exist inside one organization?",
+      "Who could teach you something about work that you cannot learn from a job title alone?",
+    ],
+    examplesToShare: [
+      "A healthcare organization needs far more than doctors and nurses.",
+      "A manufacturing company can include engineering, technology, finance, operations, sales, HR, logistics, skilled trades, and marketing.",
+      "A professional conversation can create information, perspective, mentorship, an introduction, or a future opportunity.",
+    ],
+    facilitatorQuestions: selected.questions,
+    observationGuide: [
+      "Is the student exploring rather than forcing a premature career decision?",
+      "Can the student identify more than one possible role or pathway?",
+      "Does the student ask thoughtful professional questions?",
+      "Can the student identify a specific next action?",
+    ],
+    debriefGuide: [
+      "Ask students what possibility surprised them.",
+      "Identify assumptions that changed during the activity.",
+      "Ask which question produced the most useful information.",
+      "End with each student naming one real next move.",
+    ],
+    studentRoles:
+      roleSets[activityType] ?? defaultRoles,
+    facilitatorScript: [
+      "Say: 'You do not need to know exactly what you want to do with your life today.'",
+      "Say: 'Our job this week is to replace guessing with investigating.'",
+      `Explain today's challenge: ${selected.focus}`,
+      typeDirections[activityType] ??
+        "Run the activity as an active Future Ready™ career exploration challenge.",
+      "Push students past job titles by asking: 'What does that person actually do?'",
+      "Push students past one pathway by asking: 'What is another way someone could get there?'",
+      "Close by asking every student: 'What will you do next because of what you learned?'",
+    ],
+    stepByStepInstructions: [
+      typeDirections[activityType] ??
+        "Complete the activity as an active career exploration challenge.",
+      ...selected.steps,
+    ],
+    discussionQuestions: selected.questions,
+    reflectionPrompts: [
+      "One possibility I had not seriously considered before is ______.",
+      "One assumption about careers or pathways I am questioning is ______.",
+      "One person or type of professional I could learn from is ______.",
+      "My real next move is ______.",
+      "What I want my future self to be grateful I started building now is ______.",
+    ],
+    assessmentRubric: [
+      "Career Curiosity",
+      "Pathway Awareness",
+      "Professional Communication",
+      "Relationship Building",
+      "Initiative / Next Move",
+    ],
+    portfolioEvidence: selected.evidence,
+    capstoneConnection:
+      "Students preserve their Week 5 discoveries, professional questions, pathway evidence, and next move for Beyond the Game · My Capstone and their Future Ready™ Passport.",
+    durationMinutes: minutes,
+  };
+}
+
 
 function buildActivity(
   activityType: AIActivityType,
