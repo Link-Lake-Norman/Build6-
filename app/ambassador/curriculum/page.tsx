@@ -1157,9 +1157,14 @@ export default function AmbassadorCurriculumPage() {
       return;
     }
 
-    await patchDelivery({
-      releasedToStudents: opening,
-    });
+    await patchDelivery(
+      {
+        releasedToStudents: opening,
+      },
+      opening
+        ? `Week ${selectedWeek} opened to students.`
+        : `Week ${selectedWeek} closed to students.`,
+    );
   }
 
   return (
