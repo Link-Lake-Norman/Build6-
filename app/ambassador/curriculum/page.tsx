@@ -1157,7 +1157,7 @@ export default function AmbassadorCurriculumPage() {
       return;
     }
 
-    await updateDelivery({
+    await patchDelivery({
       releasedToStudents: opening,
     });
   }
