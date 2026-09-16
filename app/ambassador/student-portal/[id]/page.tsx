@@ -274,6 +274,31 @@ export default async function AmbassadorStudentPortalPage({
         </section>
       ) : null}
 
+      {access.session.role !== "STUDENT" ? (
+        <section className="rounded-3xl border-2 border-[#4B2265]/20 bg-[#FAF7FC] p-6 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+            PRIVATE STAFF SUPPORTS
+          </p>
+          <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-[#0D1B3D]">
+                Accessibility & Learning Supports
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-slate-600">
+                Manage approved 504, IEP, services-plan,
+                deadline, timing, and response accommodations.
+              </p>
+            </div>
+            <Link
+              href={`/ambassador/student-portal/${student.id}/learning-supports`}
+              className="shrink-0 rounded-xl bg-[#4B2265] px-5 py-3 text-sm font-black text-white"
+            >
+              MANAGE LEARNING SUPPORTS
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
       {cohort ? (
         <StudentAccountabilityPanel
           studentId={student.id}

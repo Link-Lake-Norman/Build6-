@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
+import { effectiveDueDate, effectiveEstimatedMinutes, getStudentAccessibilitySupport } from "@/lib/ambassador/student-accessibility";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
@@ -103,12 +104,54 @@ export async function GET(request: NextRequest) {
     },
   });
 
+  const support =
+    await getStudentAccessibilitySupport(studentId);
+
+  const now = Date.now();
+
   return NextResponse.json({
-    assignments: assignments.map((assignment) => ({
-      ...assignment,
-      submission: assignment.submissions[0] ?? null,
-      submissions: undefined,
-    })),
+    assignments: assignments.map((assignment) => {
+      const adjustedDueAt = effectiveDueDate(
+        assignment.dueAt,
+        support,
+      );
+
+      return {
+        ...assignment,
+        baseEstimatedMinutes:
+          assignment.estimatedMinutes,
+        effectiveEstimatedMinutes:
+          effectiveEstimatedMinutes(
+            assignment.estimatedMinutes,
+            support,
+          ),
+        originalDueAt:
+          assignment.dueAt?.toISOString() ?? null,
+        dueAt:
+          adjustedDueAt?.toISOString() ?? null,
+        notDueYet: Boolean(
+          adjustedDueAt &&
+            adjustedDueAt.getTime() > now,
+        ),
+        submission:
+          assignment.submissions[0] ?? null,
+        submissions: undefined,
+      };
+    }),
+    approvedSupports: {
+      active: support.planActive,
+      extendedDeadlineDays:
+        support.planActive
+          ? support.extendedDeadlineDays
+          : 0,
+      timeMultiplier:
+        support.planActive
+          ? support.timeMultiplier
+          : 1,
+      noTimedActivities:
+        support.planActive &&
+        support.noTimedActivities,
+    },
   });
 }
 

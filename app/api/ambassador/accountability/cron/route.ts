@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendMissingWorkEmail } from "@/lib/ambassador/accountability-email";
 import {
   getStudentAccountability,
-  isSubmissionComplete,
 } from "@/lib/ambassador/student-accountability";
 import { prisma } from "@/lib/prisma";
 
@@ -379,91 +378,24 @@ async function mondayRun(dateKey: string) {
       continue;
     }
 
-    const cohortIds = student.enrollments.map((enrollment) => enrollment.cohortId);
+    const currentPendingIds = new Set<string>();
 
-    if (cohortIds.length === 0) {
-      continue;
+    for (const enrollment of student.enrollments) {
+      const accountability =
+        await getStudentAccountability(
+          student.id,
+          enrollment.cohortId,
+        );
+
+      for (const item of accountability.pendingAssignments) {
+        currentPendingIds.add(item.id);
+      }
     }
 
-    const releasedLessons = await prisma.lesson.findMany({
-      where: {
-        status: "ACTIVE",
-        weekNumber: {
-          not: 15,
-        },
-        deliverySettings: {
-          some: {
-            cohortId: {
-              in: cohortIds,
-            },
-            releasedToStudents: true,
-          },
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const releasedLessonIds = releasedLessons.map((lesson) => lesson.id);
-
-    if (releasedLessonIds.length === 0) {
-      continue;
-    }
-
-    const activeAssignments = await prisma.assignment.findMany({
-      where: {
-        id: {
-          in: assignmentIds,
-        },
-        lessonId: {
-          in: releasedLessonIds,
-        },
-        status: "ACTIVE",
-        requirement: "REQUIRED",
-        OR: [
-          {
-            cohortId: {
-              in: cohortIds,
-            },
-          },
-          {
-            cohortId: null,
-          },
-        ],
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const activeIds = new Set(activeAssignments.map((item) => item.id));
-
-    const submissions = await prisma.assignmentSubmission.findMany({
-      where: {
-        studentId: student.id,
-        assignmentId: {
-          in: assignmentIds,
-        },
-      },
-      select: {
-        assignmentId: true,
-        status: true,
-      },
-    });
-
-    const statusByAssignment = new Map(
-      submissions.map((submission) => [
-        submission.assignmentId,
-        submission.status,
-      ]),
-    );
-
-    const stillIncomplete = assignmentIds.filter(
-      (assignmentId) =>
-        activeIds.has(assignmentId) &&
-        !isSubmissionComplete(statusByAssignment.get(assignmentId)),
-    );
+    const stillIncomplete =
+      assignmentIds.filter((assignmentId) =>
+        currentPendingIds.has(assignmentId),
+      );
 
     if (stillIncomplete.length === 0) {
       continue;

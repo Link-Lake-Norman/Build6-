@@ -270,6 +270,15 @@ model Cohort {
   @@index([programId, status])
 }
 
+enum StudentSupportPlanType {
+  NONE
+  SECTION_504
+  IEP
+  SERVICES_PLAN
+  SCHOOL_ACCOMMODATION
+  OTHER
+}
+
 model Student {
   id              String    @id @default(cuid())
   userId          String    @unique
@@ -310,6 +319,7 @@ model Student {
   fundContributions CommunityFundContribution[]
 
   @@index([schoolId, graduationYear])
+  accessibilityProfile StudentAccessibilityProfile?
 }
 
 model Facilitator {
@@ -1111,6 +1121,36 @@ model StudentProfile {
   updatedAt DateTime @updatedAt
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model StudentAccessibilityProfile {
+  id                    String                 @id @default(cuid())
+  studentId             String                 @unique
+  readingMode           Boolean                @default(false)
+  focusMode             Boolean                @default(false)
+  largeText             Boolean                @default(false)
+  increasedSpacing      Boolean                @default(false)
+  highContrast          Boolean                @default(false)
+  reducedMotion         Boolean                @default(false)
+  highlightInstructions Boolean                @default(false)
+  chunkInstructions     Boolean                @default(false)
+  planType              StudentSupportPlanType @default(NONE)
+  planActive            Boolean                @default(false)
+  extendedDeadlineDays  Int                    @default(0)
+  timeMultiplier        Decimal                @default(1.00) @db.Decimal(4, 2)
+  breaksAllowed         Boolean                @default(false)
+  noTimedActivities     Boolean                @default(false)
+  speechToText          Boolean                @default(false)
+  alternativeResponse   Boolean                @default(false)
+  staffNotes            String?
+  reviewedAt            DateTime?
+  reviewedById          String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([planType, planActive])
 }
 
 model StudentReadinessProfile {

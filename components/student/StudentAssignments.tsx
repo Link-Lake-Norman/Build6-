@@ -26,7 +26,11 @@ type Assignment = {
   allowPrint: boolean;
   allowUpload: boolean;
   portfolioEligible: boolean;
+  originalDueAt?: string | null;
   dueAt: string | null;
+  notDueYet?: boolean;
+  baseEstimatedMinutes?: number;
+  effectiveEstimatedMinutes?: number | null;
   dayNumber: number | null;
   submission: Submission | null;
 };
@@ -228,6 +232,10 @@ export default function StudentAssignments({
           const complete = status === "SUBMITTED" || status === "APPROVED";
           const needsRevision =
             status === "NEEDS_REVISION" || status === "REJECTED";
+          const notDueYet =
+            required &&
+            !complete &&
+            assignment.notDueYet === true;
 
           const locked = complete;
 
@@ -242,7 +250,9 @@ export default function StudentAssignments({
                   ? "border-slate-200 bg-slate-50"
                   : complete
                     ? "border-emerald-200 bg-emerald-50/60"
-                    : "border-red-200 bg-red-50/60"
+                    : notDueYet
+                      ? "border-sky-200 bg-sky-50/60"
+                      : "border-red-200 bg-red-50/60"
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -256,7 +266,14 @@ export default function StudentAssignments({
                       <span>Day {assignment.dayNumber}</span>
                     ) : null}
 
-                    <span>{assignment.estimatedMinutes} min</span>
+                    <span>
+                        {assignment.effectiveEstimatedMinutes === null
+                          ? "Untimed per approved support"
+                          : `${
+                              assignment.effectiveEstimatedMinutes ??
+                              assignment.estimatedMinutes
+                            } min`}
+                      </span>
 
                     <span>{assignment.requirement}</span>
                   </div>
@@ -275,6 +292,13 @@ export default function StudentAssignments({
                     className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700"
                   >
                     ✓ SUBMITTED
+                  </span>
+                ) : notDueYet ? (
+                  <span
+                    title="Released, but not due yet"
+                    className="rounded-full border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-black text-sky-800"
+                  >
+                    ○ NOT DUE YET
                   </span>
                 ) : (
                   <span
