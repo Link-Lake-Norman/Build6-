@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-
+import StudentAccountabilityPanel from "@/components/student/StudentAccountabilityPanel";
 import StudentAssignments from "@/components/student/StudentAssignments";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import { prisma } from "@/lib/prisma";
@@ -9,10 +9,18 @@ type PageProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{
+    week?: string;
+  }>;
 };
 
-export default async function StudentAssignmentsPage({ params }: PageProps) {
+export default async function StudentAssignmentsPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
+  const query = await searchParams;
+  const requestedWeek = Number(query.week ?? "0");
 
   const access = await authorizeStudentAccess(id);
 
@@ -34,7 +42,6 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
     },
     select: {
       id: true,
-
       enrollments: {
         where: {
           status: "ACTIVE",
@@ -51,13 +58,13 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
                       lessons: {
                         where: {
                           status: "ACTIVE",
-                                    deliverySettings: {
-              some: {
-                cohortId: access.cohortIds[0],
-                releasedToStudents: true,
-              },
-            },
-          },
+                          deliverySettings: {
+                            some: {
+                              cohortId: access.cohortIds[0],
+                              releasedToStudents: true,
+                            },
+                          },
+                        },
                         orderBy: {
                           weekNumber: "asc",
                         },
@@ -75,7 +82,6 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
           },
         },
       },
-
       lessonProgress: {
         select: {
           lessonId: true,
@@ -96,11 +102,18 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
     notFound();
   }
 
-  const releasedLessons = enrollment.cohort.program.modules.flatMap(
-    (module) => module.lessons,
-  );
+  const releasedLessons = enrollment.cohort.program.modules
+    .flatMap((module) => module.lessons)
+    .sort((a, b) => a.weekNumber - b.weekNumber);
+
+  const requestedLesson =
+    Number.isInteger(requestedWeek) && requestedWeek > 0
+      ? releasedLessons.find((lesson) => lesson.weekNumber === requestedWeek) ??
+        null
+      : null;
 
   const currentLesson =
+    requestedLesson ??
     releasedLessons.find((lesson) => {
       const progress = student.lessonProgress.find(
         (item) => item.lessonId === lesson.id,
@@ -122,29 +135,45 @@ export default async function StudentAssignmentsPage({ params }: PageProps) {
 
         <h1 className="mt-2 text-3xl font-black">What I Need to Finish</h1>
 
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-          Only work connected to lessons your facilitator has opened appears
-          here.
+        <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-300">
+          There is no guessing here. Red ✕ means required work is not complete.
+          Green ✓ means it has been submitted. Saving a draft does not count as
+          finishing an assignment.
         </p>
       </section>
+
+      <StudentAccountabilityPanel
+        studentId={student.id}
+        cohortId={enrollment.cohort.id}
+        variant="full"
+      />
 
       {currentLesson ? (
         <section className="space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-5">
             <p className="text-xs font-black uppercase tracking-[0.14em] text-[#725500]">
-              CURRENT LESSON
+              WORK AREA
             </p>
 
             <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
               Week {currentLesson.weekNumber}: {currentLesson.title}
             </h2>
 
-            <Link
-              href={`/ambassador/student-portal/${student.id}/lesson/${currentLesson.weekNumber}`}
-              className="mt-3 inline-flex text-sm font-black text-[#4B2265]"
-            >
-              Open lesson →
-            </Link>
+            <div className="mt-3 flex flex-wrap gap-4">
+              <Link
+                href={`/ambassador/student-portal/${student.id}/lesson/${currentLesson.weekNumber}`}
+                className="text-sm font-black text-[#4B2265]"
+              >
+                Open Week {currentLesson.weekNumber} lesson →
+              </Link>
+
+              <Link
+                href={`/ambassador/student-portal/${student.id}`}
+                className="text-sm font-black text-[#0D1B3D]"
+              >
+                My Dashboard →
+              </Link>
+            </div>
           </div>
 
           <StudentAssignments

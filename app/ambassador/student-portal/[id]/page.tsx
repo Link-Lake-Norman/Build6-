@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import StudentAccountabilityPanel from "@/components/student/StudentAccountabilityPanel";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 
 type PageProps = {
@@ -273,6 +274,14 @@ export default async function AmbassadorStudentPortalPage({
         </section>
       ) : null}
 
+      {cohort ? (
+        <StudentAccountabilityPanel
+          studentId={student.id}
+          cohortId={cohort.id}
+          variant="dashboard"
+        />
+      ) : null}
+
       <section className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
           UP NEXT
@@ -326,11 +335,16 @@ export default async function AmbassadorStudentPortalPage({
           QUICK LINKS
         </p>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <QuickLink
             href={`/ambassador/student-portal/${student.id}/assignments`}
             title="Assignments"
             detail="Current work"
+          />
+          <QuickLink
+            href={`/ambassador/student-portal/${student.id}/how-to-use-my-portal`}
+            title="How to Use My Portal"
+            detail="Start here · no guessing"
           />
 
           <QuickLink

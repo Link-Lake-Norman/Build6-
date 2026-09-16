@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Submission = {
   id: string;
@@ -69,6 +70,8 @@ export default function StudentAssignments({
   studentId: string;
   lessonId: string;
 }) {
+  const router = useRouter();
+
   const [assignments, setAssignments] = useState<Assignment[]>([]);
 
   const [responses, setResponses] = useState<Record<string, string>>({});
@@ -175,6 +178,10 @@ export default function StudentAssignments({
       }));
 
       await loadAssignments();
+
+      if (action === "SUBMIT") {
+        router.refresh();
+      }
     } catch (error) {
       setMessages((current) => ({
         ...current,
@@ -209,22 +216,34 @@ export default function StudentAssignments({
       </h2>
 
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-        Focus on the work your facilitator has opened for you. Save as you go
-        and submit when you are finished.
+        Red ✕ means the assignment is not complete. Save Draft protects your
+        work but does not finish it. Press SUBMIT when you are done and confirm
+        that the status changes to a green ✓ before you leave.
       </p>
 
       <div className="mt-6 space-y-5">
         {assignments.map((assignment) => {
           const status = assignment.submission?.status;
+          const required = assignment.requirement === "REQUIRED";
+          const complete = status === "SUBMITTED" || status === "APPROVED";
+          const needsRevision =
+            status === "NEEDS_REVISION" || status === "REJECTED";
 
-          const locked = status === "SUBMITTED" || status === "APPROVED";
+          const locked = complete;
 
           const canEdit = !locked;
 
           return (
             <article
+              id={`assignment-card-${assignment.id}`}
               key={assignment.id}
-              className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+              className={`scroll-mt-6 rounded-2xl border-2 p-5 ${
+                !required
+                  ? "border-slate-200 bg-slate-50"
+                  : complete
+                    ? "border-emerald-200 bg-emerald-50/60"
+                    : "border-red-200 bg-red-50/60"
+              }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -243,9 +262,28 @@ export default function StudentAssignments({
                   </div>
                 </div>
 
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-[#0D1B3D]">
-                  {getStatusLabel(status)}
-                </span>
+                {!required ? (
+                  <span
+                    title={getStatusLabel(status)}
+                    className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600"
+                  >
+                    ○ OPTIONAL
+                  </span>
+                ) : complete ? (
+                  <span
+                    title={getStatusLabel(status)}
+                    className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700"
+                  >
+                    ✓ SUBMITTED
+                  </span>
+                ) : (
+                  <span
+                    title={getStatusLabel(status)}
+                    className="rounded-full border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700"
+                  >
+                    ✕ {needsRevision ? "ACTION REQUIRED" : "NOT COMPLETE"}
+                  </span>
+                )}
               </div>
 
               <div className="mt-4 rounded-xl bg-white p-4">
@@ -360,7 +398,9 @@ export default function StudentAssignments({
                     onClick={() => void save(assignment, "SUBMIT")}
                     className="rounded-xl bg-[#0D1B3D] px-4 py-3 text-sm font-black text-white disabled:opacity-50"
                   >
-                    Submit Assignment
+                    {savingId === assignment.id
+                      ? "Submitting..."
+                      : "SUBMIT ASSIGNMENT"}
                   </button>
                 </div>
               ) : (
