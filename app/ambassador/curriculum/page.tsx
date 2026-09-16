@@ -567,6 +567,1953 @@ export default function AmbassadorCurriculumPage() {
     }
   }
 
+  const PREBUILT_WEEK_ASSIGNMENTS: Record<
+    number,
+    {
+      title: string;
+      instructions: string;
+      minutes: number;
+      dayNumber: number;
+    }
+  > = {
+    5: {
+      title: "Life After Athlete — Transferable Skills + Identity",
+      instructions: `WHAT YOU ARE DOING
+
+You are identifying who you are beyond athletics and translating experiences from sports, school, work, family, and life into skills that matter in the real world.
+
+WHY THIS MATTERS
+
+Employers, mentors, colleges, and future teams do not only need to hear that you are hardworking, disciplined, coachable, resilient, or a leader. They need evidence that shows HOW you have demonstrated those qualities.
+
+PART 1 · WHO AM I BEYOND THE ROLE?
+
+Write at least 10 words or phrases that describe who you are.
+
+These can include:
+• strengths
+• values
+• personality
+• habits
+• roles
+• interests
+• qualities
+• ways other people experience you
+
+Then:
+
+1. Circle five that would still be true if athletics disappeared tomorrow.
+2. Choose the three that feel most important.
+3. Explain why each one belongs in your story.
+
+PART 2 · TRANSFERABLE SKILLS MAP
+
+Choose at least five real situations you have experienced.
+
+Examples:
+• preparing for competition
+• receiving difficult feedback
+• losing
+• winning
+• being injured
+• changing roles
+• sitting on the bench
+• earning a starting position
+• balancing school and athletics
+• resolving conflict
+• helping a teammate
+• practicing when nobody was watching
+• performing under pressure
+• recovering after a mistake
+
+For each situation, write:
+
+1. WHAT HAPPENED?
+2. WHAT DID YOU DO?
+3. WHAT SKILL DID IT REQUIRE?
+4. WHAT WAS THE RESULT?
+5. WHERE ELSE COULD THAT SKILL MATTER?
+
+Possible transferable skills include:
+communication, teamwork, leadership, discipline, adaptability, resilience, preparation, problem-solving, coachability, accountability, time management, confidence, and initiative.
+
+PART 3 · PROVE ONE SKILL
+
+Choose your strongest example.
+
+Write the story using:
+
+SITUATION
+What was happening?
+
+ACTION
+What did YOU actually do?
+
+RESULT
+What happened because of your action?
+
+LEARNING
+What did the experience teach you about yourself?
+
+PART 4 · HOW I WANT TO SHOW UP
+
+Choose three behaviors you want people to consistently experience from you.
+
+For each one, write one observable action that would prove it.
+
+Example:
+"I want to be dependable" is not enough.
+
+Evidence might be:
+"I arrive prepared, respond when people need me, and do what I said I would do."
+
+WHAT TO SUBMIT
+
+Submit:
+
+• your 10 identity words/phrases
+• your five transferable-skill examples
+• your strongest evidence story
+• your three How I Show Up commitments
+• a short reflection answering:
+  "Athletics is part of my story, but I am also..."
+
+PORTFOLIO
+
+Save your strongest evidence story and Transferable Skills Map as evidence of your professional skills.
+
+CAPSTONE CONNECTION
+
+Carry forward:
+
+• five identity words
+• one transferable skill
+• one real evidence story
+• one How I Show Up commitment
+
+These belong in Identity, Strengths + Skills, and Experiences + Stories in your year-long Capstone.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    6: {
+      title: "Your First $45,000 Job — Life + Money Scenario",
+      instructions: `WHAT YOU ARE DOING
+
+You have accepted your first full-time job earning $45,000 per year.
+
+Your job is to build a realistic monthly life, make financial decisions, respond when something unexpected happens, and decide what financial stability means to YOU.
+
+WHY THIS MATTERS
+
+A salary is only one part of a financial life.
+
+Housing, transportation, food, insurance, saving, emergencies, relationships, lifestyle choices, debt, and unexpected events all compete for the same money.
+
+This assignment is about decision-making — not finding one "perfect" budget.
+
+PART 1 · START WITH THE JOB
+
+Record:
+
+Annual salary: $45,000
+
+Use the monthly take-home amount provided by your facilitator for this scenario.
+
+Do NOT assume $45,000 divided by 12 is the amount you can spend each month.
+
+Write:
+
+1. Your scenario monthly take-home amount.
+2. Three expenses you think you will have every month.
+3. Three expenses young adults may forget to plan for.
+
+PART 2 · BUILD YOUR MONTHLY LIFE
+
+Using the options or figures provided by your facilitator, make decisions for:
+
+• housing
+• utilities
+• transportation
+• gas
+• auto insurance
+• phone
+• food
+• health/personal expenses
+• subscriptions
+• entertainment
+• clothing
+• saving
+• emergency fund
+• other priorities
+
+For every major choice, ask:
+
+• Is this a NEED, WANT, or FLEXIBLE choice?
+• What am I giving up by choosing this?
+• Does this fit the life I say I want?
+
+Calculate what remains after your monthly choices.
+
+PART 3 · YOUR HARDEST TRADEOFFS
+
+Choose the TWO decisions that were hardest.
+
+For each:
+
+1. What did you choose?
+2. What did you give up?
+3. Why was the choice worth it?
+4. What could make you change your decision?
+
+PART 4 · SOMETHING GOES WRONG
+
+Use the unexpected life event given by your facilitator.
+
+Examples may include:
+
+• car repair
+• medical expense
+• reduced work hours
+• required move
+• family responsibility
+• emergency travel
+• new required expense
+
+Write:
+
+1. What happened?
+2. How much does it affect your plan?
+3. What changes immediately?
+4. What do you cut, delay, reduce, or reconsider?
+5. What would have helped you prepare?
+
+Then revise your monthly plan.
+
+PART 5 · FINANCIAL STABILITY
+
+Finish these statements:
+
+Financial stability means...
+
+Money matters to me because...
+
+One financial habit I want to build is...
+
+One thing I never want money to control is...
+
+One question I still have about money is...
+
+WHAT TO SUBMIT
+
+Submit:
+
+• your original monthly plan
+• your two hardest tradeoffs
+• your unexpected-event response
+• your revised plan
+• your financial-stability statement
+• one question for Brad McMillan
+
+PORTFOLIO
+
+Save the completed scenario and revised plan as evidence of financial decision-making and problem-solving.
+
+CAPSTONE CONNECTION
+
+Carry forward:
+
+• one financial value
+• one life priority
+• one money habit
+• one goal or realization about the life you want to build
+
+Add these to Future Vision and Goals + Next Steps in your year-long Capstone.`,
+      minutes: 50,
+      dayNumber: 3,
+    },
+    7: {
+      title: "Brad McMillan — Money Question Builder + Reflection",
+      instructions: `WHAT YOU ARE DOING
+
+You are preparing for and reflecting on the Brad McMillan financial-literacy conversation.
+
+You will build stronger questions, listen for useful ideas instead of simply collecting advice, and decide what is relevant to YOUR life.
+
+WHY THIS MATTERS
+
+Professionals can give you information you cannot always get from a definition or search result.
+
+Your responsibility is to arrive prepared, listen carefully, think critically, and decide what you want to use, investigate, question, or leave for later.
+
+BEFORE THE EXPERIENCE · QUESTION BUILDER
+
+Start with your Week 6 $45,000 Job scenario.
+
+Write FIVE possible questions about topics such as:
+
+• saving
+• spending
+• credit
+• debt
+• investing
+• starting young
+• financial mistakes
+• lifestyle inflation
+• career choices
+• building stability
+• preparing for emergencies
+• money and relationships
+• long-term planning
+
+Then improve your questions.
+
+Avoid questions that could be answered with a basic definition.
+
+Choose questions that ask for:
+
+• experience
+• judgment
+• lessons learned
+• mistakes
+• examples
+• tradeoffs
+• advice
+
+Select your BEST THREE questions.
+
+Mark the ONE you most want answered.
+
+Write one possible follow-up question.
+
+DURING THE EXPERIENCE
+
+Listen for:
+
+1. ONE important idea.
+2. ONE real example or story.
+3. ONE thing that surprises you.
+4. ONE statement you want to remember.
+5. ONE action you might consider.
+
+Do not try to write every word.
+
+POST-EXPERIENCE REFLECTION
+
+Answer:
+
+1. What challenged something you believed about money?
+2. What advice felt most relevant to your life?
+3. What advice needs more context before you use it?
+4. What would you like to investigate further?
+5. Did anything change how you think about the $45,000 Job scenario?
+6. What financial habit or decision do you want to explore next?
+
+PROFESSIONAL FOLLOW-UP
+
+Draft a short thank-you message.
+
+Include:
+
+• appreciation for Brad's time
+• one specific idea you learned
+• why it mattered to you
+• a professional closing
+
+WHAT TO SUBMIT
+
+Submit:
+
+• your three final questions
+• your possible follow-up
+• your experience notes
+• your post-experience reflection
+• one financial action or habit you want to explore
+• your professional thank-you message
+
+PORTFOLIO
+
+Save the reflection and your strongest financial-learning takeaway.
+
+CAPSTONE CONNECTION
+
+Carry forward:
+
+• one belief that changed
+• one quote, lesson, or idea
+• one person who influenced your thinking
+• one financial goal or future decision
+
+These may belong in Values + Beliefs, People + Inspiration, Future Vision, or Goals + Next Steps.`,
+      minutes: 40,
+      dayNumber: 3,
+    },
+    8: {
+      title: "Terracon Professional Visit Prep + Pathway Discovery",
+      instructions: `WHAT YOU ARE DOING
+
+You are preparing for, participating in, and reflecting on the Terracon professional visit.
+
+This is not just a field trip.
+
+You are going into a real workplace to investigate careers, pathways, professional behavior, workplace culture, skills, technology, communication, and the kinds of people required to operate an organization.
+
+WHY THIS MATTERS
+
+You will notice more when you know what you are looking for.
+
+Research before an experience gives you context.
+Observation during the experience gives you evidence.
+Reflection afterward helps you decide what the experience means for YOUR future.
+
+PART 1 · COMPANY RESEARCH
+
+Research Terracon using facilitator-approved sources.
+
+Answer:
+
+1. What does Terracon do?
+2. What problems does the organization help solve?
+3. Who appears to use its services?
+4. What industries or types of projects appear connected to its work?
+5. Identify at least THREE different roles or careers that could exist within the organization.
+6. What education, training, certification, or experience might those roles require?
+7. Identify TWO skills that seem important across multiple roles.
+8. What is ONE thing you still do not understand?
+
+Do not copy and paste an About page.
+
+Explain what you learned in your own words.
+
+PART 2 · PROFESSIONAL EXPECTATIONS
+
+Before the visit, confirm that you understand:
+
+• required attire
+• arrival/departure expectations
+• phone expectations
+• safety expectations
+• introductions
+• eye contact/body language
+• listening
+• appropriate questions
+• respect for employees and workspaces
+• professional gratitude
+
+Write ONE behavior you will intentionally demonstrate during the visit.
+
+PART 3 · QUESTION BUILDER
+
+Write FIVE possible questions.
+
+Your questions may explore:
+
+• career pathways
+• daily responsibilities
+• technical skills
+• teamwork
+• communication
+• education/training
+• challenges
+• mistakes
+• company culture
+• advancement
+• advice for students
+
+Choose your BEST THREE questions.
+
+Prepare a short introduction:
+
+"My name is ______. One thing I am interested in learning today is ______."
+
+PART 4 · CAREER OBSERVATION
+
+During the experience, pay attention to:
+
+ROLES
+What kinds of jobs or responsibilities do you see?
+
+SKILLS
+What skills appear to matter?
+
+COMMUNICATION
+How do people exchange information?
+
+TEAMWORK
+Where do people depend on each other?
+
+TECHNOLOGY
+What tools, equipment, software, or systems are being used?
+
+ENVIRONMENT
+What does the workplace feel like?
+
+CULTURE
+What clues show what the organization values?
+
+PATHWAYS
+What different ways could someone enter this kind of work?
+
+Record:
+
+• at least three roles/pathways
+• at least three skills
+• one workplace observation
+• one surprise
+• one question you still have
+
+PART 5 · POST-EXPERIENCE REFLECTION
+
+Answer:
+
+1. What did you see that you could not have learned from company research alone?
+2. What surprised you?
+3. Which role or pathway would you like to understand better?
+4. What skill did you see being used?
+5. What did you notice about communication or teamwork?
+6. Who might thrive in this environment?
+7. What part of the work would fit you?
+8. What part might not fit you?
+9. What feels more possible after seeing the workplace?
+10. What do you want to explore next?
+
+PART 6 · THANK-YOU + FOLLOW-UP
+
+Draft a professional thank-you.
+
+Include:
+
+• appreciation
+• one specific thing you learned
+• why it mattered
+• a professional closing
+
+WHAT TO SUBMIT
+
+Submit:
+
+• Company Research
+• Professional Expectations confirmation
+• three prepared questions
+• Career Observation
+• Post-Experience Reflection
+• professional thank-you/follow-up
+
+PORTFOLIO
+
+Save the Career Observation and Post-Experience Reflection as professional-experience evidence.
+
+CAPSTONE CONNECTION
+
+Carry forward at least ONE:
+
+• experience story
+• career pathway
+• professional skill
+• person
+• quote
+• workplace observation
+• realization
+• question
+
+Add it to Experiences + Stories, Career + Pathways, Strengths + Skills, or People + Inspiration in your year-long Capstone.`,
+      minutes: 50,
+      dayNumber: 3,
+    },
+    9: {
+      title: "Resume Story Bank + Jennifer Miller Prep",
+      instructions: `WHAT YOU ARE DOING
+
+You are strengthening your resume and preparing for the Jennifer Miller professional session on interviewing, mock interviews, offers, and negotiation.
+
+The goal is not to make your resume sound impressive with generic words.
+
+The goal is to connect your real experiences to evidence that shows what you can actually do.
+
+WHY THIS MATTERS
+
+Anyone can write:
+
+• hardworking
+• leader
+• team player
+• dependable
+• good communicator
+
+Those words become meaningful only when you can prove them with real experiences.
+
+Your resume and interview should tell the same story.
+
+PART 1 · QUICK RESUME REVIEW
+
+Look at your current resume.
+
+Answer:
+
+1. What does someone learn about you in the first 10 seconds?
+2. What part of your story is missing?
+3. What experience deserves more attention?
+4. What skill do you claim but do not yet prove?
+5. What would an employer probably ask you about?
+
+PART 2 · BUILD YOUR RESUME STORY BANK
+
+Choose FOUR real experiences.
+
+They may come from:
+
+• athletics
+• school
+• employment
+• volunteering
+• family responsibility
+• clubs
+• leadership
+• projects
+• community involvement
+• conflict
+• failure
+• pressure
+• recovery after a mistake
+
+For each experience, write:
+
+SITUATION
+What was happening?
+
+YOUR ACTION
+What did YOU actually do?
+
+SKILL
+What skill did your action demonstrate?
+
+RESULT
+What happened?
+
+WHAT IT SAYS ABOUT YOU
+Why would this matter to an employer?
+
+PART 3 · TURN EXPERIENCE INTO RESUME LANGUAGE
+
+Choose TWO of your four experiences.
+
+For each one, write a concise resume-style statement.
+
+Avoid vague language.
+
+Instead of:
+
+"Helped the team."
+
+Try to show:
+
+• what you did
+• what responsibility you had
+• what skill you used
+• what changed or was accomplished
+
+PART 4 · INTERVIEW PREPARATION
+
+Choose THREE stories from your Story Bank.
+
+Match each one to a possible interview question.
+
+Examples:
+
+Tell me about a time you worked with a difficult person.
+
+Tell me about a time you failed.
+
+Tell me about a time you showed leadership.
+
+Tell me about a time you solved a problem.
+
+Tell me about a time you had to adapt.
+
+Tell me about a time you received difficult feedback.
+
+For each question, identify which story you could use.
+
+PART 5 · QUESTIONS FOR JENNIFER MILLER
+
+Write three professional questions about:
+
+• resumes
+• interviewing
+• hiring decisions
+• difficult interview questions
+• evaluating an offer
+• salary or offer negotiation
+• mistakes candidates make
+• what makes someone memorable
+
+Choose the ONE question you most want answered.
+
+PART 6 · AFTER THE EXPERIENCE
+
+Answer:
+
+1. What does your resume need to communicate more clearly?
+2. What story became stronger?
+3. What interview advice will you use?
+4. What did you learn about evaluating an offer?
+5. What should you understand before saying yes to a job?
+6. What did Jennifer say that changed your thinking?
+
+WHAT TO SUBMIT
+
+Submit:
+
+• quick resume review
+• four Resume Story Bank entries
+• two revised resume statements
+• three interview-story matches
+• three Jennifer Miller questions
+• post-experience reflection
+
+PORTFOLIO
+
+Save your strongest Resume Story Bank example and revised resume evidence.
+
+CAPSTONE CONNECTION
+
+Answer:
+
+What does your resume fail to communicate about who you really are?
+
+Then choose ONE story that proves that part of you.
+
+Carry that story into Experiences + Stories or Strengths + Skills in your year-long Capstone.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    10: {
+      title: "Interview Under Pressure",
+      instructions: `WHAT YOU ARE DOING
+
+You are practicing how to answer interview questions when you feel pressure, uncertainty, or surprise.
+
+You will build flexible evidence stories, respond to unexpected questions, receive feedback, and improve a second attempt.
+
+WHY THIS MATTERS
+
+Strong interviewing is not memorizing perfect answers.
+
+It is being able to:
+
+• listen
+• think
+• choose a relevant example
+• explain what you actually did
+• recover when an answer is weak
+• stay professional under pressure
+
+PART 1 · BUILD FOUR FLEXIBLE STORIES
+
+Choose FOUR real experiences.
+
+For each one, write:
+
+SITUATION
+What was happening?
+
+ACTION
+What did you do?
+
+RESULT
+What happened?
+
+LEARNING
+What did you learn?
+
+SKILLS
+What skills does the story demonstrate?
+
+Then list at least TWO interview questions the story could help answer.
+
+PART 2 · PRESSURE QUESTIONS
+
+Practice answering at least FIVE questions.
+
+Examples:
+
+1. Tell me about a time you failed.
+2. Tell me about a time you disagreed with someone.
+3. Tell me about a time you received feedback you did not like.
+4. Tell me about a time you had to adapt quickly.
+5. Tell me about a mistake you made.
+6. Tell me about a time you led.
+7. Tell me about a time you did not get the role or outcome you wanted.
+8. Tell me about a difficult teammate or coworker.
+9. Why should we choose you?
+10. Tell me something that is not on your resume.
+
+Do not memorize a script.
+
+Choose the strongest real story for the question.
+
+PART 3 · UNEXPECTED QUESTION
+
+Your facilitator will give you at least one question you did not prepare for.
+
+Before answering:
+
+• listen fully
+• take a moment
+• identify what the question is really asking
+• select a real example
+• answer honestly
+
+You may say:
+
+"That's a good question. Let me think about that for a second."
+
+PART 4 · FEEDBACK
+
+After your first attempt, record feedback about:
+
+• clarity
+• evidence
+• answer length
+• body language
+• pace
+• eye contact
+• confidence
+• professional presence
+• whether you actually answered the question
+
+PART 5 · SECOND ATTEMPT
+
+Choose ONE answer to repeat.
+
+Before the second attempt, write:
+
+1. What was weak about the first answer?
+2. What will you change?
+3. What will you keep?
+
+Then answer again.
+
+PART 6 · REFLECTION
+
+Answer:
+
+1. What happened to your communication under pressure?
+2. Which story was easiest to use?
+3. Which question was hardest?
+4. What feedback was most useful?
+5. What changed during your second attempt?
+6. What will you do when you need time to think in a future interview?
+7. What interview habit do you want to keep practicing?
+
+WHAT TO SUBMIT
+
+Submit:
+
+• four flexible interview stories
+• five practice responses or notes
+• unexpected-question response
+• feedback notes
+• first-attempt / second-attempt comparison
+• final reflection
+
+PORTFOLIO
+
+Save your strongest behavioral interview story and evidence of improvement.
+
+CAPSTONE CONNECTION
+
+Save one story about pressure, recovery, feedback, failure, or growth.
+
+Ask yourself:
+
+What does the way I respond when things are difficult reveal about who I am becoming?
+
+Carry that into Challenges + Failures or Strengths + Skills.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    11: {
+      title: "Michelle Boudin Prep — Pitch, Panel + Rebuttal",
+      instructions: `WHAT YOU ARE DOING
+
+You are preparing for the Michelle Boudin on-camera communication experience.
+
+You will practice speaking clearly, listening under pressure, answering follow-up questions, disagreeing professionally, and responding when someone challenges your point.
+
+WHY THIS MATTERS
+
+Communication becomes harder when:
+
+• people are watching
+• you are nervous
+• someone disagrees
+• you are interrupted
+• you do not know the question in advance
+• you have limited time
+• you need to defend an idea
+
+Strong communicators do not simply talk more.
+
+They listen, think, respond, adjust, and stay composed.
+
+PART 1 · YOUR 60-SECOND RESPONSE
+
+Choose a topic you can speak about honestly.
+
+Possible topics:
+
+• something you believe
+• a goal
+• a lesson athletics taught you
+• something you would change
+• a career interest
+• something young people misunderstand
+• a challenge you overcame
+• what success means to you
+
+Build a 60-second response.
+
+Use:
+
+OPEN
+What is your main point?
+
+WHY
+Why does it matter?
+
+EVIDENCE
+What experience, example, or reason supports it?
+
+CLOSE
+What do you want people to remember?
+
+Do not write a speech you plan to memorize word-for-word.
+
+PART 2 · LISTENING
+
+Practice answering a question only after the other person finishes.
+
+After each question, identify:
+
+What was actually asked?
+
+What is my strongest answer?
+
+What evidence supports it?
+
+PART 3 · PROFESSIONAL DISAGREEMENT
+
+Practice these sentence starters:
+
+"I see it differently because..."
+
+"I understand that point. My concern is..."
+
+"I agree with part of that, but..."
+
+"The evidence that shapes my view is..."
+
+"That makes me reconsider..."
+
+Write one example of how you could disagree without becoming disrespectful or defensive.
+
+PART 4 · REBUTTAL
+
+A rebuttal is not repeating your original point louder.
+
+It should respond to the other person's argument.
+
+Write:
+
+1. Their point.
+2. The part you understand.
+3. Your response.
+4. Your reason or evidence.
+5. A professional closing statement.
+
+PART 5 · PANEL PRACTICE
+
+Practice:
+
+• your 60-second response
+• one follow-up question
+• one disagreement
+• one rebuttal
+• one unexpected question
+
+Ask for feedback on:
+
+• clarity
+• pace
+• tone
+• body language
+• listening
+• composure
+• confidence
+• whether you answered the actual question
+
+PART 6 · PRE-CAMERA REFLECTION
+
+Answer:
+
+1. What happens to your communication when you are nervous?
+2. What do you tend to do too quickly?
+3. What feedback matters most?
+4. What do you want to improve before Michelle's session?
+5. What will you intentionally do when the camera turns on?
+
+WHAT TO SUBMIT
+
+Submit:
+
+• 60-second response outline
+• professional disagreement example
+• rebuttal exercise
+• panel-practice feedback
+• pre-camera reflection
+• one specific goal for the Michelle Boudin experience
+
+PORTFOLIO
+
+Save the 60-second response and communication feedback.
+
+CAPSTONE CONNECTION
+
+What does this week reveal about:
+
+• your voice
+• confidence
+• discomfort
+• listening
+• leadership
+• ability to adjust
+
+Carry one meaningful realization into My Voice, Strengths + Skills, or Challenges + Failures.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    12: {
+      title: "Michelle Boudin — On-Camera Reflection + Second Attempt",
+      instructions: `WHAT YOU ARE DOING
+
+You are participating in and reflecting on the Michelle Boudin on-camera communication experience.
+
+You will compare how you communicated before feedback and after feedback.
+
+WHY THIS MATTERS
+
+Growth is easier to see when you have evidence.
+
+The goal is not to look perfect on camera.
+
+The goal is to notice:
+
+• what happens under pressure
+• how you receive feedback
+• how quickly you adjust
+• how clearly you communicate
+• what confidence actually requires
+
+BEFORE THE EXPERIENCE
+
+Review your Week 11 work.
+
+Write:
+
+1. My communication goal is...
+2. The feedback I most want to remember is...
+3. When I get nervous, I tend to...
+4. To stay composed, I will...
+5. One thing I want the audience to understand about me is...
+
+FIRST ATTEMPT
+
+After your first on-camera response, record:
+
+• What felt strong?
+• What felt uncomfortable?
+• Did you answer the actual question?
+• What happened to your pace?
+• What happened to your voice?
+• What happened to your body language?
+• What did you notice that you had not noticed before?
+
+PROFESSIONAL FEEDBACK
+
+Record the feedback you receive.
+
+Separate it into:
+
+KEEP
+What should you continue?
+
+CHANGE
+What should you adjust?
+
+TRY
+What should you experiment with?
+
+SECOND ATTEMPT
+
+Before trying again, write your plan.
+
+I will keep...
+
+I will change...
+
+I will focus on...
+
+After the second attempt, answer:
+
+1. What changed?
+2. What improved?
+3. What was still difficult?
+4. Which piece of feedback made the biggest difference?
+5. Did you feel different, sound different, or both?
+
+UNEXPECTED QUESTION
+
+If you receive an unexpected question, record:
+
+1. What was asked?
+2. What was your first reaction?
+3. Did you slow down enough to think?
+4. What would you change if you answered again?
+
+FINAL REFLECTION
+
+Answer:
+
+1. What did being on camera reveal about your communication?
+2. What feedback was hardest to hear?
+3. What feedback was most useful?
+4. What changed between attempts?
+5. What did you learn about preparation and confidence?
+6. Where else will this skill matter?
+7. How do you want to communicate when you are uncomfortable in the future?
+
+WHAT TO SUBMIT
+
+Submit:
+
+• pre-experience communication goal
+• first-attempt reflection
+• professional feedback notes
+• second-attempt plan
+• first/second comparison
+• unexpected-question reflection, if used
+• final reflection
+
+PORTFOLIO
+
+Save evidence of your first and second attempts when available, plus your communication-growth reflection.
+
+CAPSTONE CONNECTION
+
+Save one moment of:
+
+• discomfort
+• feedback
+• adjustment
+• courage
+• composure
+• confidence
+
+Ask:
+
+What does this moment show about who I am becoming as a communicator and leader?
+
+Carry it into My Voice, Challenges + Failures, Strengths + Skills, or Experiences + Stories.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    13: {
+      title: "Brad McMillan — Life After Sports + Who Remains?",
+      instructions: `WHAT YOU ARE DOING
+
+You are exploring one of the most important questions in this program:
+
+If athletics disappeared tomorrow, what parts of you would remain?
+
+You will use the Brad McMillan mindset and life-after-sports conversation to examine identity, resilience, purpose, relationships, reputation, leadership, and what happens when an important chapter changes.
+
+WHY THIS MATTERS
+
+Being an athlete may have shaped you.
+
+It may have taught you how to:
+
+• compete
+• prepare
+• recover
+• communicate
+• lead
+• accept coaching
+• handle pressure
+• persist
+• sacrifice
+• work with others
+
+But athletics is something you DO.
+
+It is not the only thing you ARE.
+
+This assignment helps you separate the skills and values you carry forward from the role, uniform, position, statistics, or title.
+
+PART 1 · IF ATHLETICS DISAPPEARED TOMORROW
+
+Finish this statement:
+
+If athletics disappeared tomorrow, I would still be...
+
+Write at least TEN words or phrases.
+
+Then choose FIVE that matter most.
+
+For each one, explain:
+
+1. Why is this part of you?
+2. What experience proves it?
+3. Where else could this quality matter?
+
+PART 2 · A DIFFICULT CHAPTER
+
+Choose one real experience involving:
+
+• failure
+• injury
+• losing
+• rejection
+• being benched
+• changing roles
+• conflict
+• disappointment
+• a goal you did not reach
+• a plan that changed
+• another difficult transition
+
+Answer:
+
+1. What happened?
+2. What did you initially think or feel?
+3. What did you do next?
+4. What helped you recover?
+5. What did the experience teach you?
+6. What would you do differently now?
+7. What does the story say about you?
+
+PART 3 · BRAD MCMILLAN QUESTION BUILDER
+
+Write FIVE possible questions about:
+
+• mindset
+• life after sports
+• identity
+• success
+• setbacks
+• purpose
+• relationships
+• reputation
+• leadership
+• major transitions
+
+Choose your BEST THREE.
+
+Mark the ONE question you most want answered.
+
+PART 4 · DURING THE EXPERIENCE
+
+Listen for:
+
+• one lesson about identity
+• one lesson about resilience
+• one lesson about relationships or reputation
+• one lesson about purpose
+• one quote or idea you want to remember
+• one thing that challenges your thinking
+
+PART 5 · AFTER THE EXPERIENCE
+
+Answer:
+
+1. What did Brad say that stayed with you?
+2. What part of your athlete identity should you carry forward?
+3. What part of your identity may need to change?
+4. What does resilience look like when there is no next game?
+5. What matters when nobody is keeping score?
+6. What do you want people to remember about how you treated them?
+7. Who do you want to be known as ten years from now?
+
+PART 6 · PERSONAL MINDSET COMMITMENT
+
+Finish:
+
+When something important changes or ends, I want to remember...
+
+When I fail, I want to...
+
+When I receive feedback, I want to...
+
+When I am unsure what comes next, I want to...
+
+The kind of person I want to become is...
+
+WHAT TO SUBMIT
+
+Submit:
+
+• 10 identity words/phrases
+• five identity explanations
+• one difficult-chapter story
+• three Brad McMillan questions
+• experience notes
+• post-experience reflection
+• personal mindset commitment
+
+PORTFOLIO
+
+Save your difficult-chapter story and personal mindset commitment as evidence of resilience, identity, and growth.
+
+CAPSTONE CONNECTION
+
+Carry forward:
+
+• one setback or challenge
+• one belief
+• one Brad McMillan lesson or quote
+• one identity statement
+• one mindset commitment
+
+These belong in Challenges + Failures, Identity, Values + Beliefs, People + Inspiration, or Final Story.
+
+Ask yourself:
+
+Who am I when the thing I have always been known for is no longer the center of my life?`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    14: {
+      title: "Mentorship + Informational Conversation",
+      instructions: `WHAT YOU ARE DOING
+
+You are learning how to build professional relationships through preparation, curiosity, listening, gratitude, and follow-up.
+
+You will identify someone you could learn from, prepare an informational conversation, practice asking thoughtful questions, and reflect on what you learn.
+
+WHY THIS MATTERS
+
+Networking is not collecting names.
+
+Mentorship is not asking strangers to give you opportunities.
+
+Strong professional relationships begin when you are:
+
+• curious
+• prepared
+• respectful
+• specific
+• interested in learning
+• willing to listen
+• thoughtful about follow-up
+
+You can learn something useful from people even when you do not want their exact job.
+
+PART 1 · WHAT DO YOU WANT TO LEARN?
+
+Choose ONE area you want to understand better.
+
+Examples:
+
+• a career
+• an industry
+• entrepreneurship
+• skilled trades
+• college
+• technical training
+• leadership
+• management
+• a specific professional skill
+• work-life decisions
+• a lifestyle or career path
+• financial independence
+• another future direction
+
+Write:
+
+I want to learn more about...
+
+This matters to me because...
+
+PART 2 · WHO COULD HELP YOU LEARN?
+
+Identify the TYPE of person who could help.
+
+You do not need to know the person personally yet.
+
+Describe:
+
+1. Their possible role or experience.
+2. What you could learn from them.
+3. Why their perspective could help.
+4. What you should NOT ask them for in a first conversation.
+
+PART 3 · YOUR INTRODUCTION
+
+Write a short introduction.
+
+Include:
+
+• your name
+• who you are
+• what you are exploring
+• why you are interested in speaking with them
+
+Keep it brief.
+
+Example structure:
+
+"My name is ______. I am currently exploring ______. I am trying to learn more about ______, and I would really value hearing about your experience."
+
+Do not turn the introduction into a long speech.
+
+PART 4 · QUESTION BUILDER
+
+Write at least EIGHT questions.
+
+Include questions about:
+
+PATH
+How did you get where you are?
+
+DECISIONS
+What choices mattered most?
+
+SKILLS
+What skills matter in your work?
+
+CHALLENGES
+What is difficult about the path?
+
+MISTAKES
+What do you wish you had known earlier?
+
+WORK
+What does the day-to-day reality look like?
+
+ADVICE
+What should someone my age understand?
+
+NEXT STEPS
+What should I explore next if I am curious about this field?
+
+Then choose your BEST FIVE.
+
+PART 5 · LISTENING + FOLLOW-UP
+
+For each of your five questions, leave space for notes.
+
+During a real or practice conversation:
+
+1. Ask the question.
+2. Listen fully.
+3. Write the important idea.
+4. Ask at least ONE follow-up based on what the person actually said.
+
+Do not simply rush to the next prepared question.
+
+PART 6 · PROFESSIONAL CLOSE
+
+Practice ending with:
+
+• appreciation
+• one specific thing you learned
+• a professional goodbye
+
+PART 7 · FOLLOW-UP MESSAGE
+
+Draft a professional thank-you.
+
+Include:
+
+1. Thank you for their time.
+2. One specific thing you learned.
+3. Why it mattered to you.
+4. A professional closing.
+
+Do not immediately ask for a job, internship, favor, or introduction unless the conversation naturally led there.
+
+PART 8 · REFLECTION
+
+Answer:
+
+1. What question produced the most useful answer?
+2. What did you learn that surprised you?
+3. What pathway became clearer?
+4. What pathway became less interesting?
+5. Did you listen well?
+6. What follow-up question came from listening?
+7. What should you investigate next?
+8. Could this become an appropriate long-term professional relationship? Why or why not?
+
+WHAT TO SUBMIT
+
+Submit:
+
+• learning goal
+• description of the person you want to learn from
+• short introduction
+• eight-question builder
+• best five questions
+• conversation/practice notes
+• professional thank-you
+• final reflection
+
+PORTFOLIO
+
+Save your informational-conversation plan and final reflection as evidence of professional communication and career exploration.
+
+CAPSTONE CONNECTION
+
+Carry forward:
+
+• one person
+• one piece of advice
+• one pathway
+• one professional relationship
+• one question
+• one realization about your future
+
+These may belong in People + Inspiration, Career + Pathways, Experiences + Stories, or Future Vision.`,
+      minutes: 45,
+      dayNumber: 3,
+    },
+    15: {
+      title: "NO CLASS · THANKSGIVING BREAK",
+      instructions: `NO REQUIRED WORK
+
+There is no required Future Ready™ assignment this week.
+
+You are not behind.
+
+There is no make-up assignment for Thanksgiving Break.
+
+If you independently choose to use this week to finish previously released work, you may do so, but it is optional.
+
+NO SUBMISSION REQUIRED
+
+NO PORTFOLIO EVIDENCE REQUIRED
+
+NO NEW CAPSTONE ENTRY REQUIRED`,
+      minutes: 0,
+      dayNumber: 3,
+    },
+    16: {
+      title: "Who I Am Becoming — Pre-Internship Statement",
+      instructions: `WHAT YOU ARE DOING
+
+You are creating a BEFORE snapshot of who you are as you prepare to move from the fall Future Ready™ experience into the January–April internship phase.
+
+This is not the end of the program.
+
+Your year-long Capstone continues.
+
+Your internship will give you new experiences, mistakes, feedback, relationships, challenges, stories, skills, and evidence that you will add to what you have already built.
+
+WHY THIS MATTERS
+
+You have spent the fall:
+
+• exploring identity
+• identifying values
+• developing professional skills
+• visiting workplaces
+• listening to professionals
+• practicing communication
+• learning about money
+• building resume evidence
+• interviewing
+• receiving feedback
+• practicing discomfort
+• exploring careers and pathways
+• thinking about life beyond athletics
+
+Now you need to capture who you are BEFORE the internship so you can later see what changed.
+
+PART 1 · FALL EVIDENCE REVIEW
+
+Review your work from the fall.
+
+Look through:
+
+• reflections
+• portfolio evidence
+• Capstone entries
+• Brain Map
+• professional visits
+• speaker notes
+• financial work
+• resume work
+• interview practice
+• communication feedback
+• career/pathway work
+
+Choose at least ONE example for each category:
+
+IDENTITY
+Something that helped you understand yourself.
+
+SKILL
+Evidence of a skill you developed.
+
+CHALLENGE
+A difficult moment or story.
+
+EXPERIENCE
+A speaker, visit, activity, or real-world experience that changed your thinking.
+
+PERSON
+Someone whose advice or example influenced you.
+
+PATHWAY
+A career, industry, role, or possibility worth exploring.
+
+FUTURE
+A goal, value, lifestyle idea, or priority you now understand more clearly.
+
+PART 2 · WHO I AM BECOMING
+
+Write a personal statement using your own voice.
+
+Address:
+
+Who am I?
+
+What do I value?
+
+What am I good at?
+
+What am I still learning?
+
+What experiences have shaped me?
+
+How do I respond when things are difficult?
+
+What kind of teammate, employee, leader, friend, or person do I want to be?
+
+What do I want people to experience when they work with me?
+
+What am I curious about?
+
+What kind of future am I trying to build?
+
+Do not write what you think an adult wants to hear.
+
+Write what you actually believe today.
+
+PART 3 · WHAT I BRING INTO A WORKPLACE
+
+Identify FIVE qualities, skills, or behaviors you bring.
+
+For each one:
+
+1. Name it.
+2. Give real evidence.
+3. Explain how it could matter in a workplace.
+
+PART 4 · WHAT I STILL NEED TO PRACTICE
+
+Identify THREE areas where you still need growth.
+
+For each:
+
+1. What is the skill or behavior?
+2. Why does it matter?
+3. What usually gets in the way?
+4. What can you practice during the internship?
+
+PART 5 · THREE INTERNSHIP GOALS
+
+Create THREE goals.
+
+GOAL 1 · SKILL
+
+What skill do you want to strengthen?
+
+How will you know you are improving?
+
+GOAL 2 · PROFESSIONAL BEHAVIOR
+
+How do you want to show up consistently?
+
+Examples:
+
+• prepared
+• curious
+• reliable
+• professional
+• communicative
+• coachable
+• proactive
+• organized
+
+How will you prove it?
+
+GOAL 3 · EXPLORATION
+
+What do you want to learn about:
+
+• a career
+• industry
+• role
+• workplace
+• culture
+• lifestyle
+• education/training pathway
+• yourself
+
+PART 6 · BEFORE THE INTERNSHIP
+
+Answer honestly:
+
+1. What are you excited about?
+2. What are you nervous about?
+3. What do you not know yet?
+4. What is one mistake you are afraid of making?
+5. What will you do when you make a mistake?
+6. How do you want to respond to feedback?
+7. What will you do when you do not understand something?
+8. How do you want a supervisor or team to describe you?
+9. What do you want this internship to teach you about yourself?
+
+PART 7 · HOW I WILL SHOW UP
+
+Complete:
+
+When I do not know what to do, I will...
+
+When I make a mistake, I will...
+
+When I receive feedback, I will...
+
+When I feel uncomfortable, I will...
+
+When I am given a small task, I will...
+
+When I see something I want to understand, I will...
+
+When someone gives me their time, I will...
+
+PART 8 · YOU KNOW WHO YOU ARE
+
+Finish this statement:
+
+"YOU KNOW WHO YOU ARE" means...
+
+Then write:
+
+At the beginning of this program, I thought...
+
+Now I understand...
+
+By the end of my internship, I hope I can say...
+
+WHAT TO SUBMIT
+
+Submit:
+
+• Fall Evidence Review
+• Who I Am Becoming statement
+• five workplace strengths with evidence
+• three growth areas
+• three internship goals
+• Before the Internship reflection
+• How I Will Show Up commitments
+• YOU KNOW WHO YOU ARE reflection
+
+PORTFOLIO
+
+Save the Who I Am Becoming statement and three internship goals.
+
+This becomes your BEFORE evidence for the internship phase.
+
+CAPSTONE CONNECTION
+
+This is a major year-long Capstone checkpoint.
+
+Preserve this work as the starting point for:
+
+INTERNSHIP JOURNEY
+
+During January–April you will continue collecting:
+
+• stories
+• problems
+• mistakes
+• feedback
+• difficult conversations
+• workplace observations
+• people who influence you
+• skills you use
+• skills you need
+• confidence changes
+• career discoveries
+• workplace culture observations
+• moments that change your thinking
+
+At the end of the internship, you will compare who you were BEFORE with who you became through real experience.
+
+YOU KNOW WHO YOU ARE.`,
+      minutes: 50,
+      dayNumber: 3,
+    },
+
+  };
+
+  function loadPrebuiltWeekAssignment(week: number) {
+    const item = PREBUILT_WEEK_ASSIGNMENTS[week];
+
+    if (!item) {
+      setSaveMessage("No prebuilt assignment is configured for this week.");
+      return;
+    }
+
+    setAssignmentForm({
+      title: item.title,
+      instructions: item.instructions,
+      estimatedMinutes: item.minutes || 20,
+      requirement: week === 15 ? "OPTIONAL" : "REQUIRED",
+      dueAt: "",
+      dayNumber: item.dayNumber,
+      allowOnline: week !== 15,
+      allowPrint: week !== 15,
+      allowUpload: week !== 15,
+      portfolioEligible: week !== 15,
+    });
+
+    setShowFullTools(true);
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-resource-hub")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 50);
+
+    setSaveMessage(
+      week === 15
+        ? "Thanksgiving break loaded. Do not save this as student work."
+        : `${item.title} loaded. Review it, then click Save Assignment when you are ready to release it to students.`
+    );
+  }
+
+  function loadWeek4SegAssignment() {
+    setAssignmentForm({
+      title: "SEG Professional Visit Prep + Career Observation",
+      instructions: `PURPOSE
+
+Prepare for the SEG Systems / Visual Images professional experience so you arrive ready to learn, communicate professionally, discover careers, and capture evidence about your own interests and future.
+
+WHAT TO DO
+
+1. COMPANY RESEARCH
+- Explain what SEG Systems / Visual Images does.
+- Record at least two facts about the company or its history.
+- Identify the products, services, customers, industries, or work you believe connect to the company.
+
+2. CAREER + PATHWAY DISCOVERY
+- Identify at least three jobs, departments, roles, or career pathways that may exist inside the organization.
+- Choose one and explain what education, training, certification, skills, or experience someone may need.
+
+3. PROFESSIONAL EXPECTATIONS
+Write at least five behaviors you will demonstrate during the visit.
+Consider:
+- introductions
+- body language
+- eye contact
+- listening
+- phone use
+- professional language
+- asking questions
+- respect for the workplace
+- representing yourself and the program well
+
+4. QUESTION BUILDER
+Write at least three thoughtful, open-ended questions.
+
+Include:
+- one question about skills
+- one question about career pathway or preparation
+- one question about what the work is really like
+
+Improve weak questions so they cannot be answered with only yes or no.
+
+5. DURING THE VISIT
+Record:
+- at least three jobs or functions you discover
+- one example of communication
+- one example of teamwork
+- one example of problem-solving or adaptability
+- one example involving technology, quality, production, or safety
+- something that surprised you
+- something that interested you
+- something that may not fit you
+- at least one useful answer or follow-up conversation
+
+6. AFTER THE VISIT
+Respond to:
+- What did you see that you did not know existed?
+- What career or pathway would you like to explore further?
+- What professional skill did you observe?
+- What did the work environment teach you about what may or may not fit you?
+- Who or what influenced your thinking?
+- What question do you still have?
+- What should you explore next?
+
+WHAT TO SUBMIT
+
+Submit:
+- company research
+- three career/pathway discoveries
+- five professional expectations
+- at least three prepared questions
+- workplace observations
+- post-visit reflection
+
+CAPSTONE CONNECTION
+
+Save one story, person, quote, skill, observation, challenge, realization, or career discovery from this experience that says something about who you are becoming beyond athletics, school, or any single role.
+
+Your capstone response must be your own thinking and experience.`,
+      estimatedMinutes: 40,
+      requirement: "REQUIRED",
+      dueAt: "",
+      dayNumber: 3,
+      allowOnline: true,
+      allowPrint: true,
+      allowUpload: true,
+      portfolioEligible: true,
+    });
+
+    setShowFullTools(true);
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-resource-hub")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 50);
+
+    setSaveMessage(
+      "SEG assignment loaded. Review it, then click Save Assignment when you are ready to release it to students."
+    );
+  }
+
   async function createAssignment() {
     const saved = await createHubItem(
       {
@@ -3092,6 +5039,64 @@ export default function AmbassadorCurriculumPage() {
               </ContentCard>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  {selectedWeek === 4 && (
+                    <div className="mb-5 rounded-2xl border border-[#00A6A6]/30 bg-[#F2FBFB] p-4">
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#007B7B]">
+                        Week 4 · Prebuilt Student Assignment
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        Load the complete SEG professional-visit assignment.
+                        It includes research, professional expectations,
+                        question building, workplace observations, reflection,
+                        submission requirements, and the year-long Capstone
+                        Connection.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={loadWeek4SegAssignment}
+                        className="mt-3 rounded-xl bg-[#00A6A6] px-4 py-2 text-sm font-black text-white"
+                      >
+                        Load SEG Assignment
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedWeek >= 5 && selectedWeek <= 16 && (
+                    <div className="mb-5 rounded-2xl border border-[#0D1B3D]/15 bg-white p-4 shadow-sm">
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#0D1B3D]">
+                        Week {selectedWeek} · Prebuilt Student Work
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        {selectedWeek === 15
+                          ? "Thanksgiving break. No student assignment should be released this week."
+                          : "Load the prebuilt student assignment for this week's lesson, experience, reflection, and Capstone Connection."}
+                      </p>
+
+                      {selectedWeek !== 15 ? (
+                        <>
+
+
+                    <button
+                          type="button"
+                          onClick={() =>
+                            loadPrebuiltWeekAssignment(selectedWeek)
+                          }
+                          className="mt-3 rounded-xl bg-[#0D1B3D] px-4 py-2 text-sm font-black text-white"
+                        >
+                          Load Week Assignment
+                        </button>
+</>
+                      ) : (
+                        <div className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900">
+                          NO CLASS · NO ASSIGNMENT
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                 <div className="flex flex-col gap-1">
                   <h3 className="text-lg font-black text-[#0D1B3D]">
                     {editingAssignmentId ? "Edit Assignment" : "+ Add Assignment"}

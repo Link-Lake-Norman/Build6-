@@ -267,6 +267,13 @@ export default async function AmbassadorAdminPage() {
             href="/ambassador/admin/permissions"
             action="Manage Permissions"
           />
+          <AdminCard
+            title="BUILD6 Licensing & Activation"
+            description="Manage draft organization licenses, purchase and agreement gates, activation readiness, and renewals."
+            href="/ambassador/admin/build6-licensing"
+            action="Open Licensing"
+          />
+
 
           <AdminCard
             title="Messages"
