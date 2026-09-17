@@ -25,6 +25,17 @@ type StoryEntry = {
   updatedAt: Date;
 };
 
+type CompanionStoryEntry = {
+  id: string;
+  dateKey: string;
+  moment: string;
+  selfInsight: string;
+  keepForStory: string;
+  updatedAt: Date;
+};
+
+const COMPANION_JOURNAL_PREFIX = "BUILD6 Companion Journal · ";
+
 function parseCapstoneResponse(response: string) {
   const values = {
     learning: "",
@@ -46,6 +57,34 @@ function parseCapstoneResponse(response: string) {
     if (section.startsWith("Vision / Goal / Next Step:\n")) {
       values.growth = section
         .replace("Vision / Goal / Next Step:\n", "")
+        .trim();
+    }
+  }
+
+  return values;
+}
+
+function parseCompanionResponse(response: string) {
+  const values = {
+    moment: "",
+    selfInsight: "",
+    keepForStory: "",
+  };
+
+  for (const section of response.split("\n\n")) {
+    if (section.startsWith("Moment / Thought:\n")) {
+      values.moment = section.replace("Moment / Thought:\n", "").trim();
+    }
+
+    if (section.startsWith("What I Noticed About Me:\n")) {
+      values.selfInsight = section
+        .replace("What I Noticed About Me:\n", "")
+        .trim();
+    }
+
+    if (section.startsWith("Keep for My Story:\n")) {
+      values.keepForStory = section
+        .replace("Keep for My Story:\n", "")
         .trim();
     }
   }
@@ -94,6 +133,7 @@ export default async function StudentCapstonePage({ params }: PageProps) {
     },
     select: {
       id: true,
+      userId: true,
 
       user: {
         select: {
@@ -148,6 +188,39 @@ export default async function StudentCapstonePage({ params }: PageProps) {
   if (!student) {
     notFound();
   }
+
+  const isStudentOwner =
+    session.role === "STUDENT" && student.userId === session.id;
+
+  const companionStoryReflections = isStudentOwner
+    ? await prisma.reflection.findMany({
+        where: {
+          studentId: student.id,
+          prompt: {
+            startsWith: COMPANION_JOURNAL_PREFIX,
+          },
+          status: "SUBMITTED",
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        take: 12,
+        select: {
+          id: true,
+          prompt: true,
+          response: true,
+          updatedAt: true,
+        },
+      })
+    : [];
+
+  const companionStoryEntries: CompanionStoryEntry[] =
+    companionStoryReflections.map((reflection) => ({
+      id: reflection.id,
+      dateKey: reflection.prompt.replace(COMPANION_JOURNAL_PREFIX, ""),
+      ...parseCompanionResponse(reflection.response),
+      updatedAt: reflection.updatedAt,
+    }));
 
   const studentName =
     student.user.displayName ||
@@ -280,7 +353,7 @@ export default async function StudentCapstonePage({ params }: PageProps) {
 
           <div className="rounded-2xl bg-[#FFF9DF] px-5 py-3 text-center">
             <div className="text-2xl font-black text-[#0D1B3D]">
-              {completedStoryEntries.length}
+              {completedStoryEntries.length + companionStoryEntries.length}
             </div>
 
             <div className="text-xs font-black uppercase tracking-[0.12em] text-[#725500]">
@@ -324,6 +397,67 @@ export default async function StudentCapstonePage({ params }: PageProps) {
               See All My Reflections →
             </Link>
           </div>
+
+          {companionStoryEntries.length > 0 ? (
+            <div className="mb-5 rounded-2xl border border-[#F2B705]/40 bg-[#FFF9DF] p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-[#725500]">
+                    FROM MY COMPANION · CHOSEN BY ME
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-[#0D1B3D]">
+                    Moments I intentionally saved to My Story.
+                  </p>
+                </div>
+
+                <Link
+                  href={`/ambassador/student-portal/${student.id}/companion/journal`}
+                  className="text-xs font-black text-[#0D1B3D]"
+                >
+                  Open My Journal →
+                </Link>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {companionStoryEntries.slice(0, 6).map((entry) => (
+                  <article
+                    key={`companion-${entry.id}`}
+                    className="rounded-xl border border-[#F2B705]/30 bg-white p-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-xs font-black uppercase tracking-[0.12em] text-[#4B2265]">
+                        My Story · {entry.dateKey}
+                      </p>
+                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-emerald-800">
+                        Saved by Me
+                      </span>
+                    </div>
+
+                    {entry.moment ? (
+                      <StoryPiece
+                        label="The Moment"
+                        value={entry.moment}
+                      />
+                    ) : null}
+
+                    {entry.selfInsight ? (
+                      <StoryPiece
+                        label="What I Noticed About Me"
+                        value={entry.selfInsight}
+                      />
+                    ) : null}
+
+                    {entry.keepForStory ? (
+                      <StoryPiece
+                        label="What I Want to Remember"
+                        value={entry.keepForStory}
+                      />
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {storyEntries.length === 0 ? (
             <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6">

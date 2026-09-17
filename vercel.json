@@ -3,6 +3,10 @@
     {
       "path": "/api/ambassador/accountability/cron",
       "schedule": "0 12,13 * * 1,5"
+    },
+    {
+      "path": "/api/ambassador/companion-daily/cron",
+      "schedule": "0 * * * *"
     }
   ]
 }

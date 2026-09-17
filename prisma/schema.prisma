@@ -166,13 +166,14 @@ model User {
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
 
-  organizations UserOrganization[]
-  schools       UserSchool[]
-  student       Student?
-  facilitator   Facilitator?
-  employerUser  EmployerUser?
-  notifications Notification[]
-  auditLogs     AuditLog[]         @relation("AuditActor")
+  organizations     UserOrganization[]
+  schools           UserSchool[]
+  student           Student?
+  facilitator       Facilitator?
+  employerUser      EmployerUser?
+  notifications     Notification[]
+  pushSubscriptions PushSubscription[]
+  auditLogs         AuditLog[]         @relation("AuditActor")
 
   messageThreadsCreated MessageThread[]       @relation("MessageThreadCreator")
   messageParticipants   MessageParticipant[]  @relation("MessageParticipantUser")
@@ -310,16 +311,16 @@ model Student {
   readinessResponses ReadinessResponse[]
   profile            StudentProfile?
 
-  lifeAccounts      LifeAccount[]
-  lifeGoals         LifeGoal[]
-  fridayMoneyChecks FridayMoneyCheck[]
-  economyClaims     EconomyClaim[]
-  loansBorrowed     PeerLoan[]                  @relation("PeerLoanBorrower")
-  loansFunded       PeerLoan[]                  @relation("PeerLoanLender")
-  fundContributions CommunityFundContribution[]
+  lifeAccounts         LifeAccount[]
+  lifeGoals            LifeGoal[]
+  fridayMoneyChecks    FridayMoneyCheck[]
+  economyClaims        EconomyClaim[]
+  loansBorrowed        PeerLoan[]                   @relation("PeerLoanBorrower")
+  loansFunded          PeerLoan[]                   @relation("PeerLoanLender")
+  fundContributions    CommunityFundContribution[]
+  accessibilityProfile StudentAccessibilityProfile?
 
   @@index([schoolId, graduationYear])
-  accessibilityProfile StudentAccessibilityProfile?
 }
 
 model Facilitator {
@@ -762,6 +763,25 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, readAt, createdAt])
+}
+
+model PushSubscription {
+  id         String    @id @default(cuid())
+  userId     String
+  endpoint   String    @unique
+  p256dh     String
+  auth       String
+  enabled    Boolean   @default(true)
+  userAgent  String?
+  expiresAt  DateTime?
+  lastSentAt DateTime?
+  lastError  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, enabled])
 }
 
 model AuditLog {
@@ -1763,6 +1783,28 @@ model PlatformMessage {
   @@index([senderId, createdAt])
 }
 
+model CohortInvitation {
+  id             String    @id
+  cohortId       String
+  organizationId String
+  schoolId       String?
+  email          String
+  firstName      String
+  lastName       String
+  role           UserRole
+  tokenHash      String    @unique
+  status         String    @default("PENDING")
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  invitedById    String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+
+  @@index([cohortId, status])
+  @@index([email, status])
+  @@index([organizationId, status])
+}
+
 model PasswordResetRequest {
   id          String    @id @default(cuid())
   email       String
@@ -1773,6 +1815,8 @@ model PasswordResetRequest {
   handledById String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  expiresAt   DateTime?
+  tokenHash   String?   @unique
 
   @@index([status, requestedAt])
   @@index([email, status])
