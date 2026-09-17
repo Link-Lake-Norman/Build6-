@@ -3715,7 +3715,7 @@ Your capstone response must be your own thinking and experience.`,
                   title="Worksheets, Printables & Media"
                 >
 
-                  {selectedWeek <= 5 && (
+                  {selectedWeek !== 15 && (
                     <div className="mb-5 rounded-2xl border-2 border-[#F2B705] bg-[#FFFDF5] p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -3929,11 +3929,13 @@ Your capstone response must be your own thinking and experience.`,
                     </div>
                   )}
 
-                  {selectedWeek > 5 && (
+                  {selectedWeek === 15 && (
                     <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
                       <p className="text-sm font-black text-amber-900">
-                        Core packaged downloads for Week {selectedWeek} have not
-                        been added to the protected resource library yet.
+                        Week 15 · Thanksgiving Break
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-amber-800">
+                        No required student workbook or assignment is scheduled for Week 15.
                       </p>
                     </div>
                   )}
