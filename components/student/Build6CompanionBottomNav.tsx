@@ -25,12 +25,12 @@ const navItems = [
   },
   {
     key: "identity",
-    label: "Who I Am",
-    suffix: "/profile",
+    label: "Identity Map",
+    suffix: "/companion/identity",
   },
   {
     key: "story",
-    label: "My Story",
+    label: "My Capstone",
     suffix: "/capstone",
   },
 ];

@@ -401,6 +401,15 @@ export default async function Build6StudentCompanionPage({
     student.studentSkills[0]?.skill.name ||
     "";
 
+  const identityFieldCount = [
+    student.profile?.aboutMe,
+    student.profile?.strengths,
+    student.profile?.values,
+    student.profile?.careerInterests,
+    student.profile?.skillsToBuild,
+    student.profile?.futureGoals,
+  ].filter((value) => Boolean(value?.trim())).length;
+
   const stage =
     currentLesson?.module.phase?.replaceAll("_", " ").toUpperCase() ||
     "BUILD WHAT'S NEXT";
@@ -520,6 +529,52 @@ export default async function Build6StudentCompanionPage({
 
       <Build6PushNotifications studentId={student.id} />
 
+      <section className="grid gap-4 md:grid-cols-2">
+        <Link
+          href={`/ambassador/student-portal/${student.id}/companion/identity`}
+          className="rounded-3xl border-2 border-[#4B2265]/30 bg-[#F8F3FA] p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#4B2265] hover:shadow-md"
+        >
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
+            WHO I AM
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+            BUILD6™ Identity Map
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-700">
+            See my strengths, values, interests, skills, goals, and the words I
+            have already used to describe who I am.
+          </p>
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#4B2265]">
+              {identityFieldCount}/6 areas mapped
+            </span>
+            <span className="text-sm font-black text-[#4B2265]">OPEN →</span>
+          </div>
+        </Link>
+
+        <Link
+          href={`/ambassador/student-portal/${student.id}/capstone`}
+          className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF9DF] p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
+            MY STORY · MY CAPSTONE
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
+            Who Am I Becoming?
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-700">
+            Connect my identity, reflections, experiences, skills, evidence,
+            challenges, relationships, and goals into the story I am building.
+          </p>
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-[#725500]">
+              {reflectionCount} reflections · {evidenceCount} evidence
+            </span>
+            <span className="text-sm font-black text-[#0D1B3D]">OPEN →</span>
+          </div>
+        </Link>
+      </section>
+
       <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF9DF] p-6 shadow-sm md:p-7">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
@@ -544,10 +599,10 @@ export default async function Build6StudentCompanionPage({
             </Link>
 
             <Link
-              href={`/ambassador/student-portal/${student.id}/profile`}
+              href={`/ambassador/student-portal/${student.id}/companion/identity`}
               className="rounded-xl border border-[#0D1B3D] bg-white px-5 py-3 text-sm font-black text-[#0D1B3D]"
             >
-              MY WHO I AM PROFILE
+              MY BUILD6 IDENTITY MAP
             </Link>
           </div>
         </div>
@@ -698,13 +753,13 @@ export default async function Build6StudentCompanionPage({
           />
 
           <ActionCard
-            href={`/ambassador/student-portal/${student.id}/profile`}
+            href={`/ambassador/student-portal/${student.id}/companion/identity`}
             eyebrow="WHO I AM"
-            title="My Profile"
+            title="BUILD6 Identity Map"
             description={
               student.profileComplete
-                ? "Keep my strengths, values, interests and goals current."
-                : "Build the profile that helps tell my story."
+                ? "See the strengths, values, interests, skills and goals already shaping my story."
+                : "Build the identity map that helps me understand and tell my story."
             }
           />
 
@@ -717,8 +772,8 @@ export default async function Build6StudentCompanionPage({
 
           <ActionCard
             href={`/ambassador/student-portal/${student.id}/capstone`}
-            eyebrow="MY STORY"
-            title="Capstone Vault"
+            eyebrow="MY STORY · MY CAPSTONE"
+            title="My Capstone"
             description={`${reflectionCount} saved reflection${
               reflectionCount === 1 ? "" : "s"
             } are already helping build my story.`}

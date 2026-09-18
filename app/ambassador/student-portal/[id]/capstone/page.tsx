@@ -364,9 +364,17 @@ export default async function StudentCapstonePage({ params }: PageProps) {
 
         {profileThreads.length > 0 ? (
           <div className="mt-6">
-            <p className="text-xs font-black uppercase tracking-[0.15em] text-slate-400">
-              THINGS I ALREADY KNOW ABOUT MYSELF
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-black uppercase tracking-[0.15em] text-slate-400">
+                MY BUILD6 IDENTITY MAP
+              </p>
+              <Link
+                href={`/ambassador/student-portal/${student.id}/companion/identity`}
+                className="text-xs font-black text-[#4B2265]"
+              >
+                Open My Identity Map →
+              </Link>
+            </div>
 
             <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {profileThreads.map((item) => (
