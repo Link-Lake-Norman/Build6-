@@ -98,7 +98,7 @@ a {
 
   main div[style*="font-size: 58px"],
   main div[style*="font-size: 54px"] {
-    font-size: 44px !important;
+    font-size: 52.8px !important;
   }
 }
 
@@ -156,7 +156,7 @@ main [style*="font-size: 58px"],
 main [style*="font-size: 54px"],
 main [style*="font-size: 62px"],
 main [style*="font-size: 64px"] {
-  font-size: clamp(38px, 6vw, 58px) !important;
+  font-size: clamp(45.6px, 6vw, 69.6px) !important;
   line-height: 1 !important;
   max-width: 100%;
 }
@@ -253,11 +253,11 @@ main [style*="progressLabelRow"] {
   }
 
   main h1 {
-    font-size: clamp(30px, 10vw, 42px) !important;
+    font-size: clamp(36px, 10vw, 50.4px) !important;
   }
 
   main h2 {
-    font-size: clamp(23px, 7vw, 30px) !important;
+    font-size: clamp(27.6px, 7vw, 36px) !important;
   }
 
   main [style*="padding: 30px"],
@@ -333,6 +333,8 @@ main [style*="progressLabelRow"] {
   }
 
   main div[style*="font-size: 27px"] {
-    font-size: 22px !important;
+    font-size: 26.4px !important;
   }
 }
+
+/* BUILD6-UNIVERSAL-TYPE-120-20260921 */
