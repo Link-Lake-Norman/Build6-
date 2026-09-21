@@ -3143,3 +3143,23 @@
 
 
 /* BUILD6-UNIVERSAL-TYPE-120-20260921 */
+
+/* BUILD6 HOME READABILITY 120 START */
+
+.build6-home {
+  font-size: 120%;
+}
+
+.build6-home p,
+.build6-home li {
+  line-height: 1.6;
+}
+
+.build6-home button,
+.build6-home input,
+.build6-home select,
+.build6-home textarea {
+  font-size: 1em;
+}
+
+/* BUILD6 HOME READABILITY 120 END */

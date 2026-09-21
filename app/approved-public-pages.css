@@ -4345,3 +4345,29 @@ article p,
   font-size: clamp(15px, .98vw, 17px);
   line-height: 1.6;
 }
+
+/* BUILD6 PUBLIC READABILITY 120 START */
+
+/*
+   Public marketing-page readability standard.
+   This intentionally excludes headings so their approved
+   visual hierarchy is preserved.
+*/
+
+body {
+  font-size: 120%;
+}
+
+p,
+li {
+  line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 1em;
+}
+
+/* BUILD6 PUBLIC READABILITY 120 END */
