@@ -192,9 +192,8 @@ const requirementOptions: RequirementValue[] = [
 
 export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  // Ambassador pilot is currently on Week 1, with Day 1 completed.
-  // Open the teaching workspace on the next class instead of the calendar weekday.
-  const [selectedDay, setSelectedDay] = useState(2);
+  // Default to Day 1. A valid ?day=1..5 URL value overrides this on load.
+  const [selectedDay, setSelectedDay] = useState(1);
   const [closingWeek, setClosingWeek] = useState(false);
   const [weekProgressError, setWeekProgressError] = useState<string | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<
@@ -325,6 +324,11 @@ export default function AmbassadorCurriculumPage() {
     const params = new URLSearchParams(window.location.search);
 
     const queryWeek = Number(params.get("week") || "0");
+    const queryDay = Number(params.get("day") || "0");
+    if (queryDay >= 1 && queryDay <= 5) {
+      setSelectedDay(queryDay);
+    }
+
     const storedWeek = Number(
       window.sessionStorage.getItem("future-ready-facilitator-week") || "0",
     );
@@ -2948,16 +2952,22 @@ Your capstone response must be your own thinking and experience.`,
   const lesson = data.lesson;
   const delivery = data.delivery;
   const sourceContent = lesson.content;
+  const isWeekSix = selectedWeek === 6;
 
+  const displayLessonTitle = isWeekSix ? "Professional Etiquette in Action" : lesson.title;
   const phase = richLesson?.phase ?? lesson.module.phase ?? "Launch Ready";
 
-  const objective =
-    richLesson?.objective ?? sourceContent?.focus ?? lesson.summary ?? "";
+  const objective = isWeekSix
+    ? "First impressions, professional communication, workplace judgment, meetings, networking, and accountability"
+    : richLesson?.objective ?? sourceContent?.focus ?? lesson.summary ?? "";
 
-  const studentActivity =
-    richLesson?.studentActivity ?? sourceContent?.activity ?? "";
+  const studentActivity = isWeekSix
+    ? "Professional Etiquette Challenge with role play, peer feedback, and immediate retry"
+    : richLesson?.studentActivity ?? sourceContent?.activity ?? "";
 
-  const reflection = sourceContent?.reflection ?? "";
+  const reflection = isWeekSix
+    ? "Which professional behavior will help other people trust and rely on me?"
+    : sourceContent?.reflection ?? "";
 
   const workplaceConnection =
     richLesson?.workplaceConnection ??
@@ -2965,10 +2975,13 @@ Your capstone response must be your own thinking and experience.`,
 
   const skillsEarned = richLesson?.skillsEarned ?? [];
 
-  const portfolioEvidence =
-    richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
+  const portfolioEvidence = isWeekSix
+    ? "Professional Etiquette Evidence Story + Professional Etiquette Code"
+    : richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
 
-  const badgeEarned = richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
+  const badgeEarned = isWeekSix
+    ? "BUILD6™ Professional Etiquette"
+    : richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
 
   const facilitatorGuide =
     richLesson?.facilitatorGuide ??
@@ -2982,7 +2995,15 @@ Your capstone response must be your own thinking and experience.`,
     objective: string;
     activity: string;
     reflection: string;
-  }[] = [];
+  }[] = isWeekSix
+    ? [
+        { day: "Day 1", title: "First Impressions + Professional Readiness", objective: "Recognize the behaviors and choices that shape a professional first impression.", activity: "Practice arrival, introduction, readiness, body language, and professional-presence scenarios with immediate feedback and retry.", reflection: "What will I do differently before I enter my next professional setting?" },
+        { day: "Day 2", title: "Professional Communication", objective: "Communicate clearly and appropriately across common professional situations.", activity: "Practice introductions, email/message judgment, listening, tone, questions, and professional responses through role play.", reflection: "What communication habit will make me easier to trust and work with?" },
+        { day: "Day 3", title: "Workplace Judgment + Accountability", objective: "Use sound judgment, ownership, and accountability when workplace situations are imperfect.", activity: "Work through realistic scenarios involving mistakes, deadlines, unclear directions, feedback, conflict, and follow-through.", reflection: "How will I respond when I make a mistake or do not know what to do?" },
+        { day: "Day 4", title: "Meetings, Networking + Guest Etiquette", objective: "Participate professionally in meetings, networking, visits, and conversations with guests.", activity: "Practice entering conversations, introductions, question building, meeting behavior, follow-up, and professional exits.", reflection: "What can I do to make a professional conversation valuable for both people?" },
+        { day: "Day 5", title: "Professional Etiquette Challenge", objective: "Demonstrate Week 6 professional-etiquette skills under realistic pressure.", activity: "Complete a multi-scenario etiquette challenge using role play, peer feedback, reflection, and immediate retry.", reflection: "Which professional behavior will help other people trust and rely on me?" },
+      ]
+    : [];
 
   const homework: string | null = null;
 
@@ -3125,7 +3146,7 @@ Your capstone response must be your own thinking and experience.`,
               </p>
 
               <h1 className="mt-2 text-3xl font-black md:text-4xl">
-                Week {selectedWeek}: {lesson.title}
+                Week {selectedWeek}: {displayLessonTitle}
               </h1>
 
               <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">
