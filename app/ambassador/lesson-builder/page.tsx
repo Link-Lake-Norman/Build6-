@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { curriculum } from "@/content/platform";
+import { lessons as sourceLessons } from "@/content/lessons";
 import {
   createLessonCustomization,
   LESSON_BUILDER_PERMISSION_KEY,
@@ -113,9 +114,13 @@ export default function LessonBuilderPage() {
 
 
 
-  const lesson = curriculum.find(
+  const richLesson = curriculum.find(
     (item) => item.week === week
   );
+  const canonicalLesson = sourceLessons.find(
+    (item) => item.week === week
+  );
+  const lesson = richLesson ?? canonicalLesson;
 
 
   const customization = useMemo(() => {
@@ -141,7 +146,10 @@ export default function LessonBuilderPage() {
       week,
       day: "Class Session",
       topic: lesson.title,
-      objective: lesson.objective,
+      objective:
+        "objective" in lesson
+          ? String(lesson.objective)
+          : lesson.focus,
       activityType: selectedAIType,
       audience:
         "Ambassador Christian School Future Ready Students",

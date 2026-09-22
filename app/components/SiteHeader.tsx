@@ -60,7 +60,7 @@ export default function SiteHeader() {
         <div className="top-actions">
           <Link
             className="login"
-            href="/login"
+            href="/ambassador/login"
           >
             LOG IN
           </Link>

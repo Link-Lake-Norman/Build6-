@@ -636,15 +636,20 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
   }
 
   function generateAI() {
-    if (!lesson) return;
+    const generatorLesson =
+      lesson ?? sourceLessons.find((item) => item.week === week);
+    if (!generatorLesson) return;
 
     const variation = generationVariation + 1;
 
     const result = generateActivityOptions({
       week,
       day: dayLabels[dayNumber],
-      topic: lesson.title,
-      objective: lesson.objective,
+      topic: generatorLesson.title,
+      objective:
+        "objective" in generatorLesson
+          ? String(generatorLesson.objective)
+          : generatorLesson.focus,
       activityType: selectedAIType,
       audience: "Future Ready™ students",
       variation,
