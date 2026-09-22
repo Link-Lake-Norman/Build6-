@@ -1,5 +1,7 @@
 "use client";
 
+import { lessons as sourceLessons } from "@/content/lessons";
+
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -1023,6 +1025,8 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
     await loadPlanner();
   }
 
+  const canonicalLesson = sourceLessons.find((item) => item.week === week) ?? null;
+
   return (
     <main className="min-h-screen bg-[#F5F7FA] px-5 py-8 md:px-8">
       <div className="mx-auto max-w-7xl space-y-7">
@@ -1118,7 +1122,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-                {data.lesson.title}
+                {canonicalLesson?.title ?? data.lesson.title}
               </h2>
 
               <p className="mt-3 text-slate-600">
@@ -1247,7 +1251,15 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                 </div>
               ) : (
                 <p className="mt-5 text-slate-500">
-                  No master curriculum lesson is currently mapped to Week {week}
+                  {canonicalLesson ? (
+                    <>
+                      <strong>{canonicalLesson.title}</strong>
+                      <br />
+                      {canonicalLesson.focus}
+                    </>
+                  ) : (
+                    <>No master curriculum lesson is currently mapped to Week {week}</>
+                  )}
                   .
                 </p>
               )}

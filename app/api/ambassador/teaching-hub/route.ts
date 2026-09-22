@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth/session";
+import { lessons as sourceLessons } from "@/content/lessons";
 
 const AMBASSADOR_PROGRAM_ID = "cms7m13y300024ur4rb49uzlw";
 const AMBASSADOR_COHORT_ID = "cmsqx1f8i0000s9r49ecnj27s";
@@ -235,6 +236,7 @@ export async function GET(request: NextRequest) {
     }
 
     const lesson = await getAmbassadorLesson(week);
+    const canonicalLesson = sourceLessons.find((item) => item.week === week) ?? null;
 
     if (!lesson) {
       return NextResponse.json(
@@ -294,13 +296,13 @@ export async function GET(request: NextRequest) {
         id: lesson.id,
         weekNumber: lesson.weekNumber,
         position: lesson.position,
-        title: lesson.title,
+        title: canonicalLesson?.title ?? lesson.title,
         slug: lesson.slug,
-        summary: lesson.summary,
+        summary: canonicalLesson?.focus ?? lesson.summary,
         status: lesson.status,
         estimatedMinutes:
           lesson.estimatedMinutes,
-        content: lesson.content,
+        content: canonicalLesson ?? lesson.content,
         module: lesson.module,
       },
 

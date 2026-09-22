@@ -90,14 +90,14 @@ export const packagedResources: PackagedResource[] = [
     dayNumber: 3,
   },
   {
-    id: "week-06-first-45000-job",
-    title: "Week 6 · Your First $45,000 Job — Life, Money + Choices",
+    id: "week-07-first-45000-job",
+    title: "Week 7 · Your First $45,000 Job — Life, Money + Choices",
     shortTitle: "Your First $45,000 Job",
     category: "WEEK_RESOURCE",
     format: "MARKDOWN",
     relativePath: "weeks/week-06-first-45000-job.md",
     visibleToFacilitator: true,
-    week: 6,
+    week: 7,
     dayNumber: 3,
   },
   {

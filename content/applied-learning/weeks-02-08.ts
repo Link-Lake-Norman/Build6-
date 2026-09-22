@@ -672,12 +672,12 @@ export const weeks02To08AppliedLearning: AppliedLearningAsset[] = [
   },
 
   // ==========================================================================
-  // WEEK 6 · RESUME + PERSONAL BRAND
+  // WEEK 9 · RESUME + PERSONAL BRAND
   // ==========================================================================
 
   {
-    id: "week-06-prove-the-skill",
-    week: 6,
+    id: "week-09-prove-the-skill",
+    week: 9,
     title: "Don't Tell Me. Prove It.",
     format: "Case Scenario",
     audience: "Both",
@@ -756,8 +756,8 @@ export const weeks02To08AppliedLearning: AppliedLearningAsset[] = [
   },
 
   {
-    id: "week-06-five-second-profile",
-    week: 6,
+    id: "week-09-five-second-profile",
+    week: 9,
     title: "The Five-Second Profile Test",
     format: "Team Challenge",
     audience: "Both",

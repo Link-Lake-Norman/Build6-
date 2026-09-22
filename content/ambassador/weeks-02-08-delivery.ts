@@ -279,68 +279,56 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What do you think a $45,000 salary feels like in real life?",
-        "What expenses will compete for your income?",
-        "Which financial choices matter most to you?",
+        "What creates a strong first impression before you ever explain yourself?",
+        "What professional behavior makes other people trust and rely on you?",
+        "Where do communication, judgment, and accountability show up in everyday work?",
       ],
       organizationTasks: [
-        "Open the Week 6 $45,000 Job student work.",
-        "Separate needs, wants and flexible expenses.",
-        "Prepare to make tradeoffs.",
+        "Open the Week 6 Professional Etiquette student work.",
+        "Identify expectations for arrival, communication, meetings, networking, and follow-through.",
+        "Prepare for role play, peer feedback, and immediate retry.",
       ],
-      projectWork: [
-        "Build a realistic first-job life and budget.",
-      ],
-      capstoneWork: [
-        "Preserve one money decision that revealed something about your values.",
-      ],
+      projectWork: ["Build a personal Professional Etiquette Code."],
+      capstoneWork: ["Preserve one Professional Etiquette Evidence Story."],
     },
 
-    tuesday: {
-      lessonWeek: 6,
-    },
+    tuesday: { lessonWeek: 6 },
 
-    wednesday: {
-      appliedLearningAssetIds: [],
-    },
+    wednesday: { appliedLearningAssetIds: [] },
 
     thursday: {
       experience: {
         preparationQuestions: [
-          "What does a $45,000 salary actually have to support?",
-          "Which expenses are needs, wants or flexible?",
-          "Where do you expect the hardest tradeoffs?",
+          "What does professional readiness look and sound like?",
+          "How should you respond when expectations are unclear or a mistake happens?",
+          "How can you contribute in a meeting or networking conversation without taking over or disappearing?",
         ],
         duringExperience: [
-          "Build a realistic take-home-pay scenario.",
-          "Make spending choices.",
-          "Separate needs, wants and flexible expenses.",
-          "Respond to an unexpected expense.",
-          "Adjust the plan without ignoring financial reality.",
+          "Practice a professional arrival and introduction.",
+          "Practice a clear professional message.",
+          "Work through a workplace judgment and accountability scenario.",
+          "Practice meeting, networking, and guest etiquette.",
+          "Use peer feedback and retry one station.",
         ],
         debriefQuestions: [
-          "What surprised you most?",
-          "Which tradeoff was hardest?",
-          "What does financial stability mean to you now?",
+          "Which behavior created the strongest professional impression?",
+          "What feedback changed your second attempt?",
+          "Which professional behavior will you apply next week?",
         ],
-        portfolioEvidence:
-          "First $45,000 Job life, money + tradeoff reflection.",
+        portfolioEvidence: "Professional Etiquette Evidence Story + Professional Etiquette Code",
       },
-
       classroom: {
-        title: "Your First $45,000 Job",
-        description:
-          "Students experience the difference between gross income, take-home pay, expenses, priorities, tradeoffs and financial stability.",
+        title: "Professional Etiquette in Action",
+        description: "Students practice first impressions, professional communication, workplace judgment, meetings, networking, accountability, feedback, and retry.",
         appliedLearningAssetIds: [],
       },
     },
 
     friday: {
       closingQuestions: [
-        "What tradeoff was hardest?",
-        "What expense surprised you?",
-        "What does financial stability mean to you now?",
-        "What question do you want to ask Brad McMillan next week?",
+        "Which professional behavior will help other people trust and rely on you?",
+        "What will another person see or hear when you apply it?",
+        "What did feedback improve?",
       ],
     },
   },
@@ -350,17 +338,17 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What did Week 6 teach you about money?",
+        "What does a realistic $45,000 first-job life require you to decide?",
         "What financial decision do you still not understand?",
         "What question could produce useful advice?",
       ],
       organizationTasks: [
-        "Bring forward your Week 6 $45,000 life.",
+        "Build your Week 7 $45,000 first-job scenario and bring forward the tradeoffs you discover.",
         "Build questions for Brad McMillan.",
         "Choose your three strongest questions.",
       ],
       projectWork: [
-        "Prepare a financial question and decision journal.",
+        "Build a $45,000 first-job scenario and prepare a financial question and decision journal.",
       ],
       capstoneWork: [
         "Preserve one financial belief that changed or became clearer.",

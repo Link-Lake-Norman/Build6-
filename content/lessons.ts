@@ -44,18 +44,21 @@ export const lessons = [
   {
     week: 6,
     program: "ambassador-student-athlete-launch",
-    title: "Your First $45,000 Job",
-    focus: "Life, money, choices, tradeoffs, and financial stability",
-    activity: "Build a realistic first-job life and budget scenario",
+    title: "Professional Etiquette in Action",
+    focus:
+      "First impressions, professional communication, workplace judgment, meetings, networking, and accountability",
+    activity:
+      "Professional Etiquette Challenge with role play, peer feedback, and immediate retry",
     reflection:
-      "What does earning $45,000 actually mean for the life I want to build?",
+      "Which professional behavior will help other people trust and rely on me?",
   },
   {
     week: 7,
     program: "ambassador-student-athlete-launch",
-    title: "Brad McMillan — Money, Decisions + Your Future",
-    focus: "Financial judgment, questions, habits, and action",
-    activity: "Professional conversation and financial decision reflection",
+    title: "Your First $45,000 Job + Brad McMillan",
+    focus: "Financial judgment, questions, habits, tradeoffs, and action",
+    activity:
+      "Build a realistic first-job scenario, then test decisions through professional conversation",
     reflection:
       "How can better financial questions and decisions give me more control over my future?",
   },
