@@ -24,9 +24,10 @@ export default function EducatorsPage() {
             experience—without asking teachers to become workforce experts.
           </p>
 
-          <Link href="/interest?for=school" className="audience-button">
-            BRING BUILD6™ TO YOUR SCHOOL →
-          </Link>
+          <div className="audience-hero-actions">
+            <Link href="/assessment" className="audience-button">TAKE THE FREE ASSESSMENT →</Link>
+            <Link href="/interest?for=school" className="audience-button audience-button-secondary">BRING BUILD6™ TO YOUR SCHOOL →</Link>
+          </div>
         </div>
       </section>
 

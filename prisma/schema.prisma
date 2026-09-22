@@ -1822,3 +1822,28 @@ model PasswordResetRequest {
   @@index([email, status])
   @@index([userId, status])
 }
+
+model PublicAssessmentSubmission {
+  id                 String   @id @default(cuid())
+  firstName          String
+  lastName           String
+  email              String
+  audienceType       String
+  ageBand            String?
+  gradeLevel         String?
+  careerStage        String?
+  schoolOrganization String?
+  guardianName       String?
+  guardianEmail      String?
+  consent            Boolean  @default(false)
+  answers            Json
+  categoryScores     Json
+  overallScore       Int
+  source             String   @default("PUBLIC_BUILD6_ASSESSMENT")
+  completedAt        DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  @@index([email])
+  @@index([completedAt])
+  @@index([audienceType])
+}

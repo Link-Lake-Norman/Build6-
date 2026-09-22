@@ -1,0 +1,5 @@
+CREATE TABLE "PublicAssessmentSubmission" (
+"id" TEXT NOT NULL,"firstName" TEXT NOT NULL,"lastName" TEXT NOT NULL,"email" TEXT NOT NULL,"audienceType" TEXT NOT NULL,"ageBand" TEXT,"gradeLevel" TEXT,"careerStage" TEXT,"schoolOrganization" TEXT,"guardianName" TEXT,"guardianEmail" TEXT,"consent" BOOLEAN NOT NULL DEFAULT false,"answers" JSONB NOT NULL,"categoryScores" JSONB NOT NULL,"overallScore" INTEGER NOT NULL,"source" TEXT NOT NULL DEFAULT 'PUBLIC_BUILD6_ASSESSMENT',"completedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,"updatedAt" TIMESTAMP(3) NOT NULL,CONSTRAINT "PublicAssessmentSubmission_pkey" PRIMARY KEY ("id"));
+CREATE INDEX "PublicAssessmentSubmission_email_idx" ON "PublicAssessmentSubmission"("email");
+CREATE INDEX "PublicAssessmentSubmission_completedAt_idx" ON "PublicAssessmentSubmission"("completedAt");
+CREATE INDEX "PublicAssessmentSubmission_audienceType_idx" ON "PublicAssessmentSubmission"("audienceType");

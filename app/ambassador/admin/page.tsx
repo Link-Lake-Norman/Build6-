@@ -85,13 +85,13 @@ export default async function AmbassadorAdminPage() {
     <main className="space-y-8">
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white shadow-lg">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Administration
+          BUILD6™ Administration
         </p>
 
         <h1 className="mt-3 text-4xl font-black">Welcome, {session.name}</h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Manage cohorts, facilitators, students, curriculum delivery, and the
+          Manage students, cohorts, assessments, curriculum, facilitators, accounts, and the
           Ambassador Christian School pilot.
         </p>
 
@@ -189,7 +189,7 @@ export default async function AmbassadorAdminPage() {
         </p>
 
         <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          Manage Future Ready™
+          Manage BUILD6™
         </h2>
 
         <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -231,6 +231,13 @@ export default async function AmbassadorAdminPage() {
             description="Review Day 1 readiness scores and student responses in one class sheet."
             href="/ambassador/facilitator/assessments"
             action="View Assessments"
+          />
+
+          <AdminCard
+            title="Public Assessment Results"
+            description="Review free BUILD6 assessment respondents, contact information, stages, and readiness baselines."
+            href="/ambassador/admin/public-assessments"
+            action="View Public Results"
           />
 
           <AdminCard

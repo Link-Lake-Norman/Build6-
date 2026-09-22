@@ -53,7 +53,7 @@ export default function SiteHeader() {
             className="nav-assessment"
             href="/assessment"
           >
-            Free Assessment
+            Take the Free Assessment
           </Link>
         </nav>
 

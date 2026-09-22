@@ -352,6 +352,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
             what’s possible and confidently prepare for what comes next.
           </p>
 
+          <div className="hero-assessment-action"><a className="primary-cta" href="/assessment">TAKE THE FREE ASSESSMENT →</a></div>
           <div className="hero-actions">
             <a className="primary-cta" href="#journey">
               EXPLORE BUILD6 <span>→</span>
