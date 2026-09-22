@@ -2,6 +2,7 @@ import "../approved-public-pages.css";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
 
+import PublicFooter from "../components/PublicFooter";
 export default function EducatorsPage() {
   return (
     <main className="audience-page">
@@ -86,11 +87,7 @@ export default function EducatorsPage() {
           Build <strong>confident, connected, capable students.</strong>
         </h2>
       </section>
-
-      <footer className="audience-mini-footer">
-        © 2026 BUILD6™. All Rights Reserved. Proprietary brand, platform,
-        curriculum, research, data, methodologies, designs &amp; program materials.
-      </footer>
+      <PublicFooter />
     </main>
   );
 }

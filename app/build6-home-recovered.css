@@ -3163,3 +3163,51 @@
 }
 
 /* BUILD6 HOME READABILITY 120 END */
+
+/* =========================================================
+   BUILD6 HOME — SIX STAGES TYPOGRAPHY +40% — LOCKED 2026-09-21
+   Live content/SVG/layout preserved; typography only.
+   ========================================================= */
+.build6-public-home .journey-kicker,
+.build6-public-home .journey-eyebrow,
+.build6-public-home .stages-kicker {
+  font-size: 140% !important;
+}
+.build6-public-home .journey-title,
+.build6-public-home .stages-title {
+  font-size: clamp(39px, 4.9vw, 67px) !important;
+}
+.build6-public-home .journey-stage-number,
+.build6-public-home .stage-number {
+  font-size: 140% !important;
+}
+.build6-public-home .journey-stage h3,
+.build6-public-home .stage-card h3,
+.build6-public-home .stage h3 {
+  font-size: 140% !important;
+}
+.build6-public-home .journey-stage p,
+.build6-public-home .stage-card p,
+.build6-public-home .stage p {
+  font-size: 140% !important;
+}
+.build6-public-home .journey-closing,
+.build6-public-home .stages-closing,
+.build6-public-home .journey-note {
+  font-size: 140% !important;
+}
+
+
+/* BUILD6 HOME READABILITY BASELINE - 2026-09-21 */
+.build6-public-home p,
+.build6-public-home li,
+.build6-public-home .action-card p,
+.build6-public-home .proof-copy,
+.build6-public-home .proof-card p {
+  font-size: clamp(17px, 1.15vw, 20px) !important;
+  line-height: 1.5 !important;
+}
+.build6-public-home .action-card h3 {
+  font-size: clamp(20px, 1.35vw, 24px) !important;
+  line-height: 1.2 !important;
+}

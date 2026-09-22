@@ -4371,3 +4371,127 @@ textarea {
 }
 
 /* BUILD6 PUBLIC READABILITY 120 END */
+
+/* =========================================================
+   BUILD6 UNIVERSAL LARGE PUBLIC FOOTER — LOCKED 2026-09-21
+   ========================================================= */
+.build6-universal-footer{
+  background:#04192b;
+  color:#fff;
+  border-top:3px solid #f4b942;
+  padding:34px clamp(24px,5vw,78px) 20px;
+  font-family:Arial,Helvetica,sans-serif;
+}
+.b6uf-main{
+  width:min(1480px,100%);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:minmax(300px,1.5fr) minmax(150px,.7fr) minmax(170px,.8fr) minmax(280px,1fr);
+  gap:clamp(28px,4vw,70px);
+  align-items:start;
+}
+.b6uf-brand{display:grid;grid-template-columns:190px 1fr;gap:28px;align-items:center}
+.b6uf-brand img{display:block;width:190px;height:auto;background:#fff}
+.b6uf-brand p{margin:0;max-width:270px;color:rgba(255,255,255,.86);font-size:16px;line-height:1.55}
+.b6uf-column{display:flex;flex-direction:column;gap:5px}
+.b6uf-column h3{margin:0 0 8px;color:#66c2c6;font-size:13px;letter-spacing:.14em}
+.b6uf-column a{color:#fff;text-decoration:none;font-size:14px;line-height:1.35}
+.b6uf-column a:hover{text-decoration:underline}
+.b6uf-action{text-align:center;border-left:1px solid rgba(255,255,255,.25);padding-left:34px}
+.b6uf-action p{margin:0;font-size:16px;font-weight:800;line-height:1.4;letter-spacing:.14em}
+.b6uf-action span{display:block;width:80%;height:3px;background:#f4b942;margin:15px auto 18px}
+.b6uf-action a{display:block;border:1px solid #66c2c6;border-radius:6px;padding:12px 16px;color:#fff;text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.05em}
+.b6uf-bottom{
+  width:min(1480px,100%);
+  margin:26px auto 0;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.13);
+  display:flex;
+  justify-content:space-between;
+  gap:28px;
+  color:rgba(255,255,255,.72);
+  font-size:11px;
+  line-height:1.5;
+}
+.b6uf-bottom>div{display:flex;gap:22px;flex-wrap:wrap}
+@media(max-width:980px){
+  .b6uf-main{grid-template-columns:1fr 1fr}
+  .b6uf-brand{grid-column:1/-1}
+  .b6uf-action{border-left:0;padding-left:0;text-align:left}
+  .b6uf-action span{margin-left:0;max-width:240px}
+}
+@media(max-width:620px){
+  .build6-universal-footer{padding:30px 22px 18px}
+  .b6uf-main{grid-template-columns:1fr}
+  .b6uf-brand{grid-template-columns:1fr;gap:16px}
+  .b6uf-brand img{width:170px}
+  .b6uf-action{text-align:left}
+  .b6uf-bottom{flex-direction:column}
+}
+
+/* ASSESSMENT HERO — APPROVED PROPORTIONS / SMALL LEFT GUTTER */
+.assessment-page .assessment-hero{
+  min-height:480px !important;
+}
+.assessment-page .assessment-hero .assessment-shell{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:48px clamp(26px,3vw,52px) 44px !important;
+  box-sizing:border-box;
+}
+.assessment-page .assessment-hero .brand-link{
+  display:none !important;
+}
+.assessment-page .assessment-hero-copy{
+  width:min(650px,48vw) !important;
+}
+.assessment-page .assessment-hero h1{
+  max-width:650px !important;
+  font-size:clamp(48px,4.2vw,68px) !important;
+  line-height:1.02 !important;
+  letter-spacing:-.04em !important;
+}
+.assessment-page .assessment-hero .hero-copy{
+  max-width:610px !important;
+  margin-top:18px !important;
+  font-size:clamp(17px,1.2vw,20px) !important;
+  line-height:1.45 !important;
+}
+.assessment-page .assessment-hero .eyebrow{
+  font-size:16px !important;
+  margin-bottom:14px !important;
+}
+.assessment-page .assessment-hero .hero-actions{
+  margin-top:22px !important;
+}
+.assessment-page .assessment-hero .account-note{
+  font-size:15px !important;
+  margin-top:14px !important;
+}
+@media(max-width:760px){
+  .assessment-page .assessment-hero{min-height:560px !important}
+  .assessment-page .assessment-hero .assessment-shell{padding:36px 22px !important}
+  .assessment-page .assessment-hero-copy{width:100% !important}
+  .assessment-page .assessment-hero h1{font-size:clamp(42px,12vw,58px) !important}
+}
+
+
+/* BUILD6 PUBLIC READABILITY BASELINE - 2026-09-21 */
+.build6-public-page p,
+.build6-public-page li,
+.build6-public-page .body-copy,
+.build6-public-page .card-copy,
+.assessment-page p,
+.assessment-page li,
+.audience-page p,
+.audience-page li {
+  font-size: clamp(17px, 1.15vw, 20px) !important;
+  line-height: 1.5 !important;
+}
+.build6-public-page .card h3,
+.assessment-page .card h3,
+.audience-page .card h3 {
+  font-size: clamp(20px, 1.35vw, 24px) !important;
+  line-height: 1.2 !important;
+}

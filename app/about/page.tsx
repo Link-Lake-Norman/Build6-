@@ -2,6 +2,7 @@ import "../approved-public-pages.css";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
 
+import PublicFooter from "../components/PublicFooter";
 const stages = [
   ["DISCOVER™", "Who am I?"],
   ["DEVELOP™", "What skills do I need?"],
@@ -37,7 +38,7 @@ export default function AboutPage() {
             development platform that helps
             people discover who they are,
             build the skills that matter,
-            explore what&apos;s possible and
+            explore what’s possible and
             confidently prepare for what
             comes next.
           </p>
@@ -143,7 +144,7 @@ export default function AboutPage() {
 
       <section className="about-final-cta">
         <p>
-          BUILD WHAT&apos;S NEXT.
+          BUILD WHAT’S NEXT.
         </p>
 
         <h2>
@@ -160,13 +161,7 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
-
-      <footer className="b6-audience-mini-footer">
-        © 2026 BUILD6™. All Rights Reserved.
-        Proprietary brand, platform, curriculum,
-        research, data, methodologies, designs
-        &amp; program materials.
-      </footer>
+      <PublicFooter />
     </main>
   );
 }

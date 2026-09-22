@@ -1,4 +1,6 @@
 "use client";
+
+import PublicFooter from "../components/PublicFooter";
 import "../approved-public-pages.css";
 
 import { FormEvent, useState } from "react";
@@ -112,7 +114,7 @@ export default function ConnectPage() {
             <h1>THANK YOU FOR CONNECTING.</h1>
 
             <p>
-              Your information has been securely submitted to BUILD6™ for review. We&apos;ll use the details you provided to coordinate this opportunity and follow up with next steps.
+              Your information has been securely submitted to BUILD6™ for review. We’ll use the details you provided to coordinate this opportunity and follow up with next steps.
             </p>
 
             <a href="/" className="connect-primary">
@@ -138,9 +140,9 @@ export default function ConnectPage() {
           </h1>
 
           <p>
-            Whether you&apos;ve been invited to participate or you&apos;re
+            Whether you’ve been invited to participate or you’re
             interested in getting involved, tell us how you would like to
-            connect with BUILD6™ and help students experience what&apos;s
+            connect with BUILD6™ and help students experience what’s
             possible beyond the classroom.
           </p>
         </div>
@@ -412,17 +414,7 @@ export default function ConnectPage() {
           </div>
         </form>
       </section>
-
-      <footer className="connect-footer">
-        <strong>BUILD6™</strong>
-        <span>BUILD WHAT&apos;S NEXT.</span>
-
-        <p>
-          © 2026 BUILD6™. All Rights Reserved. Proprietary brand, platform,
-          curriculum, research, data, methodologies, designs &amp; program
-          materials.
-        </p>
-      </footer>
+      <PublicFooter />
     </main>
   );
 }

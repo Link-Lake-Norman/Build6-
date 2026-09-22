@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "./SiteHeader";
 
+import PublicFooter from "./PublicFooter";
 type Benefit = {
   number: string;
   title: string;
@@ -128,13 +129,7 @@ export default function AudienceLanding({
           {ctaLabel}
         </Link>
       </section>
-
-      <footer className="b6-audience-mini-footer">
-        © 2026 BUILD6™. All Rights Reserved.
-        Proprietary brand, platform, curriculum,
-        research, data, methodologies, designs
-        &amp; program materials.
-      </footer>
+      <PublicFooter />
     </main>
   );
 }

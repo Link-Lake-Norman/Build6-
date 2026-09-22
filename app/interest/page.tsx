@@ -1,4 +1,6 @@
 "use client";
+
+import PublicFooter from "../components/PublicFooter";
 import "../approved-public-pages.css";
 
 import { Suspense } from "react";
@@ -235,15 +237,15 @@ function InterestPageContent() {
             </p>
 
             <h1>
-              LET&apos;S BUILD
-              WHAT&apos;S NEXT.
+              LET’S BUILD
+              WHAT’S NEXT.
             </h1>
 
             <p>
               Thank you. Your
               information has been
               securely submitted.
-              We&apos;ll review what you
+              We’ll review what you
               shared and follow up about
               the right BUILD6™ path for
               your organization.
@@ -254,7 +256,8 @@ function InterestPageContent() {
             </a>
           </div>
         </section>
-      </main>
+            <PublicFooter />
+    </main>
     );
   }
 
@@ -614,7 +617,7 @@ export default function InterestPage() {
           <section className="public-form-hero">
             <div>
               <p className="public-eyebrow">BUILD6™</p>
-              <h1>LET&apos;S BUILD WHAT&apos;S NEXT.</h1>
+              <h1>LET’S BUILD WHAT’S NEXT.</h1>
               <p>Loading your BUILD6™ inquiry experience...</p>
             </div>
           </section>

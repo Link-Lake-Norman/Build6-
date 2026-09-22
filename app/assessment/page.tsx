@@ -2,6 +2,7 @@ import Link from "next/link";
 import "../approved-public-pages.css";
 import SiteHeader from "../components/SiteHeader";
 
+import PublicFooter from "../components/PublicFooter";
 export default function AssessmentPage() {
   return (
     <main className="assessment-page">
@@ -141,35 +142,9 @@ export default function AssessmentPage() {
         </div>
       </section>
 
+      <PublicFooter />
 
-      <footer className="build6-assessment-footer">
-        <div className="assessment-footer-inner">
-          <div className="assessment-footer-identity">
-            <div className="assessment-footer-logo">
-              BUILD<span>6</span><sup>™</sup>
-            </div>
-            <div className="assessment-footer-tagline">BUILD WHAT&apos;S NEXT.</div>
-          </div>
-
-          <div className="assessment-footer-right">
-            <p className="assessment-footer-copyright">
-              © 2026 BUILD6™. All Rights Reserved.
-            </p>
-            <p className="assessment-footer-protection">
-              Proprietary brand, platform, curriculum, research, data,
-              methodologies, designs &amp; program materials.
-            </p>
-            <div className="assessment-footer-links">
-              <span>IP PROTECTION</span>
-              <span>TERMS</span>
-              <span>PRIVACY</span>
-              <span>LICENSING</span>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <style>{`
+<style>{`
         :global(body) {
           margin: 0;
         }

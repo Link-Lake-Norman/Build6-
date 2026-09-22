@@ -44,7 +44,7 @@ const stages: Stage[] = [
   {
     number: "03",
     title: "EXPLORE",
-    text: "Build awareness of what&apos;s possible.",
+    text: "Build awareness of what’s possible.",
     tone: "purple",
     icon: (
       <IconWrap>
@@ -179,7 +179,7 @@ const ecosystem = [
   },
   {
     title: "EMPLOYERS",
-    heading: "Help build tomorrow&apos;s talent.",
+    heading: "Help build tomorrow’s talent.",
     copy: "Share insight, open doors and create meaningful exposure to industries, careers and workplace expectations.",
     href: "/connect",
     tone: "purple",
@@ -335,7 +335,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
             </span>
           </div>
 
-          <h1>BUILD WHAT&apos;S NEXT.</h1>
+          <h1>BUILD WHAT’S NEXT.</h1>
           <span className="hero-rule" />
 
           <h2>
@@ -347,7 +347,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
           <p>
             BUILD6™ is an experiential development platform that helps people
             discover who they are, build the skills that matter, explore
-            what&apos;s possible and confidently prepare for what comes next.
+            what’s possible and confidently prepare for what comes next.
           </p>
 
           <div className="hero-actions">
@@ -383,7 +383,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
         </div>
 
         <p className="journey-note">
-          This isn&apos;t six modules to complete. It&apos;s{" "}
+          This isn’t six modules to complete. It’s{" "}
           <strong>six stages of becoming.</strong>
         </p>
       </section>
@@ -415,10 +415,10 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
           <p className="proof-kicker">THE PROOF BEHIND BUILD6™</p>
           <h2>Before BUILD6™ had its name, the model was already working.</h2>
           <p className="proof-lead">
-            BUILD6™ wasn&apos;t created from theory. It grew from real students,
+            BUILD6™ wasn’t created from theory. It grew from real students,
             real employers, real experiences and lessons learned through years of
             career-readiness and workforce-development work. This is what that
-            looks like through a student&apos;s eyes.
+            looks like through a student’s eyes.
           </p>
 
           <div className="proof-lineage" aria-label="BUILD6 program lineage">
@@ -432,7 +432,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
           </div>
 
           <p className="proof-guardrail">
-            This interview documents a student&apos;s experience in the earlier
+            This interview documents a student’s experience in the earlier
             Future Ready internship model that preceded and informed BUILD6™. It
             is not presented as a claim that the student completed the current
             BUILD6™ program.
@@ -455,7 +455,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
           </div>
           <div className="proof-video-copy">
             <p>STUDENT STORY • LAKE NORMAN, NORTH CAROLINA</p>
-            <h3>A Student&apos;s Story: From Future Ready to BUILD6™</h3>
+            <h3>A Student’s Story: From Future Ready to BUILD6™</h3>
             <strong>Real student. Real internship. Real-world growth.</strong>
           </div>
         </div>
@@ -466,10 +466,10 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
           <p className="difference-label">THE DIFFERENCE IS THE CONNECTION.</p>
 
           <h2>
-            BUILD6™ isn&apos;t designed to keep people inside a platform.
+            BUILD6™ isn’t designed to keep people inside a platform.
           </h2>
 
-          <h3>It&apos;s designed to move them beyond it.</h3>
+          <h3>It’s designed to move them beyond it.</h3>
 
           <p>
             BUILD6™ connects learning with people, workplaces, conversations,
@@ -581,7 +581,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
               BUILD<span>6</span>
               <sup>™</sup>
             </div>
-            <div className="footer-tagline">BUILD WHAT&apos;S NEXT.</div>
+            <div className="footer-tagline">BUILD WHAT’S NEXT.</div>
           </div>
 
           <div className="footer-right">
