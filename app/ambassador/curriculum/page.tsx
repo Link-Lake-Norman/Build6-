@@ -3266,7 +3266,7 @@ Your capstone response must be your own thinking and experience.`,
               WEEK {lesson.weekNumber} AT A GLANCE
             </p>
             <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">
-              {lesson.title}
+              {displayLessonTitle}
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
