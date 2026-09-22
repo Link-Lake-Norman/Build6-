@@ -33,7 +33,7 @@ export default function PublicAssessmentForm() {
     } catch(e) { setError(e instanceof Error?e.message:"Unable to save assessment."); } finally { setSaving(false); }
   }
 
-  if(result) return <section className="b6-public-assessment-result"><p className="eyebrow">YOUR BUILD6™ STARTING POINT</p><h1>{result.overallScore}% readiness baseline</h1><p>This is a starting point—not a grade. Use it to identify strengths and what to build next.</p><div className="b6-result-grid">{Object.entries(result.categoryScores).map(([key,value])=><article key={key}><strong>{value}%</strong><span>{LABELS[key]??key}</span></article>)}</div><p>Questions? <a href="mailto:build6info@linklakenorman.com">build6info@linklakenorman.com</a>.</p></section>;
+  if(result) return <section className="b6-public-assessment-result"><p className="eyebrow">YOUR BUILD6™ STARTING POINT</p><h1>{result.overallScore}% readiness baseline</h1><p>This is a starting point—not a grade. Use it to identify strengths and what to build next.</p><div className="b6-result-grid">{Object.entries(result.categoryScores).map(([key,value])=><article key={key}><strong>{value}%</strong><span>{LABELS[key]??key}</span></article>)}</div><p>Questions? <a href="mailto:info@build6.education">info@build6.education</a>.</p></section>;
 
   return <div className="b6-public-assessment">
     <section className="b6-assessment-start"><p className="eyebrow">TAKE THE FREE BUILD6™ ASSESSMENT</p><h1>Start with where you are.</h1><p>No account is required to begin. This is a growth baseline, not a pass/fail test.</p></section>
