@@ -7,6 +7,7 @@ import Link from "next/link";
 import AppliedLearningTeachingHub from "@/components/ambassador/AppliedLearningTeachingHub";
 import AmbassadorWeekDeliveryConsole from "@/components/ambassador/AmbassadorWeekDeliveryConsole";
 import { curriculum as richCurriculum } from "@/content/curriculum";
+import { lessons as sourceLessons } from "@/content/lessons";
 import { ambassadorWeeklyRhythm } from "@/content/ambassador";
 
 type HubTab =
@@ -19,6 +20,59 @@ type HubTab =
   | "release";
 
 type RequirementValue = "HIDDEN" | "OPTIONAL" | "REQUIRED";
+
+const WEEK_6_PROFESSIONAL_ETIQUETTE_DAYS = [
+  {
+    day: "Day 1",
+    title: "First Impressions + Professional Readiness",
+    objective:
+      "Practice the preparation, punctuality, introduction, and presence choices that shape a first impression.",
+    activity:
+      "Complete the First 60 Seconds role play, receive one specific coaching adjustment, and retry the entrance.",
+    reflection:
+      "What can I control before I enter, and what will I change on my next attempt?",
+  },
+  {
+    day: "Day 2",
+    title: "Professional Communication",
+    objective:
+      "Choose the right channel, tone, timing, and response for workplace communication.",
+    activity:
+      "Repair email, text, voicemail, and face-to-face examples; then practice listening, clarification, tone, and body language.",
+    reflection:
+      "What will help another person understand my purpose and know what happens next?",
+  },
+  {
+    day: "Day 3",
+    title: "Workplace Judgment + Accountability",
+    objective:
+      "Respond professionally to mistakes, disagreement, feedback, lateness, confidentiality, and distraction.",
+    activity:
+      "Rotate through professionalism scenario cards. Name the impact, take responsibility, state the next action, give a realistic deadline, and retry.",
+    reflection:
+      "Which response rebuilt trust, and what made it credible?",
+  },
+  {
+    day: "Day 4",
+    title: "Meetings, Networking + Guest Etiquette",
+    objective:
+      "Participate in professional conversations with preparation, curiosity, balanced contribution, and follow-through.",
+    activity:
+      "Practice introductions, useful questions, follow-up questions, peer introductions, meeting participation, workplace meals, and a specific thank-you message.",
+    reflection:
+      "How can I contribute without taking over or disappearing from the conversation?",
+  },
+  {
+    day: "Day 5",
+    title: "Professional Etiquette Challenge",
+    objective:
+      "Apply Week 6 skills under pressure and improve a second attempt through feedback.",
+    activity:
+      "Complete the arrival, message, judgment, and guest-interaction stations. Record feedback, retry one station, and complete your Professional Etiquette Code.",
+    reflection:
+      "What professional behavior will I apply next week, and what will another person see or hear?",
+  },
+];
 
 type RequirementField =
   | "attendance"
@@ -110,6 +164,97 @@ type PlanTask = {
   resources: PlanTaskResource[];
 };
 
+type CalendarExperience = {
+  id: string;
+  lessonId: string | null;
+  weekNumber: number;
+  dayNumber: number;
+  experienceType: string;
+  title: string;
+  description: string | null;
+  eventDate: string | null;
+  startTime: string | null;
+  endTime: string | null;
+  siteName: string | null;
+  preTripPreparation: string | null;
+  studentVisibleNotes: string | null;
+  facilitatorNotes: string | null;
+  visibleToStudent: boolean;
+  status: string;
+};
+
+type ExperienceCurriculumAlignment = {
+  label: string;
+  primarySourceWeek: number;
+  assignmentSourceWeeks: number[];
+};
+
+function getExperienceCurriculumAlignment(
+  experiences: CalendarExperience[],
+): ExperienceCurriculumAlignment | null {
+  const text = experiences
+    .map((experience) =>
+      [
+        experience.title,
+        experience.description,
+        experience.preTripPreparation,
+        experience.studentVisibleNotes,
+      ]
+        .filter(Boolean)
+        .join(" "),
+    )
+    .join(" ")
+    .toLowerCase();
+
+  if (!text) return null;
+
+  if (text.includes("jennifer miller") || text.includes("resume") || text.includes("résumé")) {
+    return {
+      label: "Jennifer Miller · Resume + Interview Preparation",
+      primarySourceWeek: 9,
+      assignmentSourceWeeks: [9],
+    };
+  }
+
+  if (
+    text.includes("financial literacy") ||
+    text.includes("money") ||
+    (text.includes("brad mcmillan") && !text.includes("life after sports"))
+  ) {
+    return {
+      label: "Financial Literacy · Life + Money + Brad McMillan",
+      primarySourceWeek: 7,
+      assignmentSourceWeeks: [7],
+    };
+  }
+
+  if (text.includes("terracon")) {
+    return {
+      label: "Terracon Professional Visit",
+      primarySourceWeek: 8,
+      assignmentSourceWeeks: [8],
+    };
+  }
+
+  if (text.includes("michelle boudin")) {
+    return {
+      label: "Michelle Boudin · Pitch + On-Camera Practice",
+      primarySourceWeek: 11,
+      assignmentSourceWeeks: [11, 12],
+    };
+  }
+
+  if (text.includes("life after sports") && text.includes("brad mcmillan")) {
+    return {
+      label: "Brad McMillan · Life After Sports",
+      primarySourceWeek: 13,
+      assignmentSourceWeeks: [13],
+    };
+  }
+
+  return null;
+}
+
 type Assignment = {
   id: string;
   title: string;
@@ -149,6 +294,7 @@ type TeachingHubResponse = {
   delivery: DeliverySetting | null;
   resources: Resource[];
   planTasks: PlanTask[];
+  experiences: CalendarExperience[];
   assignments: Assignment[];
   dailyNotes: DailyTeachingNote[];
 };
@@ -192,9 +338,8 @@ const requirementOptions: RequirementValue[] = [
 
 export default function AmbassadorCurriculumPage() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  // Ambassador pilot is currently on Week 1, with Day 1 completed.
-  // Open the teaching workspace on the next class instead of the calendar weekday.
-  const [selectedDay, setSelectedDay] = useState(2);
+  // Start on Day 1 unless the URL explicitly selects another teaching day.
+  const [selectedDay, setSelectedDay] = useState(1);
   const [closingWeek, setClosingWeek] = useState(false);
   const [weekProgressError, setWeekProgressError] = useState<string | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<
@@ -259,9 +404,25 @@ export default function AmbassadorCurriculumPage() {
     visibleToStudent: true,
   });
 
+  const selectedDayExperiences = useMemo(
+    () =>
+      data?.experiences.filter(
+        (experience) => experience.dayNumber === selectedDay,
+      ) ?? [],
+    [data, selectedDay],
+  );
+
+  const experienceCurriculumAlignment = useMemo(
+    () => getExperienceCurriculumAlignment(selectedDayExperiences),
+    [selectedDayExperiences],
+  );
+
+  const alignedCurriculumWeek =
+    experienceCurriculumAlignment?.primarySourceWeek ?? selectedWeek;
+
   const richLesson = useMemo(
-    () => richCurriculum.find((item) => item.week === selectedWeek),
-    [selectedWeek],
+    () => richCurriculum.find((item) => item.week === alignedCurriculumWeek),
+    [alignedCurriculumWeek],
   );
 
   async function readApiResponse(response: Response) {
@@ -325,6 +486,10 @@ export default function AmbassadorCurriculumPage() {
     const params = new URLSearchParams(window.location.search);
 
     const queryWeek = Number(params.get("week") || "0");
+    const queryDay = Number(params.get("day") || "0");
+    if (queryDay >= 1 && queryDay <= 5) {
+      setSelectedDay(queryDay);
+    }
     const storedWeek = Number(
       window.sessionStorage.getItem("future-ready-facilitator-week") || "0",
     );
@@ -696,138 +861,51 @@ These belong in Identity, Strengths + Skills, and Experiences + Stories in your 
       dayNumber: 3,
     },
     6: {
-      title: "Your First $45,000 Job — Life + Money Scenario",
+      title: "Professional Etiquette in Action",
       instructions: `WHAT YOU ARE DOING
 
-You have accepted your first full-time job earning $45,000 per year.
+You are practicing the small professional choices that build trust before, during, and after an interaction.
 
-Your job is to build a realistic monthly life, make financial decisions, respond when something unexpected happens, and decide what financial stability means to YOU.
+DAY 1 · FIRST IMPRESSIONS
 
-WHY THIS MATTERS
+Practice arriving prepared, introducing yourself clearly, and resetting after feedback. Complete a First Impression Reset Plan.
 
-A salary is only one part of a financial life.
+DAY 2 · PROFESSIONAL COMMUNICATION
 
-Housing, transportation, food, insurance, saving, emergencies, relationships, lifestyle choices, debt, and unexpected events all compete for the same money.
+Choose the right channel for email, phone, text, or face-to-face communication. Repair a vague message and practice listening, tone, and body language.
 
-This assignment is about decision-making — not finding one "perfect" budget.
+DAY 3 · WORKPLACE JUDGMENT
 
-PART 1 · START WITH THE JOB
+Use role-play cases involving late arrival, disagreement, mistakes, feedback, confidentiality, and phone distraction. Name the impact, take responsibility, state the next action, and give a realistic deadline.
 
-Record:
+DAY 4 · MEETINGS + NETWORKING
 
-Annual salary: $45,000
+Practice a concise introduction, useful questions, balanced participation, professional meals, and specific follow-up.
 
-Use the monthly take-home amount provided by your facilitator for this scenario.
+DAY 5 · PROFESSIONAL ETIQUETTE CHALLENGE
 
-Do NOT assume $45,000 divided by 12 is the amount you can spend each month.
-
-Write:
-
-1. Your scenario monthly take-home amount.
-2. Three expenses you think you will have every month.
-3. Three expenses young adults may forget to plan for.
-
-PART 2 · BUILD YOUR MONTHLY LIFE
-
-Using the options or figures provided by your facilitator, make decisions for:
-
-• housing
-• utilities
-• transportation
-• gas
-• auto insurance
-• phone
-• food
-• health/personal expenses
-• subscriptions
-• entertainment
-• clothing
-• saving
-• emergency fund
-• other priorities
-
-For every major choice, ask:
-
-• Is this a NEED, WANT, or FLEXIBLE choice?
-• What am I giving up by choosing this?
-• Does this fit the life I say I want?
-
-Calculate what remains after your monthly choices.
-
-PART 3 · YOUR HARDEST TRADEOFFS
-
-Choose the TWO decisions that were hardest.
-
-For each:
-
-1. What did you choose?
-2. What did you give up?
-3. Why was the choice worth it?
-4. What could make you change your decision?
-
-PART 4 · SOMETHING GOES WRONG
-
-Use the unexpected life event given by your facilitator.
-
-Examples may include:
-
-• car repair
-• medical expense
-• reduced work hours
-• required move
-• family responsibility
-• emergency travel
-• new required expense
-
-Write:
-
-1. What happened?
-2. How much does it affect your plan?
-3. What changes immediately?
-4. What do you cut, delay, reduce, or reconsider?
-5. What would have helped you prepare?
-
-Then revise your monthly plan.
-
-PART 5 · FINANCIAL STABILITY
-
-Finish these statements:
-
-Financial stability means...
-
-Money matters to me because...
-
-One financial habit I want to build is...
-
-One thing I never want money to control is...
-
-One question I still have about money is...
+Complete four stations: arrival, message, judgment, and guest interaction. Receive one specific adjustment and retry the scene.
 
 WHAT TO SUBMIT
 
 Submit:
 
-• your original monthly plan
-• your two hardest tradeoffs
-• your unexpected-event response
-• your revised plan
-• your financial-stability statement
-• one question for Brad McMillan
+• First Impression Reset Plan
+• Professional Message Planner
+• Accountability Response Script
+• Conversation + Follow-up Plan
+• Professional Etiquette Code
+• strongest evidence story
 
-PORTFOLIO
+PORTFOLIO + WEEK 9 BRIDGE
 
-Save the completed scenario and revised plan as evidence of financial decision-making and problem-solving.
+Save your strongest evidence story using Situation, Action, Result, and Meaning. Bring it to Jennifer Miller Week 9 résumé and interview preparation.
 
 CAPSTONE CONNECTION
 
-Carry forward:
+Answer: What does this professional moment reveal about who I am becoming?
 
-• one financial value
-• one life priority
-• one money habit
-• one goal or realization about the life you want to build
-
-Add these to Future Vision and Goals + Next Steps in your year-long Capstone.`,
+Save the response in your Legacy Capstone.`,
       minutes: 50,
       dayNumber: 3,
     },
@@ -847,7 +925,7 @@ Your responsibility is to arrive prepared, listen carefully, think critically, a
 
 BEFORE THE EXPERIENCE · QUESTION BUILDER
 
-Start with your Week 6 $45,000 Job scenario.
+Begin with a realistic $45,000 first-job scenario and the tradeoffs it creates.
 
 Write FIVE possible questions about topics such as:
 
@@ -1154,6 +1232,10 @@ Answer:
 3. What experience deserves more attention?
 4. What skill do you claim but do not yet prove?
 5. What would an employer probably ask you about?
+
+WEEK 6 PROFESSIONAL ETIQUETTE BRIDGE
+
+Bring your strongest Week 6 Professional Etiquette Evidence Story. Identify the preparation, communication, judgment, accountability, or relationship-building skill it proves. Use that story as one of your four entries below.
 
 PART 2 · BUILD YOUR RESUME STORY BANK
 
@@ -2409,6 +2491,41 @@ YOU KNOW WHO YOU ARE.`,
     );
   }
 
+  function loadCalendarAlignedAssignment(sourceWeek: number) {
+    const item = PREBUILT_WEEK_ASSIGNMENTS[sourceWeek];
+
+    if (!item) {
+      setSaveMessage("No linked student-work package is configured for this experience.");
+      return;
+    }
+
+    setAssignmentForm({
+      title: item.title,
+      instructions: item.instructions,
+      estimatedMinutes: item.minutes || 20,
+      requirement: sourceWeek === 15 ? "OPTIONAL" : "REQUIRED",
+      dueAt: "",
+      dayNumber: selectedDay,
+      allowOnline: sourceWeek !== 15,
+      allowPrint: sourceWeek !== 15,
+      allowUpload: sourceWeek !== 15,
+      portfolioEligible: sourceWeek !== 15,
+    });
+
+    setShowFullTools(true);
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-resource-hub")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+
+    setSaveMessage(
+      `${item.title} loaded into Week ${selectedWeek}, Day ${selectedDay} because the related experience is scheduled here. Review it, then Save Assignment when ready.`,
+    );
+  }
+
   function loadWeek4SegAssignment() {
     setAssignmentForm({
       title: "SEG Professional Visit Prep + Career Observation",
@@ -2947,7 +3064,9 @@ Your capstone response must be your own thinking and experience.`,
 
   const lesson = data.lesson;
   const delivery = data.delivery;
-  const sourceContent = lesson.content;
+  const weekSixSource = sourceLessons.find((item) => item.week === 6);
+  const sourceContent =
+    selectedWeek === 6 && weekSixSource ? weekSixSource : lesson.content;
 
   const phase = richLesson?.phase ?? lesson.module.phase ?? "Launch Ready";
 
@@ -2966,9 +3085,14 @@ Your capstone response must be your own thinking and experience.`,
   const skillsEarned = richLesson?.skillsEarned ?? [];
 
   const portfolioEvidence =
-    richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
+    selectedWeek === 6
+      ? "Professional Etiquette Evidence Story + Professional Etiquette Code"
+      : richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
 
-  const badgeEarned = richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
+  const badgeEarned =
+    selectedWeek === 6
+      ? "BUILD6™ Professional Etiquette"
+      : richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
 
   const facilitatorGuide =
     richLesson?.facilitatorGuide ??
@@ -2982,7 +3106,7 @@ Your capstone response must be your own thinking and experience.`,
     objective: string;
     activity: string;
     reflection: string;
-  }[] = [];
+  }[] = selectedWeek === 6 ? WEEK_6_PROFESSIONAL_ETIQUETTE_DAYS : [];
 
   const homework: string | null = null;
 
@@ -3280,7 +3404,7 @@ Your capstone response must be your own thinking and experience.`,
               Daily Teaching Plan
             </h2>
 
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-600">
               Select the class day, then teach from this one view. The plan keeps the goal, execution, student work, evidence, materials, and optional enhancements together.
             </p>
           </div>
@@ -3299,9 +3423,9 @@ Your capstone response must be your own thinking and experience.`,
             const dailyLesson = dailyLessons[day - 1];
             const rhythm = ambassadorWeeklyRhythm[day - 1];
 
-            const taskCount = data.planTasks.filter(
-              (task) => task.dayNumber === day
-            ).length;
+            const taskCount =
+              data.planTasks.filter((task) => task.dayNumber === day).length +
+              data.experiences.filter((experience) => experience.dayNumber === day).length;
 
             return (
               <button
@@ -3314,15 +3438,15 @@ Your capstone response must be your own thinking and experience.`,
                     : "border-slate-200 bg-slate-50 hover:border-[#F2B705]"
                 }`}
               >
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#4B2265]">
+                <p className="text-sm font-black uppercase tracking-[0.12em] text-[#4B2265]">
                   Day {day}
                 </p>
 
-                <p className="mt-2 font-black text-[#0D1B3D]">
+                <p className="mt-2 text-lg font-black leading-6 text-[#0D1B3D]">
                   {dailyLesson?.title || rhythm?.title || `Class Day ${day}`}
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-slate-500">
+                <p className="mt-3 text-base leading-6 text-slate-600">
                   {taskCount > 0
                     ? `${taskCount} planned ${taskCount === 1 ? "item" : "items"}`
                     : rhythm?.purpose || "Build this class day"}
@@ -3393,14 +3517,18 @@ Your capstone response must be your own thinking and experience.`,
             );
           });
 
-          const experiences = dayTasks.filter((task) => {
+          const experienceTasks = dayTasks.filter((task) => {
             const type = task.taskType.toLowerCase();
 
             return (
               type.includes("guest") ||
-              type.includes("field")
+              type.includes("field") ||
+              type.includes("experience") ||
+              type.includes("speaker")
             );
           });
+
+          const calendarExperiences = selectedDayExperiences;
 
           const totalMinutes = dayTasks.reduce(
             (sum, task) => sum + task.durationMinutes,
@@ -3416,17 +3544,23 @@ Your capstone response must be your own thinking and experience.`,
                       WEEK {selectedWeek} · DAY {selectedDay}
                     </p>
 
-                    <h3 className="mt-2 text-3xl font-black">
+                    <h3 className="mt-2 text-4xl font-black leading-tight">
                       {dailyLesson?.title ||
                         rhythm?.title ||
                         lesson.title}
                     </h3>
 
-                    <p className="mt-3 max-w-3xl leading-7 text-slate-200">
-                      {dailyLesson?.objective ||
-                        rhythm?.purpose ||
-                        objective}
+                    <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-100">
+                      {experienceCurriculumAlignment
+                        ? `Calendar-aligned preparation and application for ${experienceCurriculumAlignment.label}.`
+                        : dailyLesson?.objective || rhythm?.purpose || objective}
                     </p>
+
+                    {experienceCurriculumAlignment ? (
+                      <div className="mt-4 inline-flex rounded-xl border border-[#F2B705]/60 bg-[#F2B705]/15 px-4 py-3 text-sm font-black text-[#FFF4C5]">
+                        CALENDAR DRIVES THIS WEEK · Related BUILD6 curriculum is aligned to the scheduled experience date.
+                      </div>
+                    ) : null}
                   </div>
 
                   <span className="w-fit rounded-full bg-white/10 px-4 py-2 text-xs font-black">
@@ -3835,7 +3969,7 @@ Your capstone response must be your own thinking and experience.`,
                                     {asset.label}
                                   </p>
 
-                                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                                  <p className="mt-1 text-[11px] leading-4 text-slate-500">
                                     {asset.description}
                                   </p>
                                 </div>
@@ -3940,7 +4074,7 @@ Your capstone response must be your own thinking and experience.`,
                     </div>
                   )}
 
-                  <div className="mb-5 rounded-2xl border-2 border-[#00A6A6]/30 bg-[#F7FFFF] p-4">
+                  <div className="mb-4 rounded-2xl border-2 border-[#00A6A6]/30 bg-[#F7FFFF] p-3.5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#007C7C]">
@@ -3957,10 +4091,10 @@ Your capstone response must be your own thinking and experience.`,
                                 : "Professional Experience Toolkit"}
                         </p>
 
-                        <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">
+                        <p className="mt-1 max-w-4xl text-xs leading-5 text-slate-600">
                           {selectedWeek === 4
                             ? "Use the Week 4 SEG Systems student work across preparation, the workplace experience and Friday reflection. The reusable experience toolkit remains preserved for other professional experiences."
-                            : "Open or download the protected student materials you need. Assigning a resource uses the existing Future Ready™ assignment system and does not replace the weekly lesson."}
+                            : "Open or download the protected student materials you need. Assigning a resource uses the existing BUILD6™ assignment system and does not replace the weekly lesson."}
                         </p>
                       </div>
 
@@ -3983,7 +4117,7 @@ Your capstone response must be your own thinking and experience.`,
                       </div>
                     )}
 
-                    <div className="mt-4 grid gap-3 md:grid-cols-2">
+                    <div className="mt-3 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                       {packagedResources
                         .filter(
                           (resource) =>
@@ -4016,7 +4150,7 @@ Your capstone response must be your own thinking and experience.`,
                           return (
                             <div
                               key={resource.id}
-                              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
@@ -4042,7 +4176,7 @@ Your capstone response must be your own thinking and experience.`,
                                 </span>
                               </div>
 
-                              <div className="mt-4 flex flex-wrap gap-2">
+                              <div className="mt-3 flex flex-wrap gap-1.5">
                                 <a
                                   href={openUrl}
                                   target="_blank"
@@ -4408,16 +4542,93 @@ Your capstone response must be your own thinking and experience.`,
                   eyebrow="8 · EXPERIENCE"
                   title="Speaker / Trip / Experience"
                 >
-                  {experiences.length > 0 ? (
+                  {experienceCurriculumAlignment ? (
+                    <div className="mb-4 rounded-xl border-2 border-[#F2B705] bg-[#FFF9DF] p-4">
+                      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#725500]">
+                        CALENDAR-ALIGNED LESSON FLOW
+                      </p>
+                      <p className="mt-1 font-black text-[#0D1B3D]">
+                        {experienceCurriculumAlignment.label}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        This experience is scheduled in Week {selectedWeek}, Day {selectedDay}. BUILD6 brings the related preparation, student work, and follow-up into this teaching week instead of leaving it attached to an old fixed week number.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {experienceCurriculumAlignment.assignmentSourceWeeks.map(
+                          (sourceWeek) => {
+                            const item = PREBUILT_WEEK_ASSIGNMENTS[sourceWeek];
+                            if (!item) return null;
+                            return (
+                              <button
+                                key={sourceWeek}
+                                type="button"
+                                onClick={() => loadCalendarAlignedAssignment(sourceWeek)}
+                                className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-xs font-black text-white"
+                              >
+                                LOAD {item.title.toUpperCase()} →
+                              </button>
+                            );
+                          },
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {calendarExperiences.length > 0 || experienceTasks.length > 0 ? (
                     <div className="space-y-3">
-                      {experiences.map((task) => (
+                      {calendarExperiences.map((experience) => (
+                        <div
+                          key={`calendar-${experience.id}`}
+                          className="rounded-xl border border-[#00A6A6]/30 bg-[#F7FFFF] p-3"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#007C7C]">
+                                CALENDAR · {experience.experienceType.replaceAll("_", " ")}
+                              </p>
+                              <p className="mt-1 font-black text-[#0D1B3D]">
+                                {experience.title}
+                              </p>
+                            </div>
+                            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-[#007C7C]">
+                              WEEK {experience.weekNumber} · DAY {experience.dayNumber}
+                            </span>
+                          </div>
+
+                          {experience.eventDate ? (
+                            <p className="mt-2 text-xs font-bold text-slate-600">
+                              {new Date(experience.eventDate).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                                timeZone: "UTC",
+                              })}
+                              {experience.startTime ? ` · ${experience.startTime}` : ""}
+                              {experience.endTime ? `–${experience.endTime}` : ""}
+                              {experience.siteName ? ` · ${experience.siteName}` : ""}
+                            </p>
+                          ) : null}
+
+                          {experience.description ? (
+                            <p className="mt-2 text-sm leading-6 text-slate-700">
+                              {experience.description}
+                            </p>
+                          ) : null}
+
+                          {experience.preTripPreparation ? (
+                            <p className="mt-2 text-xs font-semibold leading-5 text-slate-600">
+                              <strong>Prep:</strong> {experience.preTripPreparation}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))}
+
+                      {experienceTasks.map((task) => (
                         <div key={task.id}>
                           <p className="font-black text-[#0D1B3D]">
                             {task.title}
                           </p>
-                          <p className="mt-1">
-                            {task.instructions}
-                          </p>
+                          <p className="mt-1">{task.instructions}</p>
                         </div>
                       ))}
                     </div>
@@ -4430,10 +4641,10 @@ Your capstone response must be your own thinking and experience.`,
                   )}
 
                   <Link
-                    href="/ambassador/planner"
+                    href="/ambassador/calendar"
                     className="mt-4 inline-flex rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
-                    Add / Manage Experience →
+                    Add / Manage Calendar Experience →
                   </Link>
                 </DailyPilotCard>
               </div>
@@ -6054,15 +6265,15 @@ function DailyPilotCard({
 }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#4B2265]">
+      <p className="text-sm font-black uppercase tracking-[0.14em] text-[#4B2265]">
         {eyebrow}
       </p>
 
-      <h4 className="mt-2 text-lg font-black text-[#0D1B3D]">
+      <h4 className="mt-3 text-2xl font-black text-[#0D1B3D]">
         {title}
       </h4>
 
-      <div className="mt-4 text-sm leading-6 text-slate-600">
+      <div className="mt-5 text-lg leading-8 text-slate-700">
         {children}
       </div>
     </article>
