@@ -1,4 +1,5 @@
 import PublicFooter from "./components/PublicFooter";
+import "./approved-public-pages.css";
 type Stage = {
   number: string;
   title: string;
