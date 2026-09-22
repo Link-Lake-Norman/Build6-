@@ -1,3 +1,4 @@
+import PublicFooter from "./components/PublicFooter";
 type Stage = {
   number: string;
   title: string;
@@ -574,33 +575,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
         </div>
       </section>
 
-      <footer className="build6-footer">
-        <div className="footer-inner">
-          <div className="footer-identity">
-            <div className="footer-logo">
-              BUILD<span>6</span>
-              <sup>™</sup>
-            </div>
-            <div className="footer-tagline">BUILD WHAT’S NEXT.</div>
-          </div>
-
-          <div className="footer-right">
-            <p className="footer-copyright">
-              © 2026 BUILD6™. All Rights Reserved.
-            </p>
-            <p className="footer-protection">
-              Proprietary brand, platform, curriculum, research, data,
-              methodologies, designs &amp; program materials.
-            </p>
-            <div className="footer-links">
-              <span>IP PROTECTION</span>
-              <span>TERMS</span>
-              <span>PRIVACY</span>
-              <span>LICENSING</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </main>
   );
 }
