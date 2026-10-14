@@ -1,5 +1,5 @@
 export const student = {
-  name: "Future Ready Student",
+  name: "BUILD6 Student",
 
   currentPhase: "DISCOVER™",
 

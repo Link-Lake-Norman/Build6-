@@ -1,6 +1,6 @@
 export const readiness = {
   student: {
-    name: "Future Ready Student",
+    name: "BUILD6 Student",
     readinessScore: 65,
 
     careerInterests: [

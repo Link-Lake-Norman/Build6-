@@ -65,7 +65,7 @@ export default function StudentWeekOneFrontDoor({
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white p-4">
             <div className="font-black text-[#0D1B3D]">
-              My Future Ready™ Story
+              My BUILD6™ Story
             </div>
 
             <p className="mt-2 text-sm leading-6 text-slate-600">

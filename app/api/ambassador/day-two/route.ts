@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 
 const DAY_TWO_PROMPT =
-  "DAY 2 · WHERE I'M STARTING · Right now, what do you know about yourself, what are you still figuring out, and what is one thing you want Future Ready™ to help you accomplish?";
+  "DAY 2 · WHERE I'M STARTING · Right now, what do you know about yourself, what are you still figuring out, and what is one thing you want BUILD6™ to help you accomplish?";
 
 function validStudentId(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;

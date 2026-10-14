@@ -311,7 +311,7 @@ export default async function FacilitatorBadgesPage() {
       </section>
 
       <p className="text-sm font-bold text-slate-500">
-        This page reads from the existing Future Ready™ Badge and
+        This page reads from the existing BUILD6™ Badge and
         BadgeAward records. Student Passport badge records remain the
         source of truth.
       </p>

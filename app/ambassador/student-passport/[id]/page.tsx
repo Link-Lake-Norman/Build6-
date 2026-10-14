@@ -415,13 +415,13 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-              Future Ready™ Student Passport
+              BUILD6™ Student Passport
             </p>
 
             <h1 className="mt-3 text-4xl font-black">{studentName}</h1>
 
             <p className="mt-3 text-lg text-slate-200">
-              {student.school?.name ?? "Future Ready™"}
+              {student.school?.name ?? "BUILD6™"}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
@@ -446,13 +446,13 @@ export default async function StudentPassportPage({ params }: PageProps) {
               {Math.round(Number(student.readinessScore))}%
             </p>
 
-            <p className="mt-2 text-sm text-slate-300">Future Ready™ Index</p>
+            <p className="mt-2 text-sm text-slate-300">BUILD6™ Index</p>
           </div>
         </div>
 
         <div className="border-t border-white/10 bg-white/5 px-8 py-5">
           <p className="text-sm font-semibold text-slate-200">
-            Discover Purpose. Build Skills. Launch Your Future.
+            Real skills. Real experiences. Real-world readiness.
           </p>
         </div>
       </section>
@@ -467,13 +467,13 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
                 {isStudentView
-                  ? "Complete Your Future Ready™ Assessment"
-                  : "Future Ready™ Assessment Not Completed"}
+                  ? "Complete Your BUILD6™ Assessment"
+                  : "BUILD6™ Assessment Not Completed"}
               </h2>
 
               <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
                 {isStudentView
-                  ? "Before you begin your Future Ready™ journey, complete your starting assessment. This gives you a baseline of where you are today across the skills you will build throughout the program."
+                  ? "Before you begin your BUILD6™ journey, complete your starting assessment. This gives you a baseline of where you are today across the skills you will build throughout the program."
                   : "This student has not yet completed the required starting assessment. Their readiness results will appear here automatically after they submit it."}
               </p>
 
@@ -540,8 +540,8 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
               {isStudentView
-                ? "My Future Ready™ Story"
-                : "Future Ready™ Capstone"}
+                ? "My BUILD6™ Story"
+                : "BUILD6™ Capstone"}
             </h2>
 
             <p className="mt-2 text-lg font-bold text-[#4B2265]">
@@ -550,8 +550,8 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
               {isStudentView
-                ? "Your Capstone is the reflection book you will build throughout Future Ready™. It brings together your identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction into the story of who you are becoming."
-                : "This student's Capstone develops throughout Future Ready™ and brings together identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction."}
+                ? "Your Capstone is the reflection book you will build throughout BUILD6™. It brings together your identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction into the story of who you are becoming."
+                : "This student's Capstone develops throughout BUILD6™ and brings together identity, experiences, skills, reflections, challenges, accomplishments, relationships, career exploration, and future direction."}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
@@ -596,7 +596,7 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
               <p className="mt-4 text-lg leading-8 text-slate-600">
                 {currentLesson.summary ??
-                  "This lesson is available in your Future Ready™ journey."}
+                  "This lesson is available in your BUILD6™ journey."}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -632,7 +632,7 @@ export default async function StudentPassportPage({ params }: PageProps) {
           </p>
 
           <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-            My Future Ready™ Record
+            My BUILD6™ Record
           </h2>
 
           <div className="mt-6 space-y-3">
@@ -663,7 +663,7 @@ export default async function StudentPassportPage({ params }: PageProps) {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F2B705]">
-              Future Ready™ Journey
+              BUILD6™ Journey
             </p>
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
@@ -777,7 +777,7 @@ export default async function StudentPassportPage({ params }: PageProps) {
 
                     <p className="mt-1 text-sm text-slate-600">
                       {award.badge.description ??
-                        "Future Ready™ milestone completed."}
+                        "BUILD6™ milestone completed."}
                     </p>
                   </div>
                 </div>
@@ -828,12 +828,12 @@ export default async function StudentPassportPage({ params }: PageProps) {
           </p>
 
           <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
-            Future Ready™ Record
+            BUILD6™ Record
           </h2>
 
           <div className="mt-6 space-y-4">
             <ReadinessItem
-              label="Future Ready Profile"
+              label="BUILD6 Profile"
               complete={student.profileComplete}
             />
 

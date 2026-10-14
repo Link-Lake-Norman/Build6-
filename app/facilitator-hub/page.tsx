@@ -4,7 +4,7 @@ export default function FacilitatorHubPage() {
     {
       title: "Weekly Lessons",
       description:
-        "Access the Future Ready™ curriculum and weekly activities.",
+        "Access the BUILD6™ curriculum and weekly activities.",
     },
     {
       title: "Student Progress",
@@ -29,12 +29,12 @@ export default function FacilitatorHubPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Facilitator Hub
+          BUILD6™ Facilitator Hub
         </h1>
 
         <p>
           Everything educators and program leaders need
-          to deliver the Future Ready™ experience.
+          to deliver the BUILD6™ experience.
         </p>
 
       </section>

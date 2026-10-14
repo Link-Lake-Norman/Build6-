@@ -3,9 +3,9 @@ export const curriculum = [
   {
     week: 1,
     phase: "Discover Purpose",
-    title: "Future Ready Identity: Who Am I Beyond My Role?",
+    title: "BUILD6 Identity: Who Am I Beyond My Role?",
     objective:
-      "Students identify their strengths, experiences, values, and transferable skills to understand their unique Future Ready identity.",
+      "Students identify their strengths, experiences, values, and transferable skills to understand their unique BUILD6 identity.",
 
     facilitatorGuide:
       "Help students understand that their future is built from their experiences, strengths, interests, and choices. Emphasize that every student has valuable skills they can transfer into education, careers, and life.",
@@ -18,7 +18,7 @@ export const curriculum = [
     ],
 
     studentActivity:
-      "Complete the Future Ready Identity Map including strengths, interests, values, experiences, and future goals.",
+      "Complete the BUILD6 Identity Map including strengths, interests, values, experiences, and future goals.",
 
     workplaceConnection:
       "Employers look for self-awareness, communication, teamwork, reliability, and problem-solving skills.",
@@ -30,7 +30,7 @@ export const curriculum = [
     ],
 
     portfolioEvidence:
-      "Future Ready Identity Map",
+      "BUILD6 Identity Map",
 
     badgeEarned:
       "Self Discovery Badge"
@@ -93,7 +93,7 @@ export const curriculum = [
     ],
 
     studentActivity:
-      "Create a Future Ready Personal Brand Statement.",
+      "Create a BUILD6™ Personal Brand Statement.",
 
     workplaceConnection:
       "Employers evaluate professionalism, communication, and authenticity.",

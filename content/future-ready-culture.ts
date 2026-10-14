@@ -136,4 +136,4 @@ export const FUTURE_READY_TAKEAWAYS = [
 ] as const;
 
 export const FUTURE_READY_CULTURE_PROMISE =
-  "Every Future Ready™ session includes something students do, something students practice, and something useful students leave with.";
+  "Every BUILD6™ session includes something students do, something students practice, and something useful students leave with.";

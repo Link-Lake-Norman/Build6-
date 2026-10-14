@@ -1,0 +1,2 @@
+import "./toolkits.css";
+export default function Layout({children}:{children:React.ReactNode}) { return <div className="b6kit"><div className="wrap"><a href="/" aria-label="BUILD6 home"><img className="brand" src="/brand/build6-horizontal-lockup.png" alt="BUILD6 — Build What's Next" /></a><nav aria-label="Toolkit navigation"><a href="/toolkits">Facilitator Toolkits</a><a href="/my-toolkits">My Toolkits</a><a href="/toolkits/policies">License & Policies</a></nav>{children}</div></div>; }

@@ -217,7 +217,7 @@ export default function ReflectionJournalPage() {
         </Link>
 
         <p className="mt-7 text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Reflection Journal
+          BUILD6™ Reflection Journal
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -227,7 +227,7 @@ export default function ReflectionJournalPage() {
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
           Reflect on lessons, experiences,
           skills, goals, and progress
-          throughout your Future Ready™
+          throughout your BUILD6™
           journey.
         </p>
       </header>

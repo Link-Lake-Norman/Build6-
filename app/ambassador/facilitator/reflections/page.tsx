@@ -324,7 +324,7 @@ export default async function FacilitatorReflectionsPage() {
       </section>
 
       <p className="text-sm font-bold text-slate-500">
-        Reflection records are connected to the existing Future Ready™
+        Reflection records are connected to the existing BUILD6™
         student reflection system. This workspace does not create duplicate
         student records.
       </p>

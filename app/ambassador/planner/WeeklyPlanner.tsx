@@ -1,5 +1,8 @@
 "use client";
 
+import { readBuild6UsedCaseIds, rememberBuild6Cases } from "@/content/build6-case-ledger";
+import Build6ActivityPresentation from "@/components/ambassador/Build6ActivityPresentation";
+
 import { lessons as sourceLessons } from "@/content/lessons";
 
 
@@ -54,7 +57,7 @@ const WEEK_RESOURCES: WeekResource[] = [
     format: "PPTX",
     fileSuffix: "Slides.pptx",
     description:
-      "Classroom presentation for the week's Future Ready™ learning experience.",
+      "Classroom presentation for the week's BUILD6™ learning experience.",
   },
   {
     title: "Activity / Role Play / Improv / Case Kit",
@@ -108,7 +111,7 @@ const WEEK_RESOURCES: WeekResource[] = [
     format: "PDF",
     fileSuffix: "Portfolio-Artifact.pdf",
     description:
-      "Print-ready weekly evidence template for the Future Ready™ Passport and portfolio.",
+      "Print-ready weekly evidence template for the BUILD6™ Passport and portfolio.",
   },
   {
     title: "Editable Portfolio Artifact",
@@ -391,7 +394,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
     } catch {
       throw new Error(
         response.ok
-          ? "Future Ready™ received an unexpected server response. Please refresh and try again."
+          ? "BUILD6™ received an unexpected server response. Please refresh and try again."
           : `Server request failed (${response.status}). Please sign in again or refresh the page.`
       );
     }
@@ -532,7 +535,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
   const weekCode = String(week).padStart(2, "0");
 
-  const packagedDownloadMaterialsAvailable = week >= 1 && week <= 5;
+  const packagedDownloadMaterialsAvailable = (week >= 1 && week <= 5) || (week >= 9 && week <= 12);
   const protectedWeeklyStudentWorkAvailable =
     (week >= 5 && week <= 14) || week === 16;
   const materialsAvailable =
@@ -642,6 +645,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
     const variation = generationVariation + 1;
 
+    try {
     const result = generateActivityOptions({
       week,
       day: dayLabels[dayNumber],
@@ -651,19 +655,24 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
           ? String(generatorLesson.objective)
           : generatorLesson.focus,
       activityType: selectedAIType,
-      audience: "Future Ready™ students",
+      audience: "BUILD6™ students",
       variation,
 
+      excludedCaseIds: readBuild6UsedCaseIds(),
       existingTaskTitles: dayTasks.map((task) => task.title),
 
-      availableMinutes: Math.max(15, Math.min(35, 50 - totalMinutes)),
+      availableMinutes: Math.max(10, Math.min(15, 50 - totalMinutes)),
 
       classSize: 20,
     });
 
     setGenerationVariation(variation);
-
+    if (result[0]) rememberBuild6Cases(result[0]);
     setGeneratedActivity(result[0] ?? null);
+    setError("");
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Unable to generate a unique case.");
+    }
   }
 
   async function addAIToPlan() {
@@ -680,7 +689,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       .join("\n");
 
     const instructions = [
-      "FUTURE READY™ CLASSROOM ACTIVITY",
+      "BUILD6™ CLASSROOM ACTIVITY",
       "",
       `Objective: ${generatedActivity.learningObjective}`,
       "",
@@ -707,6 +716,16 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
       "OPENING CONVERSATION",
       bullets(generatedActivity.openingConversation),
       "",
+      "FULL WORKPLACE CASE CARDS",
+      ...(generatedActivity.presentationCases ?? []).flatMap((item, index) => [
+        `GROUP ${index + 1}: ${item.workplace} (${item.industry})`,
+        `SITUATION: ${item.situation}`,
+        `YOUR JOB: ${item.tasks.join("; ")}`,
+        `REMINDER: ${item.reminder}`,
+        `TWIST: ${item.twist}`,
+        `DECISION QUESTION: ${item.question}`,
+        "",
+      ]),
       "FACILITATOR SCRIPT",
       list(generatedActivity.facilitatorScript),
       "",
@@ -1039,7 +1058,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F2B705]">
-                Future Ready™ Weekly Planning Studio
+                BUILD6™ Weekly Planning Studio
               </p>
 
               <h1 className="mt-3 text-4xl font-black md:text-5xl">
@@ -1165,7 +1184,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                   </p>
 
                   <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-                    Core Future Ready™ Lesson
+                    Core BUILD6™ Lesson
                   </h2>
 
                   <p className="mt-2 text-sm font-bold text-slate-500">
@@ -1283,7 +1302,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                 Customize {dayLabels[dayNumber]} for this cohort. Add
                 traditions, AI activities, field experiences, guest
                 professionals, tangible takeaways, and your own agenda items
-                without changing the protected Future Ready™ curriculum above.
+                without changing the protected BUILD6™ curriculum above.
               </p>
             </section>
 
@@ -1444,7 +1463,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
               <div className="space-y-7">
                 <section className="rounded-3xl border-2 border-[#F2B705] bg-[#FFF9DF] p-6">
                   <p className="text-xs font-black uppercase tracking-wider text-[#725500]">
-                    Future Ready™ Signature
+                    BUILD6™ Signature
                   </p>
 
                   <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
@@ -2184,7 +2203,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
                   <p className="mt-3 max-w-3xl leading-7 text-slate-600">
                     Everything needed to prepare, teach, print, distribute,
-                    assess, and capture student evidence for this Future Ready™
+                    assess, and capture student evidence for this BUILD6™
                     week.
                   </p>
                 </div>
@@ -2316,7 +2335,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
 
             <section className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-                Future Ready™ Culture
+                BUILD6™ Culture
               </p>
 
               <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
@@ -2370,7 +2389,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
               </h2>
 
               <p className="mt-3 leading-7 text-slate-600">
-                Generate an activity tied to this week's Future Ready™ skill,
+                Generate an activity tied to this week's BUILD6™ skill,
                 then add it directly to the agenda.
               </p>
 
@@ -2402,6 +2421,8 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
               </button>
 
               {generatedActivity ? (
+                <>
+                <Build6ActivityPresentation activity={generatedActivity} week={week} day={dayLabels[dayNumber]} />
                 <article className="mt-6 overflow-hidden rounded-3xl border-2 border-[#4B2265] bg-white">
                   <div className="bg-[#4B2265] p-6 text-white">
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -2738,6 +2759,7 @@ export default function WeeklyPlanner({ defaultCohortCode, role }: Props) {
                     </div>
                   </div>
                 </article>
+                </>
               ) : null}
             </section>
           </>

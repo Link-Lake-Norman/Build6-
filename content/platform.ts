@@ -64,7 +64,7 @@ export const facilitators: Facilitator[] = [
     id: "facilitator-001",
     name: "Coach Jones",
     email: "coach.jones@ambassadorchristian.org",
-    title: "Future Ready™ Facilitator",
+    title: "BUILD6™ Facilitator",
     cohort: "Ambassador 2026",
     status: "Active",
   },
@@ -87,7 +87,7 @@ export const students: Student[] = Array.from(
       status: "Active",
       careerInterests: ["Business", "Healthcare", "Technology"],
       skills: ["Communication", "Teamwork", "Professionalism"],
-      badges: ["Future Ready Explorer"],
+      badges: ["BUILD6 Explorer"],
     };
   },
 );

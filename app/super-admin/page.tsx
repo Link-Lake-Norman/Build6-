@@ -20,11 +20,11 @@ export default function SuperAdminPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Super Admin Command Center
+          BUILD6™ Super Admin Command Center
         </h1>
 
         <p>
-          Manage the Future Ready™ ecosystem,
+          Manage the BUILD6™ ecosystem,
           partners, programs, and platform growth.
         </p>
 

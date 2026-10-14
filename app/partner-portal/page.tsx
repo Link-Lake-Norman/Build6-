@@ -12,7 +12,7 @@ export default function PartnerPortalPage() {
     <main>
 
       <SectionHeader
-        title="Future Ready™ Partner Portal"
+        title="BUILD6™ Partner Portal"
         description="Connect programs, students, employers, and community impact."
       />
 
@@ -118,7 +118,7 @@ export default function PartnerPortalPage() {
             </h2>
 
             <p>
-              Measure Future Ready™ outcomes.
+              Measure BUILD6™ outcomes.
             </p>
 
           </Card>

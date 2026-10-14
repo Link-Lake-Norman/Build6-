@@ -102,7 +102,7 @@ function serializeWorkspace(
   preservedPriorReflection: string,
 ) {
   const humanReadable: string[] = [
-    `Future Ready™ · Week ${workspace.week}`,
+    `BUILD6™ · Week ${workspace.week}`,
     workspace.title,
     workspace.subtitle,
     "",
@@ -350,7 +350,7 @@ export default function StudentWeeklyWorkspace({
           studentId,
           week: weekNumber,
           prompt: workspace
-            ? `Future Ready™ Week ${weekNumber} Student Workspace · ${workspace.title}`
+            ? `BUILD6™ Week ${weekNumber} Student Workspace · ${workspace.title}`
             : reflectionPrompt,
           response: responseText,
           submit,
@@ -499,7 +499,7 @@ export default function StudentWeeklyWorkspace({
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-              Future Ready™ · Week {weekNumber}
+              BUILD6™ · Week {weekNumber}
             </p>
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">

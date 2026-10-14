@@ -11,11 +11,11 @@ export default function DashboardPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Platform Dashboard
+          BUILD6™ Platform Dashboard
         </h1>
 
         <p>
-          Choose your role and access your Future Ready ecosystem.
+          Choose your role and access your BUILD6 ecosystem.
         </p>
 
       </section>

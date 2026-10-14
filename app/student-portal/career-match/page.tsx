@@ -10,7 +10,7 @@ export default function CareerMatchPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Career Match
+          BUILD6™ Career Match
         </h1>
 
         <p>

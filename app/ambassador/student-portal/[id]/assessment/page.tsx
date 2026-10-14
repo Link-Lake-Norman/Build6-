@@ -58,7 +58,7 @@ export default async function DayOneAssessmentPage({
   }
 
   if (student.readinessProfile?.completedAt) {
-    redirect(`/ambassador/student-portal/${student.id}`);
+    redirect(`/ambassador/student-portal/${student.id}/career-pathways`);
   }
 
   const studentName =

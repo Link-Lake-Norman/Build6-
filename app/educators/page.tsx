@@ -1,3 +1,4 @@
+import SponsorBanner from "../components/SponsorBanner";
 import "../approved-public-pages.css";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
@@ -7,21 +8,19 @@ export default function EducatorsPage() {
   return (
     <main className="audience-page">
       <SiteHeader />
-      <section className="audience-hero audience-hero-blue">
+      <section className="audience-hero audience-hero-blue b6-visual-hero b6-visual-educators">
         
 
         <div className="audience-hero-content">
-          <p className="eyebrow">FOR EDUCATORS</p>
+          <p className="eyebrow">SCHOOLS + STUDENTS</p>
 
           <h1>
-            BRING THE REAL WORLD
-            <span> INTO LEARNING.</span>
+            BUILD CONFIDENCE FOR WHAT
+            <span> COMES NEXT.</span>
           </h1>
 
           <p className="audience-lead">
-            BUILD6™ gives educators a structured way to help students develop
-            confidence, skills, relationships, career awareness, and real-world
-            experience—without asking teachers to become workforce experts.
+            BUILD6™ connects career and life readiness with applied learning and real-world relationships. Students discover their strengths, develop communication and leadership, build financial and AI literacy, explore careers and prepare for opportunities beyond graduation.
           </p>
 
           <div className="audience-hero-actions">
@@ -88,6 +87,7 @@ export default function EducatorsPage() {
           Build <strong>confident, connected, capable students.</strong>
         </h2>
       </section>
+      <SponsorBanner />
       <PublicFooter />
     </main>
   );

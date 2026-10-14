@@ -4631,3 +4631,50 @@ textarea {
 /* BUILD6 PUBLIC ASSESSMENT — 2026-09-21 */
 .hero-assessment-action{margin-top:24px}.audience-hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:24px}.audience-button-secondary{background:transparent!important;color:#fff!important;border:2px solid rgba(255,255,255,.72)!important}
 .b6-public-assessment{background:#f5f7f9;padding:42px 5% 72px;color:#0b3b60}.b6-assessment-start,.b6-question-group,.b6-assessment-profile,.b6-public-assessment-result{max-width:1100px;margin:0 auto 28px;background:#fff;border:1px solid #dce4e8;border-radius:28px;padding:clamp(24px,4vw,48px);box-shadow:0 10px 30px rgba(11,59,96,.07)}.b6-assessment-start{background:#0b3b60;color:#fff;border-top:6px solid #f4b942}.b6-assessment-start h1,.b6-public-assessment-result h1{font-size:clamp(36px,5vw,62px);line-height:1.02}.b6-question{padding:22px 0;border-top:1px solid #e5eaed}.b6-question p{font-size:18px;line-height:1.55}.b6-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.b6-scale button{min-height:74px;border:1px solid #cbd7dc;border-radius:14px;background:#fff;color:#0b3b60;padding:10px 8px;cursor:pointer}.b6-scale button strong,.b6-scale button span{display:block}.b6-scale button.selected{background:#f4b942;border-color:#f4b942}.b6-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.b6-form-grid label{font-weight:800}.b6-form-grid label.wide{grid-column:1/-1}.b6-form-grid input,.b6-form-grid select{width:100%;box-sizing:border-box;margin-top:7px;min-height:48px;border:1px solid #b9c8cf;border-radius:10px;padding:10px 12px;font:inherit;background:#fff}.b6-consent{display:flex;align-items:flex-start;gap:12px;margin:24px 0;line-height:1.5}.b6-submit-assessment{border:0;border-radius:10px;background:#f4b942;color:#082d49;font-weight:950;padding:16px 24px;font-size:16px;cursor:pointer}.b6-assessment-error{color:#a61b1b;font-weight:800}.b6-result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}.b6-result-grid article{border:1px solid #dce4e8;border-radius:16px;padding:20px}.b6-result-grid strong{display:block;font-size:30px;color:#00a6a6}@media(max-width:760px){.b6-scale{gap:5px}.b6-scale button span{display:none}.b6-form-grid,.b6-result-grid{grid-template-columns:1fr}.b6-form-grid label.wide{grid-column:auto}}
+
+/* BUILD6 PUBLIC VISUAL PHASE — MARKETING ONLY */
+/* Only approved public marketing surfaces. Homepage text sizes deliberately unchanged. */
+.b6-home-sponsor-feature{display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%);background:#092b43;color:#fff;border-block:9px solid #e7b94e;min-height:400px;overflow:hidden}
+.b6-home-sponsor-photo,.b6-public-sponsor-photo{background-image:url('/images/build6-public-visual/sponsor-hero.png');background-size:cover;background-position:45% center;min-height:310px}
+.b6-home-sponsor-copy{padding:clamp(35px,5vw,75px);align-self:center}.b6-home-sponsor-kicker,.b6-public-sponsor-kicker{color:#f4bf53;letter-spacing:.17em;font-weight:900;font-size:15px;margin:0 0 16px}
+.b6-home-sponsor-copy h2{font-size:clamp(38px,4.3vw,66px);line-height:1.08;margin:0 0 22px;font-weight:900}.b6-home-sponsor-copy h2 span{color:#f4bf53}.b6-home-sponsor-copy>p:not(.b6-home-sponsor-kicker){font-size:clamp(20px,1.7vw,25px);line-height:1.5;max-width:700px}.b6-home-sponsor-links{display:flex;gap:15px;flex-wrap:wrap;margin-top:27px}.b6-home-sponsor-links a,.b6-public-sponsor-copy a{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:15px 24px;background:#f0bd50;color:#08283d;font-size:16px;font-weight:900;border-radius:5px}.b6-home-sponsor-links a+a{background:transparent;color:white;border:2px solid #e6f1f5}
+.b6-public-sponsor-banner{background:#092b43;color:#fff;border-top:7px solid #e9b94d}.b6-public-sponsor-banner-inner{display:grid;grid-template-columns:minmax(0,35%) minmax(0,65%);max-width:1500px;margin:auto}.b6-public-sponsor-copy{padding:clamp(32px,4vw,64px)}.b6-public-sponsor-copy h2{font-size:clamp(38px,4vw,58px);line-height:1.1;margin:0 0 18px}.b6-public-sponsor-copy>p:not(.b6-public-sponsor-kicker){font-size:clamp(21px,2vw,26px);line-height:1.5;max-width:760px;margin:0 0 25px}
+/* Audience hero imagery appears on right, with navy readable text on left. */
+.b6-audience-hero.b6-visual-hero,.audience-hero.b6-visual-hero,.about-hero.b6-visual-hero{position:relative;isolation:isolate;background:#0b2b43!important;overflow:hidden;min-height:530px;display:flex;align-items:center}
+.b6-visual-hero::before{content:"";position:absolute;inset:0 0 0 52%;z-index:-1;background-image:var(--b6-hero-image);background-size:cover;background-position:center}
+.b6-visual-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#08253c 0%,#0b2d46 39%,rgba(9,42,65,.86) 55%,rgba(9,42,65,.06) 83%);border:0;border-radius:0;width:auto;height:auto;right:0;bottom:0}
+.b6-visual-schools{--b6-hero-image:url('/images/build6-public-visual/sponsor-option-5.jpg')}.b6-visual-athletes{--b6-hero-image:url('/images/build6-athletics-team-approved.png')}.b6-visual-workforce{--b6-hero-image:url('/images/build6-public-visual/sponsor-option-6.jpg')}.b6-visual-partners{--b6-hero-image:url('/images/build6-public-visual/sponsor-option-4.jpg')}.b6-visual-educators{--b6-hero-image:url('/images/build6-public-visual/sponsor-option-5.jpg')}.b6-visual-about{--b6-hero-image:url('/images/build6-public-visual/sponsor-hero.png')}
+.b6-visual-hero .b6-audience-hero-content,.b6-visual-hero .audience-hero-content,.about-hero.b6-visual-hero>div{position:relative;z-index:1;max-width:760px;margin-left:0;margin-right:0}
+/* 35% larger supporting text on marketing pages only; no homepage selectors, no portal selectors. */
+.b6-audience-page .b6-audience-lead{font-size:24.3px;line-height:1.5}.b6-audience-page .b6-audience-intro>p:last-child{font-size:22.95px}.b6-audience-page .b6-audience-benefits p{font-size:21.6px;line-height:1.5}.b6-audience-page .b6-audience-benefits h3{font-size:clamp(19px,1.8vw,25px)}.b6-audience-page .section-kicker,.b6-audience-page .eyebrow{font-size:16.2px}.b6-audience-page .b6-audience-button,.b6-audience-page .b6-audience-outcome-button{font-size:16.2px}.b6-audience-page .b6-audience-intro h2{font-size:clamp(42px,4.6vw,68px)}.b6-audience-page .b6-audience-hero h1{font-size:clamp(50px,6vw,100px)}
+.audience-page .audience-lead{font-size:24.3px;line-height:1.5}.audience-page .audience-intro>p:last-child{font-size:22.95px}.audience-page .audience-benefits p{font-size:21.6px}.audience-page .audience-benefits h3{font-size:clamp(19px,1.8vw,25px)}.audience-page .audience-button{font-size:16.2px}.audience-page .audience-intro h2{font-size:clamp(42px,4.6vw,68px)}.audience-page .audience-hero h1{font-size:clamp(50px,6vw,100px)}
+.public-page .about-hero>div>p:last-child{font-size:24.3px}.public-page .about-framework-intro>p:last-child{font-size:22.95px}.public-page .about-stage-grid p,.public-page .about-principles p{font-size:20px}.public-page .about-hero h1{font-size:clamp(50px,6vw,100px)}
+@media(max-width:900px){.b6-home-sponsor-feature,.b6-public-sponsor-banner-inner{grid-template-columns:1fr}.b6-home-sponsor-photo,.b6-public-sponsor-photo{min-height:250px}.b6-visual-hero::before{inset:0 0 0 34%;opacity:.55}.b6-visual-hero::after{background:linear-gradient(90deg,#08253c 0%,rgba(8,37,60,.94) 43%,rgba(8,37,60,.6) 100%)}.b6-visual-hero .b6-audience-hero-content{max-width:100%}}
+@media(max-width:600px){.b6-visual-hero::before{inset:0;opacity:.3}.b6-visual-hero::after{background:rgba(8,37,60,.73)}.b6-audience-page .b6-audience-lead,.audience-page .audience-lead,.public-page .about-hero>div>p:last-child{font-size:21px}.b6-audience-page .b6-audience-benefits p,.audience-page .audience-benefits p{font-size:19px}.b6-home-sponsor-copy{padding:35px 24px}.b6-public-sponsor-copy{padding:38px 24px}}
+
+
+/* BUILD6 APPROVED ATHLETICS HERO OVERRIDE */
+.b6-audience-page .b6-visual-athletes.b6-visual-hero::before {
+  background-image: url('/images/build6-athletics-team-approved.png?v=2') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  inset: 0 0 0 51% !important;
+  opacity: 1 !important;
+}
+
+.b6-audience-page .b6-visual-athletes.b6-visual-hero::after {
+  background: linear-gradient(
+    90deg,
+    #08253c 0%,
+    #08253c 35%,
+    rgba(8,37,60,.85) 53%,
+    rgba(8,37,60,0) 82%
+  ) !important;
+}
+
+@media (max-width: 700px) {
+  .b6-audience-page .b6-visual-athletes.b6-visual-hero::before {
+    inset: 0 !important;
+    opacity: .3 !important;
+  }
+}

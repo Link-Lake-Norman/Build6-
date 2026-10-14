@@ -8,6 +8,8 @@ export default function Navbar() {
           Home
         </Link>
 
+        <Link href="/assessment" className="font-bold">FREE ASSESSMENT</Link>
+
         <Link href="/academy">
           Academy
         </Link>

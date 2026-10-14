@@ -1,9 +1,9 @@
 export const futureReadyCapstone = {
-  title: "My Future Ready™ Story",
+  title: "My BUILD6™ Story",
   subtitle: "My Story. My Skills. My Future.",
 
   purpose:
-    "Your Capstone is your Future Ready™ graduation project — a personal reflection book about who you are beyond your role, what has shaped you, what you have learned, the skills and experiences you have built, and who you are becoming.",
+    "Your Capstone is your BUILD6™ graduation project — a personal reflection book about who you are beyond your role, what has shaped you, what you have learned, the skills and experiences you have built, and who you are becoming.",
 
   promise:
     "You will not create this book all at once. You will build it as you build yourself.",
@@ -45,7 +45,7 @@ export const futureReadyCapstone = {
       number: "06",
       title: "My Skills",
       description:
-        "Evidence of communication, teamwork, leadership, problem-solving, adaptability, professionalism, initiative, and other Future Ready™ skills.",
+        "Evidence of communication, teamwork, leadership, problem-solving, adaptability, professionalism, initiative, and other BUILD6™ skills.",
     },
     {
       number: "07",

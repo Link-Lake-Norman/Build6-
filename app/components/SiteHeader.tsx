@@ -4,6 +4,7 @@ import EmailPopup from "./EmailPopup";
 export default function SiteHeader() {
   return (
     <>
+      <link rel="stylesheet" href="/build6-public-stable.css?v=20260924a" />
       <header className="topbar">
         <Link
           className="brand"
@@ -12,13 +13,9 @@ export default function SiteHeader() {
         >
           <span className="brand-logo-wrap">
             <img
-              src="/brand/build6-logo-approved.png"
+              src="/brand/build6-horizontal-lockup.png"
               alt="BUILD6 — Build What's Next"
             />
-
-            <sup className="brand-tm">
-              ™
-            </sup>
           </span>
         </Link>
 
@@ -28,6 +25,10 @@ export default function SiteHeader() {
         >
           <Link href="/#journey">
             Experience
+          </Link>
+
+          <Link href="/about">
+            About
           </Link>
 
           <Link href="/schools">
@@ -45,19 +46,11 @@ export default function SiteHeader() {
           <Link href="/partners">
             Partners
           </Link>
-
-          <Link href="/about">
-            About
-          </Link>
-          <Link
-            className="nav-assessment"
-            href="/assessment"
-          >
-            Take the Free Assessment
-          </Link>
         </nav>
 
         <div className="top-actions">
+          <Link href="/toolkits" className="nav-assessment">TOOLKITS</Link>
+          <Link className="nav-assessment" href="/assessment">FREE ASSESSMENT</Link>
           <Link
             className="login"
             href="/ambassador/login"

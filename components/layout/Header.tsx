@@ -4,7 +4,7 @@ export default function Header() {
     <header className="header">
 
       <h1>
-        Future Ready™ Platform
+        BUILD6™ Platform
       </h1>
 
       <div>

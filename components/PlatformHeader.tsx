@@ -317,11 +317,11 @@ export default function PlatformHeader({
             className="block"
           >
             <p className="text-2xl font-black">
-              Future Ready™
+              BUILD6™
             </p>
 
             <p className="mt-1 text-sm text-slate-300">
-              Discover Purpose. Build Skills. Launch Your Future.
+              Real skills. Real experiences. Real-world readiness.
             </p>
           </Link>
 
@@ -332,7 +332,7 @@ export default function PlatformHeader({
               </p>
 
               <p className="mt-1 font-semibold">
-                Future Ready™ Pilot Program
+                BUILD6™ Program
               </p>
             </div>
 

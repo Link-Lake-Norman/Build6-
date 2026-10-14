@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import {
   generateCareerPathways,
+  generateDiscoveryCareers,
   type StudentCareerProfile,
 } from "@/content/career-intelligence";
 import CareerSaveButton from "./CareerSaveButton";
@@ -44,6 +45,18 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
           firstName: true,
           lastName: true,
           displayName: true,
+        },
+      },
+      readinessProfile: {
+        select: {
+          completedAt: true,
+          selfAwareness: true,
+          communication: true,
+          leadership: true,
+          professionalPresence: true,
+          careerReadiness: true,
+          adaptability: true,
+          aiReadiness: true,
         },
       },
       profile: {
@@ -128,6 +141,7 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
   };
 
   const generatedPathways = generateCareerPathways(profile);
+  const discoveryCareers = generateDiscoveryCareers(profile);
 
   const pathways =
     generatedPathways.length > 0
@@ -363,6 +377,60 @@ export default async function CareerPathwaysPage({ params }: PageProps) {
               </article>
             );
           })}
+        </div>
+      </section>
+
+      {student.readinessProfile?.completedAt ? (
+        <section className="rounded-3xl border border-teal-200 bg-teal-50 p-7">
+          <h2 className="text-2xl font-black text-[#0D1B3D]">Your Assessment → Career Exploration</h2>
+          <p className="mt-3 leading-7 text-slate-700">Your completed readiness assessment helps identify areas to practice as you explore these careers. Your actual career interests, strengths, values, goals and saved experiences inform the career suggestions above. A readiness score does not determine what career you should pursue.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {([
+              ["Self-awareness", student.readinessProfile.selfAwareness],
+              ["Communication", student.readinessProfile.communication],
+              ["Leadership", student.readinessProfile.leadership],
+              ["Professional presence", student.readinessProfile.professionalPresence],
+              ["Career readiness", student.readinessProfile.careerReadiness],
+              ["Adaptability", student.readinessProfile.adaptability],
+              ["AI readiness", student.readinessProfile.aiReadiness],
+            ] as const).map(([label, value]) => (
+              <div key={label} className="rounded-xl border border-teal-100 bg-white p-4">
+                <p className="font-bold text-[#0D1B3D]">{label}</p>
+                <p className="mt-1 text-sm text-slate-600">Baseline: {Number(value).toFixed(1)} / 5 · Growth opportunity, not career eligibility</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm leading-6 text-slate-700">Discuss which suggested careers connect to your values and interests, which less-familiar roles you want to investigate, and what education, training or work experience each requires. Save the careers that interest you.</p>
+        </section>
+      ) : (
+        <section className="rounded-3xl border border-slate-200 bg-white p-7">
+          <h2 className="text-xl font-black text-[#0D1B3D]">Connect your assessment</h2>
+          <p className="mt-2 text-slate-700">Complete your existing readiness assessment to add your baseline and growth priorities to this Career + Opportunity Map.</p>
+          <Link href={`/ambassador/student-portal/${student.id}/assessment`} className="mt-4 inline-block rounded-xl bg-[#0D1B3D] px-5 py-3 font-bold text-white">Open My Assessment →</Link>
+        </section>
+      )}
+
+      <section className="rounded-3xl border-2 border-teal-200 bg-white p-7">
+        <p className="text-sm font-black uppercase tracking-[0.16em] text-teal-700">Explore beyond the familiar</p>
+        <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">Six less-familiar careers to investigate</h2>
+        <p className="mt-3 max-w-4xl leading-7 text-slate-700">These six exploratory suggestions use your saved strengths, interests, values, goals and career signals. They are starting points, not eligibility decisions. Education and training routes are common examples; check the current requirements of any school, employer or licensing body.</p>
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          {discoveryCareers.map((career) => (
+            <article key={career.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+              <p className="text-sm font-bold text-teal-700">{career.industry}</p>
+              <h3 className="mt-1 text-2xl font-black text-[#0D1B3D]">{career.title}</h3>
+              <p className="mt-3 leading-7 text-slate-700">{career.description}</p>
+              <div className="mt-4 grid gap-4">
+                <CareerList title="Why explore this" items={career.whyItFits} />
+                <CareerList title="Skills to build" items={career.skillsToDevelop} />
+                <CareerList title="Ways to test it" items={career.experiencesToTry} />
+                <CareerList title="Education and training routes to research" items={career.educationRoutes} />
+              </div>
+              <div className="mt-5 border-t border-slate-200 pt-4">
+                <CareerSaveButton studentId={student.id} careerName={career.title} industry={career.industry} description={career.description} initiallySaved={savedCareerNames.has(career.title.toLowerCase())} />
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

@@ -142,7 +142,7 @@ export default async function AssessmentsPage() {
 
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
           A read-only class view of the readiness assessment students completed
-          at the beginning of Future Ready™.
+          at the beginning of BUILD6™.
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
@@ -168,7 +168,7 @@ export default async function AssessmentsPage() {
 
           <p className="mt-2 text-sm text-slate-500">
             Use this view to quickly compare student readiness across the seven
-            Future Ready™ categories.
+            BUILD6™ categories.
           </p>
         </div>
 

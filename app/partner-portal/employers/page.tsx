@@ -8,7 +8,7 @@ export default function PartnerEmployersPage() {
     <main>
 
       <h1>
-        Future Ready™ Partner Employer Connections
+        BUILD6™ Partner Employer Connections
       </h1>
 
       <p>

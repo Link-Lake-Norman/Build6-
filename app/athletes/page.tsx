@@ -35,8 +35,8 @@ export default function AthletesPage() {
       ]}
       outcomeLabel="BUILD THE PERSON. NOT JUST THE PLAYER."
       outcome="Translate performance into readiness for what comes next."
-      ctaHref="/interest?for=athletics"
-      ctaLabel="BUILD6™ FOR ATHLETES + TEAMS →"
+      ctaHref="/athletes/professionals"
+      ctaLabel="EXPLORE ATHLETICS PROFESSIONAL DEVELOPMENT →"
       tone="gold"
     />
   );

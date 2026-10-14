@@ -21,7 +21,7 @@ export default function StudentPassportPage() {
       <section className="mb-8">
 
         <h1 className="text-4xl font-bold">
-          Future Ready™ Student Passport
+          BUILD6™ Student Passport
         </h1>
 
         <p className="mt-3 text-lg">
@@ -42,7 +42,7 @@ export default function StudentPassportPage() {
           </h2>
 
           <p className="mt-3">
-            Future Ready Student
+            BUILD6 Student
           </p>
 
         </div>
@@ -108,7 +108,7 @@ export default function StudentPassportPage() {
       <section className="border rounded-xl p-6 mb-8">
 
         <h2 className="text-2xl font-bold">
-          Future Ready™ Badges
+          BUILD6™ Badges
         </h2>
 
 

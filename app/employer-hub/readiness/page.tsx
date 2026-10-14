@@ -2,13 +2,13 @@ export default function EmployerReadinessPage() {
 
   const students = [
     {
-      name: "Future Ready Student",
+      name: "BUILD6 Student",
       readiness: 85,
       skills: "Communication, Leadership, Teamwork",
       experiences: 3,
     },
     {
-      name: "Future Ready Student",
+      name: "BUILD6 Student",
       readiness: 72,
       skills: "Problem Solving, Professional Skills",
       experiences: 2,
@@ -21,7 +21,7 @@ export default function EmployerReadinessPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Employer Readiness View
+          BUILD6™ Employer Readiness View
         </h1>
 
         <p>

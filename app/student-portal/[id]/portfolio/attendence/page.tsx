@@ -42,7 +42,7 @@ export default async function StudentAttendancePage({
       week: index + 1,
       date: `Week ${index + 1} Session`,
       status: "Present",
-      notes: "Participated in the weekly Future Ready session.",
+      notes: "Participated in the weekly BUILD6 session.",
     })
   );
 
@@ -88,7 +88,7 @@ export default async function StudentAttendancePage({
         </h1>
 
         <p className="mt-3 text-lg leading-8 text-slate-200">
-          {student.name} · Future Ready™ Pilot
+          {student.name} · BUILD6™
         </p>
       </header>
 
@@ -219,7 +219,7 @@ export default async function StudentAttendancePage({
         </h2>
 
         <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
-          Attendance contributes to the Future Ready™ Readiness
+          Attendance contributes to the BUILD6™ Readiness
           Score because reliability, preparation, and consistent
           participation are essential workplace behaviors.
         </p>

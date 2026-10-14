@@ -10,7 +10,7 @@ export default function ManageOpportunitiesPage() {
       </h1>
 
       <p>
-        Create, manage, and review Future Ready™ career experiences.
+        Create, manage, and review BUILD6™ career experiences.
       </p>
 
 

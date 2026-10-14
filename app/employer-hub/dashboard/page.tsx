@@ -4,7 +4,7 @@ export default function EmployerDashboardPage() {
       title: "Students Connected",
       value: "20",
       description:
-        "Students participating in Future Ready™ experiences",
+        "Students participating in BUILD6™ experiences",
     },
     {
       title: "Skills Developing",
@@ -35,7 +35,7 @@ export default function EmployerDashboardPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Employer Dashboard
+          BUILD6™ Employer Dashboard
         </h1>
 
         <p>
@@ -88,7 +88,7 @@ export default function EmployerDashboardPage() {
               </h3>
 
               <p>
-                Developing through the Future Ready™ curriculum.
+                Developing through the BUILD6™ curriculum.
               </p>
 
             </article>

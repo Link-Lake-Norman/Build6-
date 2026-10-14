@@ -48,7 +48,7 @@ const DAY_LABELS: Record<
 
   tuesday: {
     day: "Tuesday",
-    title: "Core Future Ready™ Lesson",
+    title: "Core BUILD6™ Lesson",
     shortTitle: "Lesson",
   },
 
@@ -66,7 +66,7 @@ const DAY_LABELS: Record<
 
   friday: {
     day: "Friday",
-    title: "Future Ready Friday™",
+    title: "BUILD6™ Friday",
     shortTitle: "Friday",
   },
 };
@@ -85,7 +85,7 @@ const ZONE_META: Record<
 
   connect: {
     label: "CONNECT / TEACH",
-    description: "Connect today's work to the Future Ready™ skill.",
+    description: "Connect today's work to the BUILD6™ skill.",
   },
 
   practice: {
@@ -304,7 +304,7 @@ export default function AmbassadorWeekDeliveryConsole({ week }: Props) {
 
             <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-600">
               Start with the week. Choose the day. Run one focused 50-minute
-              Future Ready™ experience.
+              BUILD6™ experience.
             </p>
           </div>
 
@@ -796,7 +796,7 @@ function DayResources({
       <>
         <ResourceSection title="Tuesday Teaching Guide">
           <p className="text-sm font-semibold leading-6 text-slate-700">
-            Teach the existing Future Ready™ lesson, guide discussion and
+            Teach the existing BUILD6™ lesson, guide discussion and
             complete the student activity. Keep the lesson active and prepare
             students for Wednesday&apos;s Applied Learning Lab.
           </p>
@@ -855,7 +855,7 @@ function DayResources({
         <List items={delivery.friday.closingQuestions} />
       </ResourceSection>
 
-      <ResourceSection title="Future Ready Friday™ Reminder">
+      <ResourceSection title="BUILD6™ Friday Reminder">
         <p className="text-sm font-semibold leading-6 text-slate-700">
           Friday closes the loop: Life Economy, money decisions, accountability,
           reflection and the student&apos;s next-week commitment.
@@ -1142,7 +1142,7 @@ function buildActivityBank({
 
       option(
         `week-${week}-core`,
-        "Core Future Ready™ Lesson",
+        "Core BUILD6™ Lesson",
         "CORE LESSON",
         12,
         `Teach the Week ${week} skill.`,
@@ -1266,7 +1266,7 @@ function buildActivityBank({
         "DEBRIEF",
         10,
         delivery.thursday.experience.debriefQuestions[0] ??
-          "Connect the experience to Future Ready™ learning.",
+          "Connect the experience to BUILD6™ learning.",
       ),
 
       option(

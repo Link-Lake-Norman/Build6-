@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import Build6CompanionJournal from "@/components/student/Build6CompanionJournal";
 import Build6CompanionEvidenceUpload from "@/components/student/Build6CompanionEvidenceUpload";
+import Build6PaperReflectionUpload from "@/components/student/Build6PaperReflectionUpload";
 import { getSessionUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 
@@ -179,6 +180,8 @@ export default async function Build6CompanionJournalPage({
       />
 
       <Build6CompanionEvidenceUpload studentId={student.id} />
+
+        <Build6PaperReflectionUpload studentId={student.id} />
 
       <section>
         <div className="flex flex-wrap items-end justify-between gap-3">

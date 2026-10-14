@@ -114,7 +114,7 @@ export default function StudentAppliedLearningLab({
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#F2B705]">
-              Future Ready™ Applied Learning
+              BUILD6™ Applied Learning
             </p>
 
             <h2 className="mt-2 text-3xl font-black">
@@ -475,7 +475,7 @@ export default function StudentAppliedLearningLab({
               {selected.portfolioEvidence ? (
                 <div className="mt-7 rounded-3xl bg-[#0D1B3D] p-6 text-white">
                   <p className="text-xs font-black uppercase tracking-[0.15em] text-[#F2B705]">
-                    Future Ready™ Evidence
+                    BUILD6™ Evidence
                   </p>
 
                   <p className="mt-3 text-base font-black leading-7">

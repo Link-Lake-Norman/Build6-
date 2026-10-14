@@ -6,7 +6,7 @@ export default function PartnerProgramsPage() {
     <main className="max-w-7xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] p-10 text-white">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™
+          BUILD6™
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -14,7 +14,7 @@ export default function PartnerProgramsPage() {
         </h1>
 
         <p className="mt-4 text-lg text-slate-200">
-          Review the complete Future Ready™ curriculum sequence available
+          Review the complete BUILD6™ curriculum sequence available
           to schools, employers and community partners.
         </p>
       </div>

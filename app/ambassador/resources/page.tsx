@@ -116,7 +116,7 @@ export default function TeachingResourcesPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const packaged = week <= 4;
+  const packaged = week <= 4 || (week >= 9 && week <= 12);
 
   const assets = useMemo(
     () => ASSETS.map((asset) => assetForWeek(asset, week)),
@@ -253,7 +253,7 @@ export default function TeachingResourcesPage() {
 
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
           Preview classroom materials before using them, download what you
-          need, or attach a resource directly to a specific Future Ready™
+          need, or attach a resource directly to a specific BUILD6™
           lesson day. The core lesson plan remains the curriculum spine.
         </p>
       </section>

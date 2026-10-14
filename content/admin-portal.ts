@@ -1,5 +1,5 @@
 export const adminProfile = {
-  name: "Future Ready Administrator",
+  name: "BUILD6 Administrator",
   role: "Program Administrator",
   initials: "FR",
 };

@@ -27,7 +27,7 @@ export default function LicensingPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Licensing Dashboard
+          BUILD6™ Licensing Dashboard
         </h1>
 
         <p>

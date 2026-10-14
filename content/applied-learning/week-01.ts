@@ -16,7 +16,7 @@ export const week01AppliedLearning: AppliedLearningAsset[] = [
       "Professional Presence",
     ],
 
-    lessonConnection: "Future Ready Identity: Who Am I Beyond My Role?",
+    lessonConnection: "BUILD6 Identity: Who Am I Beyond My Role?",
 
     whyItMatters:
       "Students often know their activities, titles, positions, sports, or responsibilities but struggle to explain what those experiences reveal about them. This challenge helps students turn everyday experiences into evidence of transferable skills.",
@@ -128,7 +128,7 @@ export const week01AppliedLearning: AppliedLearningAsset[] = [
     ],
 
     portfolioEvidence:
-      "30-second Future Ready introduction and experience-to-skill evidence.",
+      "30-second BUILD6™ introduction and experience-to-skill evidence.",
 
     athleteExtension: {
       title: "Beyond the Jersey",
@@ -159,10 +159,10 @@ export const week01AppliedLearning: AppliedLearningAsset[] = [
       "Social Awareness",
     ],
 
-    lessonConnection: "Future Ready Identity: Who Am I Beyond My Role?",
+    lessonConnection: "BUILD6 Identity: Who Am I Beyond My Role?",
 
     whyItMatters:
-      "Future Ready identity is also about how other people experience you. Empathy, listening, and awareness affect trust, relationships, teamwork, and leadership.",
+      "BUILD6 identity is also about how other people experience you. Empathy, listening, and awareness affect trust, relationships, teamwork, and leadership.",
 
     scenario:
       "Your group is preparing for a presentation. One teammate who normally contributes has become quiet, missed part of the preparation, and gives short answers. Another teammate says, 'They're being lazy. We should just do their part.'",
@@ -304,7 +304,7 @@ export const week01AppliedLearning: AppliedLearningAsset[] = [
       "Communication",
     ],
 
-    lessonConnection: "Future Ready Identity: Who Am I Beyond My Role?",
+    lessonConnection: "BUILD6 Identity: Who Am I Beyond My Role?",
 
     whyItMatters:
       "Students need repeated low-risk speaking practice before interviews, panels, employer conversations, and major presentations.",

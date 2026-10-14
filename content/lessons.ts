@@ -72,43 +72,10 @@ export const lessons = [
     reflection:
       "What can I learn about careers by seeing how real people, roles, skills and systems work together?",
   },
-  {
-    week: 9,
-    program: "ambassador-student-athlete-launch",
-    title: "Resume Story Bank + Jennifer Miller Prep",
-    focus: "Evidence, resume development, personal brand, and communication",
-    activity: "Translate experience into evidence and professional stories",
-    reflection:
-      "How do I prove what I can do instead of simply saying what I am?",
-  },
-  {
-    week: 10,
-    program: "ambassador-student-athlete-launch",
-    title: "Interview Under Pressure",
-    focus: "Confidence, storytelling, adaptability, and communication",
-    activity: "Structured and unexpected interview practice",
-    reflection:
-      "How do I stay credible, clear and confident when I do not know exactly what I will be asked?",
-  },
-  {
-    week: 11,
-    program: "ambassador-student-athlete-launch",
-    title: "Michelle Boudin Prep — Find Your Voice Under Pressure",
-    focus:
-      "Pitch, listening, professional disagreement, rebuttal, and communication",
-    activity: "Speaking, panel, rebuttal, and camera preparation",
-    reflection:
-      "How do I communicate what I believe clearly, listen to another perspective and respond professionally under pressure?",
-  },
-  {
-    week: 12,
-    program: "ambassador-student-athlete-launch",
-    title: "Michelle Boudin — On Camera",
-    focus: "Communication, feedback, adjustment, composure, and confidence",
-    activity: "First attempt, feedback, adjustment, and second attempt",
-    reflection:
-      "What happens when I receive feedback, make an intentional adjustment and try again?",
-  },
+  {week:9,program:"ambassador-student-athlete-launch",title:"AI at Work — Think Better. Work Smarter. Stay Human.",focus:"Responsible AI use, prompting, verification, privacy, professional judgment, human ownership, and project application",activity:"Prompting Lab + AI Judgment/Verification Lab + AI Project Studio",reflection:"How do I use AI without giving up my own thinking?"},
+  {week:10,program:"ambassador-student-athlete-launch",title:"Professional Curiosity + Business Literacy — Julie + Eric",focus:"Professional curiosity, active listening, intelligent questions, business literacy, relationship building, and follow-up",activity:"Curiosity Lab + speaker research + Julie & Eric professional conversation + connection record",reflection:"What can I learn from a professional conversation that I cannot learn from a website?"},
+  {week:11,program:"ambassador-student-athlete-launch",title:"How a Business Actually Works — Champion Tire & Wheel",focus:"Operations, systems thinking, workflow, quality, safety, customer experience, technology, business economics, and career exploration",activity:"Business systems practice + Champion research + Operations Detective tour challenge",reflection:"How do people, process, technology, quality, safety, and customer needs connect inside a real business?"},
+  {week:12,program:"ambassador-student-athlete-launch",title:"Communication Under Pressure — Michelle Boudin",focus:"Camera presence, interviews, presentations, panels, conflict response, listening, body language, concise answers, and professional recovery",activity:"Camera Lab + Pressure/Conflict/Panel Lab + Michelle Boudin live coaching + immediate retry",reflection:"How do I think, respond, recover, and remain credible when the pressure is real?"},
   {
     week: 13,
     program: "ambassador-student-athlete-launch",

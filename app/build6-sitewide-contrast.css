@@ -1,0 +1,15 @@
+/* BUILD6 sitewide contrast: ONLY navy interactive controls. Avoid dark navy text on navy actions. */
+:is(a, button, [role="button"])[class*="bg-[#0D1B3D]"],
+:is(a, button, [role="button"])[class*="bg-[#172B55]"],
+:is(a, button, [role="button"])[class*="bg-[#0B3B60]"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+:is(a, button, [role="button"])[class*="bg-[#0D1B3D]"] :is(span, strong, b, svg),
+:is(a, button, [role="button"])[class*="bg-[#172B55]"] :is(span, strong, b, svg),
+:is(a, button, [role="button"])[class*="bg-[#0B3B60]"] :is(span, strong, b, svg) {
+  color: #ffffff !important;
+  stroke: currentColor;
+}
+/* Portal footer occupies the full width below the sidebar and content. */
+.b6-approved-footer { flex-shrink: 0; }

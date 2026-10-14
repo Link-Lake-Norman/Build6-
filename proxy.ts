@@ -64,6 +64,16 @@ const routeRules: RouteRule[] = [
   },
 
   {
+    prefix: "/educators",
+    roles: [
+      "SUPER_ADMIN",
+      "ORGANIZATION_ADMIN",
+      "SCHOOL_ADMIN",
+      "FACILITATOR",
+    ],
+  },
+
+  {
     prefix: "/employer-hub",
     roles: [
       "SUPER_ADMIN",
@@ -251,6 +261,7 @@ export const config = {
     "/ambassador/curriculum/:path*",
     "/ambassador/lesson-builder/:path*",
     "/ambassador/facilitator/:path*",
+    "/educators/:path*",
     "/employer-hub/:path*",
     "/employer-dashboard/:path*",
     "/partner-portal/:path*",

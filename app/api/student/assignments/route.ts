@@ -44,7 +44,9 @@ export async function GET(request: NextRequest) {
   const assignments = await prisma.assignment.findMany({
     where: {
       lessonId,
-      status: "ACTIVE",
+      status: {
+        in: ["ACTIVE", "ARCHIVED"],
+      },
       OR: [
         {
           cohortId: enrollment.cohortId,
@@ -64,6 +66,7 @@ export async function GET(request: NextRequest) {
     ],
     select: {
       id: true,
+      status: true,
       title: true,
       instructions: true,
       estimatedMinutes: true,
@@ -109,15 +112,48 @@ export async function GET(request: NextRequest) {
 
   const now = Date.now();
 
+  /*
+   * BUILD6_STUDENT_ASSIGNMENT_VISIBILITY_V1
+   *
+   * Student portal visibility only.
+   *
+   * ACTIVE assignments remain visible.
+   * ARCHIVED assignments remain visible only when this student already
+   * owns a submission record (DRAFT, SUBMITTED, APPROVED, revision, etc.).
+   *
+   * This hides obsolete/missing-assignment clutter without deleting,
+   * modifying, or disconnecting any student work.
+   */
+  const visibleAssignments = assignments.filter(
+    (assignment) =>
+      assignment.status === "ACTIVE" || assignment.submissions.length > 0,
+  );
+
   return NextResponse.json({
-    assignments: assignments.map((assignment) => {
+    assignments: visibleAssignments.map((assignment) => {
       const adjustedDueAt = effectiveDueDate(
         assignment.dueAt,
         support,
       );
 
+      const submission = assignment.submissions[0] ?? null;
+      const archivedFromPlanner = assignment.status === "ARCHIVED";
+      const submittedAndLocked =
+        submission?.status === "SUBMITTED" ||
+        submission?.status === "APPROVED";
+
       return {
         ...assignment,
+        archivedFromPlanner,
+        stillLiveForStudent: true,
+        readOnly: submittedAndLocked,
+        preservationLabel: archivedFromPlanner
+          ? submission?.status === "DRAFT"
+            ? "Draft preserved — keep working and submit when ready."
+            : submittedAndLocked
+              ? "Submitted work preserved for portfolio/capstone history."
+              : "Still available to complete and submit even though it is no longer in the facilitator active plan."
+          : null,
         baseEstimatedMinutes:
           assignment.estimatedMinutes,
         effectiveEstimatedMinutes:
@@ -133,8 +169,7 @@ export async function GET(request: NextRequest) {
           adjustedDueAt &&
             adjustedDueAt.getTime() > now,
         ),
-        submission:
-          assignment.submissions[0] ?? null,
+        submission,
         submissions: undefined,
       };
     }),
@@ -208,7 +243,9 @@ export async function POST(request: NextRequest) {
   const assignment = await prisma.assignment.findFirst({
     where: {
       id: assignmentId,
-      status: "ACTIVE",
+      status: {
+        in: ["ACTIVE", "ARCHIVED"],
+      },
       OR: [
         {
           cohortId: enrollment.cohortId,

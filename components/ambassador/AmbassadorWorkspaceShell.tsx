@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import PublicFooter from "@/app/components/PublicFooter";
 import PlatformHeader from "@/components/PlatformHeader";
 import PageHistoryControls from "@/components/navigation/PageHistoryControls";
 import type { SessionUser } from "@/lib/auth/session";
@@ -39,9 +40,14 @@ const staffPrimary: NavItem[] = [
     description: "Today and your cohort",
   },
   {
+    href: "/ambassador/assignments",
+    label: "Assignments",
+    description: "Add, edit and review student work",
+  },
+  {
     href: "/ambassador/curriculum",
-    label: "Lesson Plans",
-    description: "Teach and prepare",
+    label: "Curriculum",
+    description: "Lessons, teaching plan and resources",
   },
 ];
 
@@ -90,6 +96,11 @@ const staffStudents: NavItem[] = [
     description: "Program communication",
   },
   {
+    href: "/ambassador/challenges/review",
+    label: "Challenge Review",
+    description: "I Challenge You safety + governance",
+  },
+  {
     href: "/ambassador/facilitator/analytics",
     label: "Analytics",
     description: "Progress and evidence",
@@ -106,6 +117,11 @@ const adminItems: NavItem[] = [
     href: "/ambassador/messages",
     label: "Messages",
     description: "Student and program communication",
+  },
+  {
+    href: "/ambassador/challenges/review",
+    label: "Challenge Review",
+    description: "I Challenge You safety + governance",
   },
   {
     href: "/ambassador/admin/password-resets",
@@ -191,6 +207,11 @@ function studentItems(pathname: string): NavItem[] {
       description: "What I need to finish",
     },
     {
+      href: `/ambassador/student-portal/${studentId}/challenges`,
+      label: "Challenges",
+      description: "I Challenge You · game mode",
+    },
+    {
       href: `/ambassador/student-portal/${studentId}/career-pathways`,
       label: "Career Discovery",
       description: "Explore what fits me",
@@ -263,6 +284,13 @@ function workspaceMode(
   }
 
   if (
+    pathname === "/ambassador/challenges/review" ||
+    pathname.startsWith("/ambassador/challenges/review/")
+  ) {
+    return isAdminRole(session.role) ? "ADMIN" : "STAFF";
+  }
+
+  if (
     pathname.startsWith("/ambassador/student-portal/") ||
     pathname.startsWith("/ambassador/student-passport/")
   ) {
@@ -274,6 +302,8 @@ function workspaceMode(
     pathname.startsWith("/ambassador/facilitator/") ||
     pathname === "/ambassador/curriculum" ||
     pathname.startsWith("/ambassador/curriculum/") ||
+    pathname === "/ambassador/assignments" ||
+    pathname.startsWith("/ambassador/assignments/") ||
     pathname === "/ambassador/planner" ||
     pathname.startsWith("/ambassador/planner/") ||
     pathname === "/ambassador/lesson-builder" ||
@@ -292,19 +322,21 @@ function workspaceMode(
 }
 
 function isActive(pathname: string, href: string) {
-  if (pathname === href) {
+  const hrefPath = href.split(/[?#]/)[0];
+
+  if (pathname === hrefPath) {
     return true;
   }
 
-  if (href === "/ambassador/admin") {
+  if (hrefPath === "/ambassador/admin") {
     return pathname === href;
   }
 
-  if (href === "/ambassador/facilitator") {
+  if (hrefPath === "/ambassador/facilitator") {
     return pathname === href;
   }
 
-  return pathname.startsWith(`${href}/`);
+  return pathname.startsWith(`${hrefPath}/`);
 }
 
 function applyAttention(
@@ -410,6 +442,7 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
         <PageHistoryControls />
 
         <div className="mx-auto w-full max-w-7xl px-6 py-8">{children}</div>
+        <PublicFooter />
       </div>
     );
   }
@@ -562,6 +595,7 @@ export default function AmbassadorWorkspaceShell({ session, children }: Props) {
           </div>
         </main>
       </div>
+      <PublicFooter />
     </div>
   );
 }
@@ -614,8 +648,12 @@ function WorkspaceSidebar({
               label: "Teaching Dashboard",
             },
             {
+              href: "/ambassador/assignments",
+              label: "Assignments",
+            },
+            {
               href: "/ambassador/curriculum",
-              label: "Lesson Plans",
+              label: "Curriculum",
             },
             {
               href: "/ambassador/calendar",
@@ -726,7 +764,21 @@ function SidebarGroup({
             <Link
               key={item.href}
               href={item.href}
-              onClick={onNavigate}
+              scroll={true}
+              onClick={(event) => {
+                onNavigate?.();
+
+                /*
+                 * BUILD6_ASSESSMENTS_NAV_RESET_V1
+                 * The Assessments workspace must open as its own page.
+                 * Force a clean navigation so curriculum scroll position
+                 * cannot carry into the assessment results view.
+                 */
+                if (item.href === "/ambassador/facilitator/assessments") {
+                  event.preventDefault();
+                  window.location.assign(item.href);
+                }
+              }}
               className={`block rounded-xl px-3 py-3 transition ${
                 active
                   ? "bg-[#FFF3BF] text-[#0D1B3D]"

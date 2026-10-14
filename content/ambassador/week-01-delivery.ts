@@ -6,13 +6,13 @@ export const ambassadorWeek01Delivery: AmbassadorWeekDelivery = {
   monday: {
     reflectionPrompt: [
       "What experiences from school, sports, work, family, volunteering, or life have shaped who you are?",
-      "What is one strength you already bring into Future Ready™?",
+      "What is one strength you already bring into BUILD6™?",
       "What is one skill you want to strengthen this semester?",
       "What do you want people to understand about you beyond your role, position, or title?",
     ],
 
     organizationTasks: [
-      "Set up or review your Future Ready™ workspace.",
+      "Set up or review your BUILD6™ workspace.",
       "Confirm your profile information is complete.",
       "Organize your first portfolio folder or digital evidence space.",
       "Record one personal goal for the semester.",
@@ -20,7 +20,7 @@ export const ambassadorWeek01Delivery: AmbassadorWeekDelivery = {
     ],
 
     projectWork: [
-      "Begin your Future Ready Identity Map.",
+      "Begin your BUILD6 Identity Map.",
       "Collect examples from athletics, school, work, volunteering, family responsibilities, or life that demonstrate transferable skills.",
     ],
   },
@@ -58,7 +58,7 @@ export const ambassadorWeek01Delivery: AmbassadorWeekDelivery = {
         "What experience seemed to shape them the most?",
         "What skill did you hear them demonstrate through their story?",
         "What did you notice about how they communicated?",
-        "What is one idea you can apply to your own Future Ready identity?",
+        "What is one idea you can apply to your own BUILD6 identity?",
       ],
 
       portfolioEvidence:

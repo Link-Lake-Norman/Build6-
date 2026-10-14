@@ -19,7 +19,7 @@ export default function PartnerAnalyticsPage() {
     <main className="max-w-7xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] p-10 text-white">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™
+          BUILD6™
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -27,7 +27,7 @@ export default function PartnerAnalyticsPage() {
         </h1>
 
         <p className="mt-4 text-lg text-slate-200">
-          Monitor partner organizations participating in the Future Ready™
+          Monitor partner organizations participating in the BUILD6™
           workforce ecosystem.
         </p>
       </div>

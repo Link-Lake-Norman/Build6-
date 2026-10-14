@@ -9,7 +9,7 @@ export default function AdminPage() {
     {
       title: "Students",
       value: "20",
-      description: "Active Future Ready™ participants",
+      description: "Active BUILD6™ participants",
     },
     {
       title: "Employers",
@@ -34,7 +34,7 @@ export default function AdminPage() {
     <main>
 
       <SectionHeader
-        title="Future Ready™ Admin Hub"
+        title="BUILD6™ Admin Hub"
         description="Manage students, employers, experiences, and workforce readiness data."
       />
 
@@ -78,13 +78,14 @@ export default function AdminPage() {
         }}
       >
 
+        <a href="/admin/toolkits" style={{display:"inline-block",padding:16,color:"#075c65",fontWeight:800}}>Toolkit Orders &amp; Licenses →</a>
         <h2>
           Platform Governance
         </h2>
 
 
         <p>
-          Future Ready™ administrators oversee users,
+          BUILD6™ administrators oversee users,
           organizations, programs, permissions, and
           platform operations.
         </p>

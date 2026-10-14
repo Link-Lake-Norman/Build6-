@@ -1,5 +1,7 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
 import { useEffect, useMemo, useState } from "react";
 import { curriculum } from "@/content/platform";
 import { lessons as sourceLessons } from "@/content/lessons";
@@ -12,12 +14,14 @@ import {
   type LessonResourceType,
 } from "@/content/lesson-builder";
 
-import {
-  generateActivityOptions,
-} from "@/content/ai-lesson-generator";
+import { generateActivityOptions, AI_ACTIVITY_OPTIONS } from "@/content/ai-lesson-generator";
+import { BUILD6_GAME_MODES, gameModeToActivityType, type Build6GameMode, type Build6GameModifier } from "@/content/build6-game-engine";
+import { readBuild6UsedCaseIds, rememberBuild6Cases } from "@/content/build6-case-ledger";
+import Build6ActivityPresentation from "@/components/ambassador/Build6ActivityPresentation";
 
 import type {
   AIGeneratedActivity,
+  AIActivityType,
 } from "@/content/ai-activity-types";
 
 
@@ -76,7 +80,12 @@ function loadPermissions(): PermissionSnapshot {
 
 export default function LessonBuilderPage() {
 
-  const [week, setWeek] = useState(1);
+  const searchParams = useSearchParams();
+  const initialWeek = Math.min(
+    16,
+    Math.max(1, Number(searchParams.get("week") ?? "1") || 1),
+  );
+  const [week, setWeek] = useState(initialWeek);
 
   const [customizations, setCustomizations] =
     useState<LessonCustomization[]>([]);
@@ -86,22 +95,19 @@ export default function LessonBuilderPage() {
 
   const [aiActivities, setAiActivities] =
     useState<AIGeneratedActivity[]>([]);
+  const [presentationError, setPresentationError] = useState("");
 
   const [generationVariation, setGenerationVariation] =
     useState(0);
 
   const [selectedAIType, setSelectedAIType] =
-    useState<
-      | "Role Play"
-      | "Case Scenario"
-      | "Improv"
-      | "Team Building"
-      | "Pop Quiz"
-      | "Media Practice"
-      | "Career Connection"
-      | "Capstone Workshop"
-      | "Guest Speaker Preparation"
-    >("Role Play");
+    useState<AIActivityType>("Role Play");
+
+  const [selectedGameMode, setSelectedGameMode] =
+    useState<Build6GameMode>("Improv Game");
+
+  const [gameModifiers, setGameModifiers] =
+    useState<Build6GameModifier[]>(["MORE_FUN"]);
 
 
   useEffect(() => {
@@ -137,36 +143,31 @@ export default function LessonBuilderPage() {
 
 
   function generateAIActivity() {
-
     if (!lesson) return;
-
     const nextVariation = generationVariation + 1;
-
-    const results = generateActivityOptions({
-      week,
-      day: "Class Session",
-      topic: lesson.title,
-      objective:
-        "objective" in lesson
-          ? String(lesson.objective)
-          : lesson.focus,
-      activityType: selectedAIType,
-      audience:
-        "Ambassador Christian School Future Ready Students",
-      variation: nextVariation,
-    });
-
-    setGenerationVariation(nextVariation);
-
-    setAiActivities(
-      results.filter(
-        (activity) =>
-          activity.activityType === selectedAIType
-      )
-    );
+    try {
+      const results = generateActivityOptions({
+        week,
+        day: searchParams.get("day") ?? "Current Teaching Day",
+        topic: lesson.title,
+        objective: "objective" in lesson ? String(lesson.objective) : lesson.focus,
+        activityType: gameModeToActivityType(selectedGameMode),
+        audience: "Ambassador Christian School BUILD6™ Students",
+        gameMode: selectedGameMode,
+        gameModifiers,
+        variation: nextVariation,
+        availableMinutes: 12,
+        excludedCaseIds: readBuild6UsedCaseIds(),
+      });
+      const next = results;
+      next.forEach(rememberBuild6Cases);
+      setGenerationVariation(nextVariation);
+      setAiActivities(next);
+      setPresentationError("");
+    } catch (error) {
+      setPresentationError(error instanceof Error ? error.message : "Activity generation failed.");
+    }
   }
-
-
 
   return (
 
@@ -176,7 +177,7 @@ export default function LessonBuilderPage() {
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white">
 
         <p className="text-sm font-bold uppercase text-[#F2B705]">
-          Future Ready™ Lesson Builder
+          BUILD6™ Lesson Builder
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -184,8 +185,7 @@ export default function LessonBuilderPage() {
         </h1>
 
         <p className="mt-3 text-slate-200">
-          Create activities, discussions, assessments,
-          and classroom experiences connected to each lesson.
+          Create BUILD6™ games, improv, role plays, team challenges and applied experiences connected to each lesson.
         </p>
 
       </section>
@@ -200,20 +200,31 @@ export default function LessonBuilderPage() {
 
 
         <p className="mt-2 text-slate-600">
-          Generate supplemental activities based on the
-          current Future Ready™ lesson.
+          Generate active, low-screen BUILD6™ experiences tied to the current lesson. Students should move, speak, decide, react and practice real skills.
         </p>
 
 
+        <div className="mt-5 rounded-2xl border border-[#E2B93B]/50 bg-[#FFFDF5] p-4">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#8A6300]">BUILD6™ GAME MODE</p>
+          <p className="mt-1 text-sm text-slate-600">Generate something students do — improv, movement, role play, competition, professional scenarios and real decisions — not another worksheet or lecture.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {BUILD6_GAME_MODES.map((mode) => (
+              <button key={mode} type="button" onClick={() => { setSelectedGameMode(mode); setSelectedAIType(gameModeToActivityType(mode)); }} className={`rounded-xl border px-3 py-2 text-sm font-black ${selectedGameMode === mode ? "border-[#0D1B3D] bg-[#0D1B3D] text-white" : "bg-white text-[#0D1B3D]"}`}>{mode}</button>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {([
+              ["MORE_FUN", "🎉 Make It More Fun"], ["MORE_IMPROV", "🎭 Make It Improv"], ["MORE_COMPETITIVE", "🏁 Make It Competitive"],
+              ["FIVE_MINUTES", "⚡ Make It 5 Minutes"], ["TEAM_BASED", "👥 Make It Team-Based"], ["CHALLENGE_READY", "🎯 Turn Into I Challenge You"],
+            ] as [Build6GameModifier, string][]).map(([modifier, label]) => { const active = gameModifiers.includes(modifier); return (
+              <button key={modifier} type="button" onClick={() => setGameModifiers((current) => active ? current.filter((item) => item !== modifier) : [...current, modifier])} className={`rounded-xl border px-3 py-2 text-sm font-bold ${active ? "border-[#F2B705] bg-[#FFF2B8] text-[#0D1B3D]" : "bg-white text-slate-700"}`}>{label}</button>
+            ); })}
+          </div>
+        </div>
+
         <div className="mt-5 flex flex-wrap gap-3">
 
-          {[
-            "Role Play",
-            "Case Scenario",
-            "Improv",
-            "Team Building",
-            "Pop Quiz",
-          ].map((type) => (
+          {AI_ACTIVITY_OPTIONS.map((type) => (
 
             <button
 
@@ -221,12 +232,7 @@ export default function LessonBuilderPage() {
 
               onClick={() =>
                 setSelectedAIType(
-                  type as
-                  | "Role Play"
-                  | "Case Scenario"
-                  | "Improv"
-                  | "Team Building"
-                  | "Pop Quiz"
+                  type
                 )
               }
 
@@ -264,6 +270,8 @@ export default function LessonBuilderPage() {
 
 
 
+          {presentationError && <p role="alert" className="mt-3 text-red-700">{presentationError}</p>}
+
         <div className="mt-6 space-y-5">
 
 
@@ -282,6 +290,8 @@ export default function LessonBuilderPage() {
               <p>
                 {activity.learningObjective}
               </p>
+
+              <Build6ActivityPresentation activity={activity} week={week} day={searchParams.get("day") ?? "Current Teaching Day"} />
 
               <h4 className="mt-4 font-bold">
                 Why This Matters

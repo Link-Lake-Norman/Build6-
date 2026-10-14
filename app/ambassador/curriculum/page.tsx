@@ -7,7 +7,9 @@ import Link from "next/link";
 import AppliedLearningTeachingHub from "@/components/ambassador/AppliedLearningTeachingHub";
 import AmbassadorWeekDeliveryConsole from "@/components/ambassador/AmbassadorWeekDeliveryConsole";
 import { curriculum as richCurriculum } from "@/content/curriculum";
-import { ambassadorWeeklyRhythm } from "@/content/ambassador";
+import { ambassadorWeeklyRhythm, getAmbassadorWeekDelivery } from "@/content/ambassador";
+import { getBuild6Week0912Content } from "@/content/ambassador/week-09-12-week-content";
+import Build6GeneratedTopicPresentation from "@/components/ambassador/Build6GeneratedTopicPresentation";
 
 type HubTab =
   | "overview"
@@ -124,6 +126,16 @@ type Assignment = {
   badgeName: string | null;
   dueAt: string | null;
   status: string;
+  submissionSummary?: {
+    enrolledStudentCount: number;
+    submissionRecords: number;
+    completedCount: number;
+    draftCount: number;
+    submittedCount: number;
+    approvedCount: number;
+    needsRevisionCount: number;
+    rejectedCount: number;
+  };
 };
 
 type DailyTeachingNote = {
@@ -191,9 +203,9 @@ const requirementOptions: RequirementValue[] = [
 ];
 
 export default function AmbassadorCurriculumPage() {
-  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(6);
   // Default to Day 1. A valid ?day=1..5 URL value overrides this on load.
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(5);
   const [closingWeek, setClosingWeek] = useState(false);
   const [weekProgressError, setWeekProgressError] = useState<string | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<
@@ -238,6 +250,16 @@ export default function AmbassadorCurriculumPage() {
   const [editingAssignmentId, setEditingAssignmentId] =
     useState<string | null>(null);
 
+  /* BUILD6_ALL_WEEK_ASSIGNMENTS_TABLE_V1 */
+  const [allWeekAssignments, setAllWeekAssignments] = useState<
+    {week: number; lessonId: string; assignment: Assignment}[]
+  >([]);
+  const [assignmentTableBusy, setAssignmentTableBusy] = useState(false);
+  const [assignmentTableError, setAssignmentTableError] = useState<string | null>(null);
+  const [assignmentTableRevision, setAssignmentTableRevision] = useState(0);
+  const [assignmentWeekFilter, setAssignmentWeekFilter] = useState(0);
+
+
   const [resourceForm, setResourceForm] = useState({
     title: "",
     description: "",
@@ -271,7 +293,7 @@ export default function AmbassadorCurriculumPage() {
     } catch {
       throw new Error(
         response.ok
-          ? "Future Ready™ received an unexpected server response. Please refresh and try again."
+          ? "BUILD6™ received an unexpected server response. Please refresh and try again."
           : `Server request failed (${response.status}). Please sign in again or refresh the page.`
       );
     }
@@ -407,72 +429,9 @@ export default function AmbassadorCurriculumPage() {
   }
 
   async function closeCurrentWeek() {
-    if (closingWeek || selectedWeek === 15) return;
-
-    const currentStatus = weekStatuses.find(
-      (item) => item.week === selectedWeek,
+    setWeekProgressError(
+      "Closing a week must not automatically complete unfinished work."
     );
-
-    if (currentStatus?.closed) {
-      if (selectedWeek < 16) {
-        changeWeek(selectedWeek + 1);
-      }
-      return;
-    }
-
-    setClosingWeek(true);
-    setWeekProgressError(null);
-
-    try {
-      const alreadyCompleted = new Set(
-        currentStatus?.completedDays ?? [],
-      );
-
-      const missingDays = [1, 2, 3, 4, 5].filter(
-        (dayNumber) => !alreadyCompleted.has(dayNumber),
-      );
-
-      for (const dayNumber of missingDays) {
-        const response = await fetch(
-          "/api/ambassador/day-completion",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              cohortCode: "PILOT-2026-2027",
-              week: selectedWeek,
-              dayNumber,
-              facilitatorNote:
-                "Week closed by facilitator. Student access and existing student work remain unchanged.",
-            }),
-          },
-        );
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            result.error || `Unable to close Week ${selectedWeek}.`,
-          );
-        }
-      }
-
-      await loadFacilitatorWeekStatuses();
-
-      if (selectedWeek < 16) {
-        changeWeek(selectedWeek + 1);
-      }
-    } catch (caughtError) {
-      setWeekProgressError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Unable to close this week.",
-      );
-    } finally {
-      setClosingWeek(false);
-    }
   }
 
   async function patchDelivery(
@@ -555,6 +514,7 @@ export default function AmbassadorCurriculumPage() {
       }
 
       await loadWeek(selectedWeek);
+      setAssignmentTableRevision((current) => current + 1);
       setSaveMessage(successMessage);
 
       return true;
@@ -1124,611 +1084,125 @@ Add it to Experiences + Stories, Career + Pathways, Strengths + Skills, or Peopl
       dayNumber: 3,
     },
     9: {
-      title: "Resume Story Bank + Jennifer Miller Prep",
+      title: "AI at Work — Think Better. Work Smarter. Stay Human.",
       instructions: `WHAT YOU ARE DOING
 
-You are strengthening your resume and preparing for the Jennifer Miller professional session on interviewing, mock interviews, offers, and negotiation.
+Use AI as a professional thinking partner without giving up your own judgment.
 
-The goal is not to make your resume sound impressive with generic words.
+TUESDAY · PROMPTING + PROBLEM SOLVING
+• Improve weak prompts using role, context, goal, audience, constraints, and format.
+• Decide what AI can support and what the human must still decide.
 
-The goal is to connect your real experiences to evidence that shows what you can actually do.
+WEDNESDAY · AI JUDGMENT + VERIFICATION
+• Would You Trust It?
+• STOP — CHECK — DECIDE.
+• AI Detective.
+• Fix the AI.
+• Trust / Verify / Reject.
+• Build My AI Verification Checklist.
 
-WHY THIS MATTERS
+THURSDAY · AI PROJECT STUDIO
+Document what you asked, what AI gave you, what you changed or rejected, what you verified, and what YOU contributed.
 
-Anyone can write:
+FRIDAY · HUMAN ADVANTAGE
+Create My Professional AI Rules and identify the human skill you want to strengthen.
 
-• hardworking
-• leader
-• team player
-• dependable
-• good communicator
-
-Those words become meaningful only when you can prove them with real experiences.
-
-Your resume and interview should tell the same story.
-
-PART 1 · QUICK RESUME REVIEW
-
-Look at your current resume.
-
-Answer:
-
-1. What does someone learn about you in the first 10 seconds?
-2. What part of your story is missing?
-3. What experience deserves more attention?
-4. What skill do you claim but do not yet prove?
-5. What would an employer probably ask you about?
-
-PART 2 · BUILD YOUR RESUME STORY BANK
-
-Choose FOUR real experiences.
-
-They may come from:
-
-• athletics
-• school
-• employment
-• volunteering
-• family responsibility
-• clubs
-• leadership
-• projects
-• community involvement
-• conflict
-• failure
-• pressure
-• recovery after a mistake
-
-For each experience, write:
-
-SITUATION
-What was happening?
-
-YOUR ACTION
-What did YOU actually do?
-
-SKILL
-What skill did your action demonstrate?
-
-RESULT
-What happened?
-
-WHAT IT SAYS ABOUT YOU
-Why would this matter to an employer?
-
-PART 3 · TURN EXPERIENCE INTO RESUME LANGUAGE
-
-Choose TWO of your four experiences.
-
-For each one, write a concise resume-style statement.
-
-Avoid vague language.
-
-Instead of:
-
-"Helped the team."
-
-Try to show:
-
-• what you did
-• what responsibility you had
-• what skill you used
-• what changed or was accomplished
-
-PART 4 · INTERVIEW PREPARATION
-
-Choose THREE stories from your Story Bank.
-
-Match each one to a possible interview question.
-
-Examples:
-
-Tell me about a time you worked with a difficult person.
-
-Tell me about a time you failed.
-
-Tell me about a time you showed leadership.
-
-Tell me about a time you solved a problem.
-
-Tell me about a time you had to adapt.
-
-Tell me about a time you received difficult feedback.
-
-For each question, identify which story you could use.
-
-PART 5 · QUESTIONS FOR JENNIFER MILLER
-
-Write three professional questions about:
-
-• resumes
-• interviewing
-• hiring decisions
-• difficult interview questions
-• evaluating an offer
-• salary or offer negotiation
-• mistakes candidates make
-• what makes someone memorable
-
-Choose the ONE question you most want answered.
-
-PART 6 · AFTER THE EXPERIENCE
-
-Answer:
-
-1. What does your resume need to communicate more clearly?
-2. What story became stronger?
-3. What interview advice will you use?
-4. What did you learn about evaluating an offer?
-5. What should you understand before saying yes to a job?
-6. What did Jennifer say that changed your thinking?
-
-WHAT TO SUBMIT
-
-Submit:
-
-• quick resume review
-• four Resume Story Bank entries
-• two revised resume statements
-• three interview-story matches
-• three Jennifer Miller questions
-• post-experience reflection
-
-PORTFOLIO
-
-Save your strongest Resume Story Bank example and revised resume evidence.
+MIDWEEK REFLECTION
+What did I notice about the difference between getting an AI answer and making a professional decision?
 
 CAPSTONE CONNECTION
-
-Answer:
-
-What does your resume fail to communicate about who you really are?
-
-Then choose ONE story that proves that part of you.
-
-Carry that story into Experiences + Stories or Strengths + Skills in your year-long Capstone.`,
-      minutes: 45,
+Save the original AI output, your changes/rejections, your verification, and the reasoning behind your final decision.`,
+      minutes: 50,
       dayNumber: 3,
     },
     10: {
-      title: "Interview Under Pressure",
+      title: "Professional Curiosity + Business Literacy — Julie + Eric",
       instructions: `WHAT YOU ARE DOING
 
-You are practicing how to answer interview questions when you feel pressure, uncertainty, or surprise.
+Learn how to enter a professional room prepared, ask better questions, listen for opportunity, understand how professionals create value, and follow up.
 
-You will build flexible evidence stories, respond to unexpected questions, receive feedback, and improve a second attempt.
+TUESDAY · CURIOSITY LAB
+• Practice a concise professional introduction.
+• Turn weak questions into strong open-ended questions.
+• Ask a primary question and natural follow-ups.
+• Listen for clues instead of reading a list.
 
-WHY THIS MATTERS
+WEDNESDAY · JULIE + ERIC RESEARCH
+Use only confirmed/public information available to the class.
+• What work do they do?
+• What problems do they help solve?
+• Who are their customers, clients, members, partners, or stakeholders?
+• Prepare 3–5 thoughtful questions that cannot be answered by a quick website search.
 
-Strong interviewing is not memorizing perfect answers.
+THURSDAY · LIVE PROFESSIONAL CONVERSATION
+Listen for decisions, business problems, roles, career paths, and opportunities to explore.
 
-It is being able to:
+FRIDAY
+Write a specific thank-you/follow-up and complete your Professional Connection Record.
 
-• listen
-• think
-• choose a relevant example
-• explain what you actually did
-• recover when an answer is weak
-• stay professional under pressure
-
-PART 1 · BUILD FOUR FLEXIBLE STORIES
-
-Choose FOUR real experiences.
-
-For each one, write:
-
-SITUATION
-What was happening?
-
-ACTION
-What did you do?
-
-RESULT
-What happened?
-
-LEARNING
-What did you learn?
-
-SKILLS
-What skills does the story demonstrate?
-
-Then list at least TWO interview questions the story could help answer.
-
-PART 2 · PRESSURE QUESTIONS
-
-Practice answering at least FIVE questions.
-
-Examples:
-
-1. Tell me about a time you failed.
-2. Tell me about a time you disagreed with someone.
-3. Tell me about a time you received feedback you did not like.
-4. Tell me about a time you had to adapt quickly.
-5. Tell me about a mistake you made.
-6. Tell me about a time you led.
-7. Tell me about a time you did not get the role or outcome you wanted.
-8. Tell me about a difficult teammate or coworker.
-9. Why should we choose you?
-10. Tell me something that is not on your resume.
-
-Do not memorize a script.
-
-Choose the strongest real story for the question.
-
-PART 3 · UNEXPECTED QUESTION
-
-Your facilitator will give you at least one question you did not prepare for.
-
-Before answering:
-
-• listen fully
-• take a moment
-• identify what the question is really asking
-• select a real example
-• answer honestly
-
-You may say:
-
-"That's a good question. Let me think about that for a second."
-
-PART 4 · FEEDBACK
-
-After your first attempt, record feedback about:
-
-• clarity
-• evidence
-• answer length
-• body language
-• pace
-• eye contact
-• confidence
-• professional presence
-• whether you actually answered the question
-
-PART 5 · SECOND ATTEMPT
-
-Choose ONE answer to repeat.
-
-Before the second attempt, write:
-
-1. What was weak about the first answer?
-2. What will you change?
-3. What will you keep?
-
-Then answer again.
-
-PART 6 · REFLECTION
-
-Answer:
-
-1. What happened to your communication under pressure?
-2. Which story was easiest to use?
-3. Which question was hardest?
-4. What feedback was most useful?
-5. What changed during your second attempt?
-6. What will you do when you need time to think in a future interview?
-7. What interview habit do you want to keep practicing?
-
-WHAT TO SUBMIT
-
-Submit:
-
-• four flexible interview stories
-• five practice responses or notes
-• unexpected-question response
-• feedback notes
-• first-attempt / second-attempt comparison
-• final reflection
-
-PORTFOLIO
-
-Save your strongest behavioral interview story and evidence of improvement.
+MIDWEEK REFLECTION
+Which question or follow-up showed the strongest curiosity today, and what made it stronger?
 
 CAPSTONE CONNECTION
-
-Save one story about pressure, recovery, feedback, failure, or growth.
-
-Ask yourself:
-
-What does the way I respond when things are difficult reveal about who I am becoming?
-
-Carry that into Challenges + Failures or Strengths + Skills.`,
-      minutes: 45,
+Save what you researched, the question you asked, what you learned, and the next action you chose because of the conversation.`,
+      minutes: 50,
       dayNumber: 3,
     },
     11: {
-      title: "Michelle Boudin Prep — Pitch, Panel + Rebuttal",
+      title: "How a Business Actually Works — Champion Tire & Wheel",
       instructions: `WHAT YOU ARE DOING
 
-You are preparing for the Michelle Boudin on-camera communication experience.
+Use Champion Tire & Wheel to understand a business as a connected system—not only as automotive careers.
 
-You will practice speaking clearly, listening under pressure, answering follow-up questions, disagreeing professionally, and responding when someone challenges your point.
+TUESDAY · BUSINESS SYSTEMS LAB
+Map customer need → roles → handoffs → materials/information → quality → safety → customer communication → finished outcome.
+Identify where delay, waste, error, or a missed handoff could affect money, quality, safety, or reputation.
 
-WHY THIS MATTERS
+WEDNESDAY · CHAMPION RESEARCH
+Research products/services, customers, problems solved, likely workflow, technology, safety, supply/vendor considerations, and visible/hidden careers.
+Prepare operations questions for the tour.
 
-Communication becomes harder when:
+THURSDAY · OPERATIONS DETECTIVE
+CLOSED-TOE SHOES.
+Find one workflow, quality-control point, customer-service moment, technology use, safety practice, teamwork/leadership behavior, unexpected career, and improvement question.
 
-• people are watching
-• you are nervous
-• someone disagrees
-• you are interrupted
-• you do not know the question in advance
-• you have limited time
-• you need to defend an idea
+FRIDAY
+Write a specific thank-you, map a transferable skill, and explain one business-system insight.
 
-Strong communicators do not simply talk more.
-
-They listen, think, respond, adjust, and stay composed.
-
-PART 1 · YOUR 60-SECOND RESPONSE
-
-Choose a topic you can speak about honestly.
-
-Possible topics:
-
-• something you believe
-• a goal
-• a lesson athletics taught you
-• something you would change
-• a career interest
-• something young people misunderstand
-• a challenge you overcame
-• what success means to you
-
-Build a 60-second response.
-
-Use:
-
-OPEN
-What is your main point?
-
-WHY
-Why does it matter?
-
-EVIDENCE
-What experience, example, or reason supports it?
-
-CLOSE
-What do you want people to remember?
-
-Do not write a speech you plan to memorize word-for-word.
-
-PART 2 · LISTENING
-
-Practice answering a question only after the other person finishes.
-
-After each question, identify:
-
-What was actually asked?
-
-What is my strongest answer?
-
-What evidence supports it?
-
-PART 3 · PROFESSIONAL DISAGREEMENT
-
-Practice these sentence starters:
-
-"I see it differently because..."
-
-"I understand that point. My concern is..."
-
-"I agree with part of that, but..."
-
-"The evidence that shapes my view is..."
-
-"That makes me reconsider..."
-
-Write one example of how you could disagree without becoming disrespectful or defensive.
-
-PART 4 · REBUTTAL
-
-A rebuttal is not repeating your original point louder.
-
-It should respond to the other person's argument.
-
-Write:
-
-1. Their point.
-2. The part you understand.
-3. Your response.
-4. Your reason or evidence.
-5. A professional closing statement.
-
-PART 5 · PANEL PRACTICE
-
-Practice:
-
-• your 60-second response
-• one follow-up question
-• one disagreement
-• one rebuttal
-• one unexpected question
-
-Ask for feedback on:
-
-• clarity
-• pace
-• tone
-• body language
-• listening
-• composure
-• confidence
-• whether you answered the actual question
-
-PART 6 · PRE-CAMERA REFLECTION
-
-Answer:
-
-1. What happens to your communication when you are nervous?
-2. What do you tend to do too quickly?
-3. What feedback matters most?
-4. What do you want to improve before Michelle's session?
-5. What will you intentionally do when the camera turns on?
-
-WHAT TO SUBMIT
-
-Submit:
-
-• 60-second response outline
-• professional disagreement example
-• rebuttal exercise
-• panel-practice feedback
-• pre-camera reflection
-• one specific goal for the Michelle Boudin experience
-
-PORTFOLIO
-
-Save the 60-second response and communication feedback.
+MIDWEEK REFLECTION
+What part of a business system had I never thought about before, and why does it matter?
 
 CAPSTONE CONNECTION
-
-What does this week reveal about:
-
-• your voice
-• confidence
-• discomfort
-• listening
-• leadership
-• ability to adjust
-
-Carry one meaningful realization into My Voice, Strengths + Skills, or Challenges + Failures.`,
-      minutes: 45,
+Preserve one operations insight: what you observed, which roles were connected, and what could happen if one handoff failed.`,
+      minutes: 50,
       dayNumber: 3,
     },
     12: {
-      title: "Michelle Boudin — On-Camera Reflection + Second Attempt",
+      title: "Communication Under Pressure — Michelle Boudin",
       instructions: `WHAT YOU ARE DOING
 
-You are participating in and reflecting on the Michelle Boudin on-camera communication experience.
+Practice how to think, respond, recover, and stay credible when communication becomes unscripted or uncomfortable.
 
-You will compare how you communicated before feedback and after feedback.
+TUESDAY · CAMERA LAB
+Practice a 30-second introduction, explain something complicated simply, answer an unexpected question, and improve eye contact, posture, voice, pacing, and concise structure.
+First take → one coaching point → immediate second take.
 
-WHY THIS MATTERS
+WEDNESDAY · PRESSURE + CONFLICT + PANEL LAB
+Practice difficult or skeptical questions, disagreement without defensiveness, interruption, blanking, criticism, correcting misinformation, saying "I don't know" professionally, and panelist/interviewer/moderator/observer roles.
+Freeze, coach, replay, and retry.
 
-Growth is easier to see when you have evidence.
+THURSDAY · MICHELLE BOUDIN LIVE APPLICATION
+Apply camera, interview, panel, presentation, conflict-response, and recovery skills with professional coaching and immediate retry.
 
-The goal is not to look perfect on camera.
+FRIDAY
+Write a thank-you and complete your Before / After Communication Artifact.
 
-The goal is to notice:
-
-• what happens under pressure
-• how you receive feedback
-• how quickly you adjust
-• how clearly you communicate
-• what confidence actually requires
-
-BEFORE THE EXPERIENCE
-
-Review your Week 11 work.
-
-Write:
-
-1. My communication goal is...
-2. The feedback I most want to remember is...
-3. When I get nervous, I tend to...
-4. To stay composed, I will...
-5. One thing I want the audience to understand about me is...
-
-FIRST ATTEMPT
-
-After your first on-camera response, record:
-
-• What felt strong?
-• What felt uncomfortable?
-• Did you answer the actual question?
-• What happened to your pace?
-• What happened to your voice?
-• What happened to your body language?
-• What did you notice that you had not noticed before?
-
-PROFESSIONAL FEEDBACK
-
-Record the feedback you receive.
-
-Separate it into:
-
-KEEP
-What should you continue?
-
-CHANGE
-What should you adjust?
-
-TRY
-What should you experiment with?
-
-SECOND ATTEMPT
-
-Before trying again, write your plan.
-
-I will keep...
-
-I will change...
-
-I will focus on...
-
-After the second attempt, answer:
-
-1. What changed?
-2. What improved?
-3. What was still difficult?
-4. Which piece of feedback made the biggest difference?
-5. Did you feel different, sound different, or both?
-
-UNEXPECTED QUESTION
-
-If you receive an unexpected question, record:
-
-1. What was asked?
-2. What was your first reaction?
-3. Did you slow down enough to think?
-4. What would you change if you answered again?
-
-FINAL REFLECTION
-
-Answer:
-
-1. What did being on camera reveal about your communication?
-2. What feedback was hardest to hear?
-3. What feedback was most useful?
-4. What changed between attempts?
-5. What did you learn about preparation and confidence?
-6. Where else will this skill matter?
-7. How do you want to communicate when you are uncomfortable in the future?
-
-WHAT TO SUBMIT
-
-Submit:
-
-• pre-experience communication goal
-• first-attempt reflection
-• professional feedback notes
-• second-attempt plan
-• first/second comparison
-• unexpected-question reflection, if used
-• final reflection
-
-PORTFOLIO
-
-Save evidence of your first and second attempts when available, plus your communication-growth reflection.
+MIDWEEK REFLECTION
+What pressure reaction did I notice in myself, and what recovery technique helped me remain credible?
 
 CAPSTONE CONNECTION
-
-Save one moment of:
-
-• discomfort
-• feedback
-• adjustment
-• courage
-• composure
-• confidence
-
-Ask:
-
-What does this moment show about who I am becoming as a communicator and leader?
-
-Carry it into My Voice, Challenges + Failures, Strengths + Skills, or Experiences + Stories.`,
-      minutes: 45,
+Preserve your before/after example: the pressure response, feedback, what you changed, and evidence your next attempt was stronger.`,
+      minutes: 50,
       dayNumber: 3,
     },
     13: {
@@ -2095,7 +1569,7 @@ These may belong in People + Inspiration, Career + Pathways, Experiences + Stori
       title: "NO CLASS · THANKSGIVING BREAK",
       instructions: `NO REQUIRED WORK
 
-There is no required Future Ready™ assignment this week.
+There is no required BUILD6™ assignment this week.
 
 You are not behind.
 
@@ -2115,7 +1589,7 @@ NO NEW CAPSTONE ENTRY REQUIRED`,
       title: "Who I Am Becoming — Pre-Internship Statement",
       instructions: `WHAT YOU ARE DOING
 
-You are creating a BEFORE snapshot of who you are as you prepare to move from the fall Future Ready™ experience into the January–April internship phase.
+You are creating a BEFORE snapshot of who you are as you prepare to move from the fall BUILD6™ experience into the January–April internship phase.
 
 This is not the end of the program.
 
@@ -2374,7 +1848,7 @@ YOU KNOW WHO YOU ARE.`,
   };
 
   function loadPrebuiltWeekAssignment(week: number) {
-    const item = PREBUILT_WEEK_ASSIGNMENTS[week];
+    const item = getPlannerPrebuiltAssignment(week);
 
     if (!item) {
       setSaveMessage("No prebuilt assignment is configured for this week.");
@@ -2883,6 +2357,27 @@ Your capstone response must be your own thinking and experience.`,
     }, 50);
   }
 
+/* BUILD6_DIRECT_ASSIGNMENTS_NAV */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("section") !== "assignments") return;
+
+    setShowFullTools(true);
+    setActiveTab("assignments");
+
+    window.setTimeout(() => {
+      document
+        .getElementById("future-ready-assignments")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 150);
+  }, []);
+
   function openAssignments() {
     setShowFullTools(true);
     setActiveTab("assignments");
@@ -2909,11 +2404,67 @@ Your capstone response must be your own thinking and experience.`,
     }
   }
 
+  /* BUILD6_REACT310_HOOK_ORDER_FIX_V1
+     These effects must execute before any conditional return so React sees
+     the same hook order on loading, error, and loaded renders. */
+  useEffect(() => {
+    if (activeTab !== "assignments") return;
+    let canceled = false;
+    async function fetchAllAssignments() {
+      setAssignmentTableBusy(true);
+      setAssignmentTableError(null);
+      const found: {week: number; lessonId: string; assignment: Assignment}[] = [];
+      const failed: number[] = [];
+      // Batches limit requests to four concurrently.
+      for (let start = 1; start <= 16; start += 4) {
+        if (canceled) return;
+        const batch = await Promise.all(
+          Array.from({length: Math.min(4, 17 - start)}, (_, i) => start + i)
+            .map(async (week) => {
+              try {
+                const response = await fetch(`/api/ambassador/teaching-hub?week=${week}`, {cache: "no-store"});
+                if (!response.ok) throw new Error(String(response.status));
+                const result = (await response.json()) as TeachingHubResponse;
+                if (!result.lesson?.id || !Array.isArray(result.assignments)) throw new Error("Incomplete response");
+                return {week, result};
+              } catch { return {week, result: null}; }
+            })
+        );
+        if (canceled) return;
+        for (const item of batch) {
+          if (!item.result) { failed.push(item.week); continue; }
+          for (const assignment of item.result.assignments) {
+            found.push({week: item.week, lessonId: item.result.lesson.id, assignment});
+          }
+        }
+      }
+      if (!canceled) {
+        setAllWeekAssignments(dedupeAssignmentRows(found));
+        setAssignmentTableError(failed.length ? `Could not load Week(s) ${failed.join(", ")}. The table is incomplete; retry before making changes.` : null);
+        setAssignmentTableBusy(false);
+      }
+    }
+    void fetchAllAssignments();
+    return () => { canceled = true; };
+  }, [activeTab, assignmentTableRevision]);
+
+  useEffect(() => {
+    if (!data || data.lesson.weekNumber !== selectedWeek || typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const assignmentId = params.get("editAssignment");
+    if (!assignmentId || params.get("section") !== "assignments") return;
+    const match = data.assignments.find((item) => item.id === assignmentId);
+    if (!match) return;
+    params.delete("editAssignment");
+    window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
+    openAssignmentManager(match);
+  }, [data, selectedWeek]);
+
   if (loading && !data) {
     return (
       <main className="rounded-3xl border border-slate-200 bg-white p-8">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-[#4B2265]">
-          Future Ready™ Curriculum & Teaching Hub
+          BUILD6™ Curriculum & Teaching Hub
         </p>
 
         <h1 className="mt-3 text-2xl font-black text-[#0D1B3D]">
@@ -2953,41 +2504,200 @@ Your capstone response must be your own thinking and experience.`,
   const delivery = data.delivery;
   const sourceContent = lesson.content;
   const isWeekSix = selectedWeek === 6;
+  const week0912Override = getBuild6Week0912Content(selectedWeek);
 
-  const displayLessonTitle = isWeekSix ? "Professional Etiquette in Action" : lesson.title;
-  const phase = richLesson?.phase ?? lesson.module.phase ?? "Launch Ready";
+  const displayLessonTitle = isWeekSix
+    ? "Professional Etiquette in Action"
+    : week0912Override?.title ?? lesson.title;
+
+  const phase =
+    week0912Override?.phase ??
+    richLesson?.phase ??
+    lesson.module.phase ??
+    "Launch Ready";
 
   const objective = isWeekSix
     ? "First impressions, professional communication, workplace judgment, meetings, networking, and accountability"
-    : richLesson?.objective ?? sourceContent?.focus ?? lesson.summary ?? "";
+    : week0912Override?.objective ??
+      richLesson?.objective ??
+      sourceContent?.focus ??
+      lesson.summary ??
+      "";
 
   const studentActivity = isWeekSix
     ? "Professional Etiquette Challenge with role play, peer feedback, and immediate retry"
-    : richLesson?.studentActivity ?? sourceContent?.activity ?? "";
+    : week0912Override?.studentActivity ??
+      richLesson?.studentActivity ??
+      sourceContent?.activity ??
+      "";
 
   const reflection = isWeekSix
     ? "Which professional behavior will help other people trust and rely on me?"
-    : sourceContent?.reflection ?? "";
+    : week0912Override?.reflection ??
+      sourceContent?.reflection ??
+      "";
 
   const workplaceConnection =
+    week0912Override?.workplaceConnection ??
     richLesson?.workplaceConnection ??
     "Connect this lesson to professional expectations, career readiness, and real workplace experiences.";
 
-  const skillsEarned = richLesson?.skillsEarned ?? [];
+  const skillsEarned =
+    week0912Override?.skillsEarned ??
+    richLesson?.skillsEarned ??
+    [];
 
   const portfolioEvidence = isWeekSix
     ? "Professional Etiquette Evidence Story + Professional Etiquette Code"
-    : richLesson?.portfolioEvidence ?? "Future Ready™ Portfolio Evidence";
+    : week0912Override?.portfolioEvidence ??
+      richLesson?.portfolioEvidence ??
+      "BUILD6™ Portfolio Evidence";
 
   const badgeEarned = isWeekSix
     ? "BUILD6™ Professional Etiquette"
-    : richLesson?.badgeEarned ?? "Future Ready™ Skill Badge";
+    : week0912Override?.badgeEarned ??
+      richLesson?.badgeEarned ??
+      "BUILD6™ Skill Badge";
 
   const facilitatorGuide =
+    week0912Override?.facilitatorGuide ??
     richLesson?.facilitatorGuide ??
     "Use the lesson focus, core activity, discussion, reflection, and available resources to facilitate this session. Add cohort-specific notes below as needed.";
 
-  const discussionQuestions = richLesson?.discussionQuestions ?? [];
+  const discussionQuestions =
+    week0912Override?.discussionQuestions ??
+    richLesson?.discussionQuestions ??
+    [];
+
+  /* BUILD6_WEEK_DELIVERY_DAILY_POPULATION_V1
+     Additive only: uses the existing 1–16 week delivery records already in BUILD6.
+     Week 6's approved custom five-day plan remains untouched below. */
+  const selectedWeekDelivery = getAmbassadorWeekDelivery(selectedWeek);
+
+  /* BUILD6_SAFE_WEEK_RENDER_V1
+     Display-layer protection only.
+     The authoritative Weeks 1–16 delivery files remain unchanged.
+     Optional or empty nested arrays must never crash the curriculum screen. */
+  const safeStringArray = (value: unknown): string[] =>
+    Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === "string")
+      : [];
+
+  const mondayReflectionPrompts = safeStringArray(
+    selectedWeekDelivery?.monday?.reflectionPrompt,
+  );
+  const mondayOrganizationTasks = safeStringArray(
+    selectedWeekDelivery?.monday?.organizationTasks,
+  );
+  const mondayProjectWork = safeStringArray(
+    selectedWeekDelivery?.monday?.projectWork,
+  );
+  const mondayCapstoneWork = safeStringArray(
+    selectedWeekDelivery?.monday?.capstoneWork,
+  );
+  const wednesdayAppliedLearningAssetIds = safeStringArray(
+    selectedWeekDelivery?.wednesday?.appliedLearningAssetIds,
+  );
+  const thursdayPreparationQuestions = safeStringArray(
+    selectedWeekDelivery?.thursday?.experience?.preparationQuestions,
+  );
+  const thursdayDuringExperience = safeStringArray(
+    selectedWeekDelivery?.thursday?.experience?.duringExperience,
+  );
+  const thursdayDebriefQuestions = safeStringArray(
+    selectedWeekDelivery?.thursday?.experience?.debriefQuestions,
+  );
+  const fridayClosingQuestions = safeStringArray(
+    selectedWeekDelivery?.friday?.closingQuestions,
+  );
+
+
+  const weekDeliveryDailyLessons: {
+    day: string;
+    title: string;
+    objective: string;
+    activity: string;
+    reflection: string;
+  }[] = selectedWeekDelivery
+    ? [
+        {
+          day: "Day 1",
+          title: "START IT · Prepare + Organize",
+          objective:
+            mondayReflectionPrompts[0] ||
+            `Prepare for Week ${selectedWeek}.`,
+          activity: [
+            ...mondayOrganizationTasks,
+            ...mondayProjectWork,
+            ...mondayCapstoneWork,
+          ].join("\n• "),
+          reflection:
+            mondayReflectionPrompts[mondayReflectionPrompts.length - 1] || "What do you want to carry into this week?",
+        },
+        {
+          day: "Day 2",
+          title: data.lesson.title || `Week ${selectedWeek} Core Skill`,
+          objective:
+            objective ||
+            `Learn and practice the core Week ${selectedWeek} skill.`,
+          activity:
+            studentActivity ||
+            `Practice the Week ${selectedWeek} skill through discussion, application, and professional decision-making.`,
+          reflection:
+            reflection ||
+            `What did you practice today that you can use in a real situation?`,
+        },
+        {
+          day: "Day 3",
+          title: "DEVELOP IT · Applied Learning Lab",
+          objective:
+            `Apply the Week ${selectedWeek} skill through hands-on practice, judgment, communication, and retry.`,
+          activity:
+            wednesdayAppliedLearningAssetIds.length > 0
+              ? `Complete the Week ${selectedWeek} applied-learning activities: ${wednesdayAppliedLearningAssetIds
+                  .map((id) =>
+                    id
+                      .replace(/^week-\d+-/, "")
+                      .split("-")
+                      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(" "),
+                  )
+                  .join(" + ")}.`
+              : `Use the Week ${selectedWeek} generated case, role play, improv, team challenge, or other applied activity attached to this teaching day.`,
+          reflection:
+            `What changed after you practiced, received feedback, or tried again?`,
+        },
+        {
+          day: "Day 4",
+          title:
+            selectedWeekDelivery?.thursday?.classroom?.title ||
+            "APPLY IT · Experience + Workplace Connection",
+          objective:
+            selectedWeekDelivery?.thursday?.classroom?.description ||
+            `Connect Week ${selectedWeek} learning to a real workplace, professional, community, or career setting.`,
+          activity: [
+            ...thursdayPreparationQuestions.map(
+              (item) => `PREP: ${item}`,
+            ),
+            ...thursdayDuringExperience.map(
+              (item) => `NOTICE/DO: ${item}`,
+            ),
+          ].join("\n• "),
+          reflection:
+            thursdayDebriefQuestions[0] ||
+            "What did this experience change or clarify for you?",
+        },
+        {
+          day: "Day 5",
+          title: "REFLECT ON IT · Prove + Carry Forward",
+          objective:
+            `Close Week ${selectedWeek} by identifying what changed, what evidence matters, and what should carry forward.`,
+          activity: fridayClosingQuestions.join("\n• "),
+          reflection:
+            fridayClosingQuestions[fridayClosingQuestions.length - 1] || "What will you carry forward from this week?",
+        },
+      ]
+    : [];
 
   const dailyLessons: {
     day: string;
@@ -3003,7 +2713,7 @@ Your capstone response must be your own thinking and experience.`,
         { day: "Day 4", title: "Meetings, Networking + Guest Etiquette", objective: "Participate professionally in meetings, networking, visits, and conversations with guests.", activity: "Practice entering conversations, introductions, question building, meeting behavior, follow-up, and professional exits.", reflection: "What can I do to make a professional conversation valuable for both people?" },
         { day: "Day 5", title: "Professional Etiquette Challenge", objective: "Demonstrate Week 6 professional-etiquette skills under realistic pressure.", activity: "Complete a multi-scenario etiquette challenge using role play, peer feedback, reflection, and immediate retry.", reflection: "Which professional behavior will help other people trust and rely on me?" },
       ]
-    : [];
+    : weekDeliveryDailyLessons;
 
   const homework: string | null = null;
 
@@ -3027,6 +2737,29 @@ Your capstone response must be your own thinking and experience.`,
       });
     } else {
       setEditingAssignmentId(null);
+      setAssignmentForm({
+        title: "",
+        instructions: "",
+        estimatedMinutes: 20,
+        requirement: "REQUIRED",
+        dueAt: "",
+        dayNumber: null,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      });
+    }
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      params.set("section", "assignments");
+      params.set("week", String(selectedWeek));
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}?${params.toString()}`,
+      );
     }
 
     setShowFullTools(true);
@@ -3034,12 +2767,505 @@ Your capstone response must be your own thinking and experience.`,
 
     window.setTimeout(() => {
       document
-        .getElementById("future-ready-assignments")
+        .getElementById("build6-assignment-editor")
         ?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
-    }, 100);
+    }, 250);
+  }
+
+
+
+
+
+  /* BUILD6_16_WEEK_ASSIGNMENT_PLANNER_V1
+     Non-destructive planner:
+     - shows all 16 weeks at once
+     - dedupes repeated saved records in the UI only
+     - surfaces canonical prebuilt assignments already in this file
+     - adds a prebuilt assignment with one checkbox click
+     - never auto-deletes existing database assignments
+  */
+  /* BUILD6_ASSIGNMENT_WEEK_MAPPING_CHECKBOX_FINISH_V1
+     Canonical assignment planner corrections:
+     Week 6 = Professional Etiquette
+     Week 7 = Finance / $45,000 Job + Brad Theis
+     Week 8 = Terracon
+     Other weeks continue to use the protected prebuilt assignment map.
+  */
+  function getPlannerPrebuiltAssignment(week: number) {
+    if (week === 15) return undefined;
+
+    if (week === 6) {
+      return {
+        title: "Professional Etiquette in Action",
+        instructions: `PURPOSE
+
+Practice the professional behaviors that help people trust, respect, and rely on you in real workplaces, meetings, networking situations, tours, interviews, internships, and professional experiences.
+
+WHAT TO PRACTICE
+
+1. FIRST IMPRESSIONS
+- arrival and readiness
+- introductions
+- eye contact and body language
+- appropriate phone use
+- professional appearance and presence
+
+2. PROFESSIONAL COMMUNICATION
+- greetings and introductions
+- listening before responding
+- asking clear questions
+- professional email and message judgment
+- tone, timing, and follow-through
+
+3. WORKPLACE JUDGMENT + ACCOUNTABILITY
+- what to do when you make a mistake
+- how to ask for clarification
+- handling feedback
+- meeting deadlines
+- owning your role and responsibilities
+
+4. MEETINGS + NETWORKING
+- entering a conversation
+- introducing yourself and others
+- asking thoughtful questions
+- participating without dominating
+- exiting and following up professionally
+
+5. PROFESSIONAL ETIQUETTE CHALLENGE
+Complete realistic role-play and workplace scenarios. Use peer feedback, retry the scenario, and identify the behavior you will carry into your next professional setting.
+
+REFLECTION
+What professional behavior will help other people trust and rely on you?`,
+        minutes: 50,
+        dayNumber: 5,
+      };
+    }
+
+    if (week === 7) {
+      const finance = PREBUILT_WEEK_ASSIGNMENTS[6];
+      if (finance) {
+        return {
+          ...finance,
+          title: "Your First $45,000 Job — Life + Money Scenario · Brad Theis",
+        };
+      }
+
+      return {
+        title: "Your First $45,000 Job — Life + Money Scenario · Brad Theis",
+        instructions: "Apply financial-literacy decisions to a realistic first-job income scenario, including take-home pay, housing, transportation, saving, spending, benefits, tradeoffs, and the cost of real-life choices.",
+        minutes: 50,
+        dayNumber: 3,
+      };
+    }
+
+    if (week === 8) {
+      const terracon = PREBUILT_WEEK_ASSIGNMENTS[7];
+      if (terracon) {
+        return {
+          ...terracon,
+          title: terracon.title.toLowerCase().includes("terracon")
+            ? terracon.title
+            : `Terracon · ${terracon.title}`,
+        };
+      }
+
+      return {
+        title: "Terracon Professional Experience + Career Pathway Discovery",
+        instructions: "Prepare for the Terracon professional experience, identify roles and pathways, build professional questions, observe workplace skills and culture, and complete a post-experience reflection and career connection.",
+        minutes: 50,
+        dayNumber: 3,
+      };
+    }
+
+    return PREBUILT_WEEK_ASSIGNMENTS[week];
+  }
+
+
+  /* BUILD6_WEEKLY_ASSIGNMENT_RHYTHM_V2
+     Locked rhythm:
+       Monday    = launch the weekly workbook.
+       Tuesday   = exact Day 2 workbook section/activity.
+       Wednesday = exact Day 3 workbook section + next-day experience research when applicable.
+       Thursday  = exact Day 4 workbook section tied to speaker/tour/experience/application.
+       Friday    = exact Day 5 workbook section + thank-you/follow-up + completion/deeper-portal work.
+     Portfolio/capstone artifacts are intentionally concentrated on Wednesday and Friday.
+     Existing student work is never deleted when the active assignment is removed.
+  */
+  function getCanonicalStudentWorkForWeek(week: number) {
+    if (week === 15) return [];
+
+    const delivery = getAmbassadorWeekDelivery(week);
+    const experienceText = JSON.stringify(delivery?.thursday ?? {}).toLowerCase();
+    const hasThursdayExperience =
+      experienceText.includes("experience") ||
+      experienceText.includes("visit") ||
+      experienceText.includes("tour") ||
+      experienceText.includes("speaker") ||
+      experienceText.includes("professional") ||
+      experienceText.includes("employer") ||
+      experienceText.includes("company");
+
+    const workbookInstruction = (dayNumber: number, dayName: string) =>
+      `Open the BUILD6™ Week ${week} Student Workbook and complete the ${dayName} / Day ${dayNumber} page(s) and activity for that day. Use the workbook as the source of truth for prompts, notes, decisions, reflections, and evidence.`;
+
+    return [
+      {
+        key: `week-${week}-day-1-weekly-workbook`,
+        title: `Week ${week} Weekly Workbook · Monday Launch`,
+        instructions: `${workbookInstruction(1, "Monday")} Review the week's focus, organize what is due, begin the Monday workbook work, and identify what you want to learn or improve this week.`,
+        estimatedMinutes: 25,
+        requirement: "REQUIRED" as const,
+        dayNumber: 1,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      },
+      {
+        key: `week-${week}-day-2-workbook`,
+        title: `Week ${week} Workbook · Tuesday / Day 2`,
+        instructions: `${workbookInstruction(2, "Tuesday")} Complete the exact Day 2 activity that aligns with Tuesday's lesson. Do not substitute a generic response for the workbook activity.`,
+        estimatedMinutes: 25,
+        requirement: "REQUIRED" as const,
+        dayNumber: 2,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      },
+      {
+        key: `week-${week}-day-3-workbook-research`,
+        title: hasThursdayExperience
+          ? `Week ${week} Workbook + Company/Tour Research · Wednesday`
+          : `Week ${week} Workbook · Wednesday / Day 3`,
+        instructions: hasThursdayExperience
+          ? `${workbookInstruction(3, "Wednesday")} Then research tomorrow's company/host using its website and reliable public information. Identify: what problems the organization solves; who its clients/customers are; its products/services; roles/careers students noticed; and at least 3 informed questions to ask during the tour, visit, speaker conversation, or professional experience. Save this research as this week's Wednesday artifact/evidence.`
+          : `${workbookInstruction(3, "Wednesday")} Complete the Day 3 applied work and save the strongest research, decision, example, or evidence from today as a portfolio/capstone artifact when meaningful.`,
+        estimatedMinutes: hasThursdayExperience ? 35 : 25,
+        requirement: "REQUIRED" as const,
+        dayNumber: 3,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      },
+      {
+        key: `week-${week}-day-4-workbook-experience`,
+        title: hasThursdayExperience
+          ? `Week ${week} Workbook + Professional Experience · Thursday`
+          : `Week ${week} Workbook · Thursday / Day 4`,
+        instructions: hasThursdayExperience
+          ? `${workbookInstruction(4, "Thursday")} Bring Wednesday's research and questions into today's tour, speaker, employer visit, or professional experience. Capture useful answers, roles, products/services, workplace observations, problems being solved, and career pathways directly in the Day 4 workbook section.`
+          : `${workbookInstruction(4, "Thursday")} Complete the exact Day 4 application activity and connect the lesson to a real workplace, career, team, or community situation.`,
+        estimatedMinutes: 25,
+        requirement: "REQUIRED" as const,
+        dayNumber: 4,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      },
+      {
+        key: `week-${week}-day-5-closeout`,
+        title: `Week ${week} Friday Closeout · Workbook + Thank-You + Follow-Up`,
+        instructions: `${workbookInstruction(5, "Friday")} Write the appropriate professional thank-you note or follow-up from this week's speaker, host, tour, mentor, team, or learning experience. Check that every required assignment for the week is complete and submitted. If everything is complete, use the remaining time to go deeper in your BUILD6™ portal: expand a career pathway, portfolio/capstone evidence, Student Passport, reflection, professional connection, or opportunity you want to investigate. Save the strongest Friday reflection, thank-you/follow-up evidence, or completed artifact for portfolio/capstone use.`,
+        estimatedMinutes: 30,
+        requirement: "REQUIRED" as const,
+        dayNumber: 5,
+        allowOnline: true,
+        allowPrint: true,
+        allowUpload: true,
+        portfolioEligible: true,
+      },
+    ];
+  }
+
+
+  /* BUILD6_COMPACT_ASSIGNMENT_REVIEW_V1
+     Default planner = clean assignment plan.
+     Completed / historical / supporting records remain preserved and visible
+     under a collapsed Preserved Student Work section for each week.
+  */
+  function isSupportingOrLegacyAssignment(assignment: Assignment) {
+    const title = assignment.title.toLowerCase();
+
+    return (
+      title === "student workbook" ||
+      title === "portfolio artifact" ||
+      title.includes("professional experience") ||
+      title.includes("reflection") ||
+      title.includes("thank-you") ||
+      title.includes("thank you") ||
+      title.includes("capstone")
+    );
+  }
+
+  function assignmentMatchesCanonical(
+    assignment: Assignment,
+    canonical: ReturnType<typeof getCanonicalStudentWorkForWeek>[number],
+  ) {
+    const clean = (value: string) =>
+      value.toLowerCase().replace(/\s+/g, " ").trim();
+
+    if (assignment.dayNumber !== canonical.dayNumber) return false;
+
+    const savedTitle = clean(assignment.title);
+    const canonicalTitle = clean(canonical.title);
+
+    if (savedTitle === canonicalTitle) return true;
+
+    if (
+      canonicalTitle.includes("workbook") &&
+      (savedTitle === "student workbook" ||
+        savedTitle.startsWith("student workbook · day"))
+    ) return true;
+
+    if (
+      canonicalTitle.includes("follow-up reflection") &&
+      (savedTitle.includes("post-experience reflection") ||
+       savedTitle.includes("follow-up reflection"))
+    ) return true;
+
+    if (
+      canonicalTitle.includes("thank-you") &&
+      (savedTitle.includes("thank you") ||
+       savedTitle.includes("thank-you"))
+    ) return true;
+
+    return false;
+  }
+
+  async function addCanonicalStudentWork(
+    week: number,
+    lessonId: string | null,
+    item: ReturnType<typeof getCanonicalStudentWorkForWeek>[number],
+  ) {
+    const existing = dedupeAssignmentRows(allWeekAssignments)
+      .filter((row) => row.week === week)
+      .some((row) => assignmentMatchesCanonical(row.assignment, item));
+
+    if (existing) {
+      setSaveMessage(`${item.title} is already added to Week ${week}.`);
+      return;
+    }
+
+    setAssignmentTableBusy(true);
+    setAssignmentTableError(null);
+
+    try {
+      let resolvedLessonId = lessonId;
+
+      if (!resolvedLessonId) {
+        const lessonResponse = await fetch(
+          `/api/ambassador/teaching-hub?week=${week}`,
+          { cache: "no-store" },
+        );
+
+        if (!lessonResponse.ok) {
+          throw new Error(
+            `Unable to load Week ${week} lesson (${lessonResponse.status}).`,
+          );
+        }
+
+        const lessonResult =
+          (await lessonResponse.json()) as TeachingHubResponse;
+
+        resolvedLessonId = lessonResult.lesson?.id ?? null;
+      }
+
+      if (!resolvedLessonId) {
+        throw new Error(`Week ${week} lesson ID is unavailable.`);
+      }
+
+      const response = await fetch("/api/ambassador/teaching-hub", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          lessonId: resolvedLessonId,
+          action: "createAssignment",
+          title: item.title,
+          instructions: item.instructions,
+          estimatedMinutes: item.estimatedMinutes,
+          requirement: item.requirement,
+          dueAt: null,
+          dayNumber: item.dayNumber,
+          allowOnline: item.allowOnline,
+          allowPrint: item.allowPrint,
+          allowUpload: item.allowUpload,
+          portfolioEligible: item.portfolioEligible,
+        }),
+      });
+
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(
+          typeof detail.error === "string"
+            ? detail.error
+            : `Server returned ${response.status}`,
+        );
+      }
+
+      setSaveMessage(`${item.title} added to Week ${week}.`);
+      setAssignmentTableRevision((value) => value + 1);
+      if (week === selectedWeek) await loadWeek(week);
+    } catch (cause) {
+      setAssignmentTableError(
+        cause instanceof Error ? cause.message : `Could not add ${item.title}.`,
+      );
+      setAssignmentTableBusy(false);
+    }
+  }
+
+  function normalizeAssignmentKey(
+    week: number,
+    title: string,
+    instructions: string,
+    dayNumber: number | null | undefined,
+  ) {
+    const clean = (value: string) =>
+      value.toLowerCase().replace(/\s+/g, " ").trim();
+
+    return [week, dayNumber ?? 0, clean(title), clean(instructions)].join("::");
+  }
+
+  function dedupeAssignmentRows(
+    rows: {week: number; lessonId: string; assignment: Assignment}[],
+  ) {
+    const seen = new Set<string>();
+    return rows.filter(({week, assignment}) => {
+      const key = normalizeAssignmentKey(
+        week,
+        assignment.title,
+        assignment.instructions,
+        assignment.dayNumber,
+      );
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  async function addPrebuiltAssignmentForWeek(
+    week: number,
+    lessonId: string,
+  ) {
+    if (week === 15) {
+      setSaveMessage("Week 15 is Thanksgiving break · No class · No assignment.");
+      return;
+    }
+
+    const item = PREBUILT_WEEK_ASSIGNMENTS[week];
+
+    if (!item) {
+      setSaveMessage(
+        `No protected prebuilt assignment is configured for Week ${week}. Use + Add Custom Assignment if you want to create one.`,
+      );
+      return;
+    }
+
+    const duplicate = dedupeAssignmentRows(allWeekAssignments).some(
+      ({week: existingWeek, assignment}) =>
+        normalizeAssignmentKey(
+          existingWeek,
+          assignment.title,
+          assignment.instructions,
+          assignment.dayNumber,
+        ) ===
+        normalizeAssignmentKey(
+          week,
+          item.title,
+          item.instructions,
+          item.dayNumber,
+        ),
+    );
+
+    if (duplicate) {
+      setSaveMessage(`Week ${week} assignment is already added.`);
+      return;
+    }
+
+    setAssignmentTableBusy(true);
+    setAssignmentTableError(null);
+
+    try {
+      const response = await fetch("/api/ambassador/teaching-hub", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          lessonId,
+          action: "createAssignment",
+          title: item.title,
+          instructions: item.instructions,
+          estimatedMinutes: item.minutes || 20,
+          requirement: "REQUIRED",
+          dueAt: null,
+          dayNumber: item.dayNumber,
+          allowOnline: true,
+          allowPrint: true,
+          allowUpload: true,
+          portfolioEligible: true,
+        }),
+      });
+
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(
+          typeof detail.error === "string"
+            ? detail.error
+            : `Server returned ${response.status}`,
+        );
+      }
+
+      setSaveMessage(`Week ${week} assignment added.`);
+      setAssignmentTableRevision((current) => current + 1);
+
+      if (week === selectedWeek) {
+        await loadWeek(week);
+      }
+    } catch (cause) {
+      setAssignmentTableError(
+        cause instanceof Error
+          ? cause.message
+          : `Could not add Week ${week} assignment.`,
+      );
+      setAssignmentTableBusy(false);
+    }
+  }
+
+  async function removeFromAssignmentTable(week: number, lessonId: string, item: Assignment) {
+    if (!window.confirm(`Remove "${item.title}" from the facilitator active plan? It will stay live in student portals so unfinished work can still be completed/submitted, and submitted work remains preserved for portfolio/capstone history.`)) return;
+    setAssignmentTableBusy(true);
+    setAssignmentTableError(null);
+    try {
+      const response = await fetch("/api/ambassador/teaching-hub", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({lessonId, action: "deleteAssignment", assignmentId: item.id}),
+      });
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(typeof detail.error === "string" ? detail.error : `Server returned ${response.status}`);
+      }
+      if (week === selectedWeek) await loadWeek(week);
+      setAssignmentTableRevision((current) => current + 1);
+      setSaveMessage(`Removed assignment from the facilitator active plan. It remains live in student portals for completion/submission and portfolio/capstone history.`);
+    } catch (cause) {
+      setAssignmentTableError(cause instanceof Error ? cause.message : "Could not remove assignment.");
+      setAssignmentTableBusy(false);
+    }
+  }
+
+  function navigateToAssignment(week: number, assignmentId?: string) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("week", String(week));
+    url.searchParams.set("day", "1");
+    url.searchParams.set("section", "assignments");
+    if (assignmentId) url.searchParams.set("editAssignment", assignmentId);
+    else url.searchParams.delete("editAssignment");
+    window.location.assign(url.pathname + url.search);
   }
 
   async function saveAssignment() {
@@ -3081,7 +3307,7 @@ Your capstone response must be your own thinking and experience.`,
     title: string,
   ) {
     const confirmed = window.confirm(
-      `Remove "${title}" from this week's assignments?\n\nThis removes the assignment from the facilitator/student lesson plan. This action cannot be undone from this screen.`
+      `Archive "${title}" from this week's active assignments?\n\nAny student draft/submission stays preserved and locked in the student portal for portfolio/capstone history.`
     );
 
     if (!confirmed) return;
@@ -3091,7 +3317,7 @@ Your capstone response must be your own thinking and experience.`,
         action: "deleteAssignment",
         assignmentId,
       },
-      `"${title}" removed from this week.`,
+      `"${title}" archived from the active week. Student work remains preserved.`,
     );
 
     if (removed && editingAssignmentId === assignmentId) {
@@ -3206,6 +3432,15 @@ Your capstone response must be your own thinking and experience.`,
         </div>
       )}
 
+      <div className="rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 text-slate-900">
+        <p className="font-black uppercase">Current teaching workspace</p>
+        <h2 className="mt-2 text-2xl font-black">
+          Week {selectedWeek} · Day {selectedDay}
+        </h2>
+        <p className="mt-2">
+          Previous and upcoming weeks are available below.
+        </p>
+      </div>
       <details className="group rounded-2xl border border-slate-200 bg-white shadow-sm">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
           <div>
@@ -3456,7 +3691,7 @@ Your capstone response must be your own thinking and experience.`,
                 </div>
               </div>
 
-              <div className="grid gap-5 bg-[#F8FAFC] p-6 lg:grid-cols-2 md:p-8">
+              <div className="grid items-start gap-5 bg-[#F8FAFC] p-6 lg:grid-cols-2 md:p-8">
 
                 {/* AGENDA */}
                 <DailyPilotCard
@@ -3470,7 +3705,7 @@ Your capstone response must be your own thinking and experience.`,
                           key={task.id}
                           className="rounded-xl border border-slate-200 bg-white p-4"
                         >
-                          <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                             <div>
                               <p className="text-[10px] font-black uppercase tracking-wider text-[#4B2265]">
                                 {task.taskType}
@@ -3489,6 +3724,17 @@ Your capstone response must be your own thinking and experience.`,
                           <div className="mt-3 whitespace-pre-line rounded-xl bg-slate-50 p-3 text-sm leading-7 text-slate-700">
                             {task.instructions}
                           </div>
+                          {/* BUILD6_DAILY_PRESENTATION_ATTACHMENTS_V1 */}
+                          <Build6GeneratedTopicPresentation
+                            week={selectedWeek}
+                            day={selectedDay}
+                            topic={task.title}
+                            objective={dailyLesson?.objective || rhythm?.purpose || objective}
+                            activityTypeHint={`${task.taskType} ${task.title}`}
+                            durationMinutes={task.durationMinutes}
+                            taskKey={task.id}
+                          />
+
 
                         </div>
                       ))}
@@ -3570,7 +3816,7 @@ Your capstone response must be your own thinking and experience.`,
                       )}
 
                       <p className="rounded-xl bg-[#FFF7D6] p-3 text-xs font-bold text-[#725500]">
-                        This is the Future Ready™ recommended flow. Use
+                        This is the BUILD6™ recommended flow. Use
                         Customize Daily Plan if Coach wants to adjust the day.
                       </p>
                     </div>
@@ -3632,12 +3878,12 @@ Your capstone response must be your own thinking and experience.`,
                   {selectedWeek === 1 && selectedDay === 1 && (
                     <div className="mt-4 rounded-xl border border-[#00A6A6] bg-[#EAFBFB] p-4">
                       <p className="font-black text-[#0D1B3D]">
-                        Future Ready™ Starting Assessment
+                        BUILD6™ Starting Assessment
                       </p>
 
                       <p className="mt-1 text-sm leading-6">
                         Students complete their readiness baseline. Results
-                        automatically become part of their Future Ready™ record.
+                        automatically become part of their BUILD6™ record.
                       </p>
                     </div>
                   )}
@@ -3698,6 +3944,12 @@ Your capstone response must be your own thinking and experience.`,
                   eyebrow="5 · CARRY FORWARD"
                   title="What Carries Forward?"
                 >
+                  <details className="group rounded-xl border border-[#DDD6F3] bg-[#FAF8FF]">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-black text-[#4B2265]">
+                      <span>View portfolio evidence and capstone notes</span>
+                      <span aria-hidden="true" className="transition-transform group-open:rotate-180">▾</span>
+                    </summary>
+                    <div className="border-t border-[#DDD6F3] bg-white p-3">
                   {selectedWeek === 1 && selectedDay === 1 ? (
                     <>
                       <p className="font-black text-[#0D1B3D]">
@@ -3728,12 +3980,15 @@ Your capstone response must be your own thinking and experience.`,
                   <p className="mt-4 rounded-xl bg-[#F4F3FF] p-3 text-sm font-bold text-[#4B2265]">
                     Portfolio Evidence: {portfolioEvidence}
                   </p>
+                    </div>
+                  </details>
                 </DailyPilotCard>
 
                 {/* MATERIALS */}
                 <DailyPilotCard
                   eyebrow="6 · MATERIALS + ASSETS"
                   title="Worksheets, Printables & Media"
+                  className="lg:col-span-2"
                 >
 
                   {selectedWeek !== 15 && (
@@ -3749,7 +4004,7 @@ Your capstone response must be your own thinking and experience.`,
                           </p>
 
                           <p className="mt-1 text-xs leading-5 text-slate-600">
-                            These are the protected Future Ready™ materials already
+                            These are the protected BUILD6™ materials already
                             built for this week. Open, print, or download only what
                             you need for today.
                           </p>
@@ -3760,7 +4015,7 @@ Your capstone response must be your own thinking and experience.`,
                         </span>
                       </div>
 
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2">
                         {[
                           {
                             label: "Student Workbook",
@@ -3848,7 +4103,7 @@ Your capstone response must be your own thinking and experience.`,
                           return (
                             <div
                               key={asset.label}
-                              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                              className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
                             >
                               <div className="flex items-start justify-between gap-3">
                                 <div>
@@ -3868,10 +4123,15 @@ Your capstone response must be your own thinking and experience.`,
                                 </span>
                               </div>
 
-                              <details className="mt-3">
-                                <summary className="cursor-pointer list-none rounded-lg bg-[#0D1B3D] px-3 py-2 text-center text-[11px] font-black text-white">
-                                  Open Resource
-                                </summary>
+                              <div className="mt-3">
+                                <a
+                                  href={primaryUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block rounded-lg bg-[#0D1B3D] px-3 py-2 text-center text-[11px] font-black text-white"
+                                >
+                                  Open Resource ↗
+                                </a>
 
                                 <div className="mt-2 flex flex-wrap gap-2">
                                   <a
@@ -3942,7 +4202,7 @@ Your capstone response must be your own thinking and experience.`,
                                     </button>
                                   )}
                                 </div>
-                              </details>
+                              </div>
                             </div>
                           );
                         })}
@@ -3981,7 +4241,7 @@ Your capstone response must be your own thinking and experience.`,
                         <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">
                           {selectedWeek === 4
                             ? "Use the Week 4 SEG Systems student work across preparation, the workplace experience and Friday reflection. The reusable experience toolkit remains preserved for other professional experiences."
-                            : "Open or download the protected student materials you need. Assigning a resource uses the existing Future Ready™ assignment system and does not replace the weekly lesson."}
+                            : "Open or download the protected student materials you need. Assigning a resource uses the existing BUILD6™ assignment system and does not replace the weekly lesson."}
                         </p>
                       </div>
 
@@ -4361,9 +4621,25 @@ Your capstone response must be your own thinking and experience.`,
                       </div>
                     </div>
                   ) : (
-                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-                      <p className="font-black text-[#0D1B3D]">No Day {selectedDay} assignment is required.</p>
-                      <p className="mt-1 text-sm leading-6 text-slate-600">Shared weekly work is available below without cluttering today’s required actions.</p>
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3">
+                      <div>
+                        <p className="text-sm font-black text-[#0D1B3D]">
+                          No Day {selectedDay} assignment is currently attached.
+                        </p>
+                        {sharedAssignments.length > 0 ? (
+                          <p className="mt-1 text-xs text-slate-500">
+                            {sharedAssignments.length} weekly/shared {sharedAssignments.length === 1 ? "assignment is" : "assignments are"} available below.
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => openAssignmentManager()}
+                        className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-[11px] font-black text-white"
+                      >
+                        + Add Assignment
+                      </button>
                     </div>
                   )}
 
@@ -4420,7 +4696,7 @@ Your capstone response must be your own thinking and experience.`,
                     onClick={() => openAssignmentManager()}
                     className="mt-4 rounded-xl border border-[#0D1B3D] px-4 py-2 text-xs font-black text-[#0D1B3D]"
                   >
-                    Manage Assignments →
+                    Open Assignment Manager →
                   </button>
                 </DailyPilotCard>
 
@@ -4604,7 +4880,7 @@ Your capstone response must be your own thinking and experience.`,
                     <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
                       Adjust timing, add activities, choose another discussion,
                       attach a worksheet or video, add a speaker, or create a
-                      follow-up. The Future Ready™ objective and evidence
+                      follow-up. The BUILD6™ objective and evidence
                       framework remain the curriculum spine.
                     </p>
                   </div>
@@ -4642,7 +4918,7 @@ Your capstone response must be your own thinking and experience.`,
 
               <p className="mt-2 text-sm font-semibold leading-6 text-[#0D1B3D]">
                 {selectedDay === 3
-                  ? "Run the existing Future Ready™ applied-learning experience for this week — scenario, public speaking, panel, role play, decision lab, or other assigned practice."
+                  ? "Run the existing BUILD6™ applied-learning experience for this week — scenario, public speaking, panel, role play, decision lab, or other assigned practice."
                   : "Use the scheduled experience when one is planned. The existing classroom applied-learning experience remains available as the flex-day option."}
               </p>
             </div>
@@ -4768,7 +5044,7 @@ Your capstone response must be your own thinking and experience.`,
 
       <section
         className={`${
-          "hidden"
+          activeTab === "assignments" ? "" : "hidden"
         } overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm`}
       >
         <div className="border-b border-slate-200 bg-slate-50 p-6">
@@ -4844,7 +5120,7 @@ Your capstone response must be your own thinking and experience.`,
 
         <div className="p-6 md:p-8">
           {activeTab === "overview" && (
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid items-start gap-5 lg:grid-cols-2">
               <ContentCard title="Theme / Focus">
                 <p>{lesson.title}</p>
               </ContentCard>
@@ -4903,7 +5179,7 @@ Your capstone response must be your own thinking and experience.`,
                   </h3>
 
                   <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                    Use the Future Ready™ lesson builder for Week {selectedWeek}
+                    Use the BUILD6™ lesson builder for Week {selectedWeek}
                     to customize activities, facilitation, classroom delivery,
                     and supplemental lesson materials.
                   </p>
@@ -5023,7 +5299,7 @@ Your capstone response must be your own thinking and experience.`,
 
               <div className="rounded-2xl border-2 border-[#F2B705] bg-[#FFFDF5] p-6">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-                  Future Ready™ AI Teaching Assistant
+                  BUILD6™ AI Teaching Assistant
                 </p>
 
                 <h3 className="mt-2 text-xl font-black text-[#0D1B3D]">
@@ -5051,6 +5327,306 @@ Your capstone response must be your own thinking and experience.`,
               id="future-ready-assignments"
               className="scroll-mt-6 space-y-5"
             >
+              <section className="rounded-2xl border border-[#0D1B3D]/15 bg-white p-4 md:p-6" aria-label="16-week assignment planner">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B2265]">
+                      BUILD6™ 16-WEEK ASSIGNMENT PLANNER
+                    </p>
+                    <h3 className="mt-1 text-xl font-black text-[#0D1B3D]">
+                      See every week. Check what students should receive.
+                    </h3>
+                    <p className="mt-1 max-w-4xl text-sm leading-6 text-slate-600">
+                      Every instructional week shows the core Day 1–5 Student Workbook plan. Experience weeks also show Day 5 follow-up reflection and thank-you work. Completed, historical, reflection, portfolio, capstone, and legacy records remain preserved under each week's collapsed Preserved Student Work section.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={assignmentTableBusy}
+                      onClick={() => setAssignmentTableRevision((value) => value + 1)}
+                      className="rounded-lg border border-[#0D1B3D] px-3 py-2 text-sm font-bold text-[#0D1B3D] disabled:opacity-50"
+                    >
+                      Refresh
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigateToAssignment(selectedWeek)}
+                      className="rounded-lg bg-[#0D1B3D] px-3 py-2 text-sm font-bold text-white"
+                    >
+                      + Add Custom Assignment
+                    </button>
+                  </div>
+                </div>
+
+                {assignmentTableError && (
+                  <p role="alert" className="mt-3 rounded-lg bg-amber-50 p-3 text-sm font-bold text-amber-900">
+                    {assignmentTableError}
+                  </p>
+                )}
+
+                {assignmentTableBusy && (
+                  <p role="status" className="mt-3 text-sm text-slate-600">
+                    Loading or updating the 16-week assignment plan…
+                  </p>
+                )}
+
+
+                <div className="mt-5 overflow-x-auto">
+                  <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
+                    <thead>
+                      <tr className="border-b-2 border-[#0D1B3D] text-[#0D1B3D]">
+                        <th className="p-3">Week</th>
+                        <th className="p-3">Day</th>
+                        <th className="p-3">Student Work</th>
+                        <th className="p-3">Status</th>
+                        <th className="p-3">Completed</th>
+                        <th className="p-3">Add</th>
+                        <th className="p-3">Remove</th>
+                        <th className="p-3">Edit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.from({length: 16}, (_, index) => index + 1).flatMap((week) => {
+                        if (week === 15) {
+                          return [
+                            <tr key="week-15-break" className="border-b border-slate-200 bg-amber-50/60">
+                              <td className="p-3 font-black">15</td>
+                              <td className="p-3">—</td>
+                              <td className="p-3 font-bold text-amber-900">Thanksgiving Break · No Class · No Assignment</td>
+                              <td className="p-3 font-bold text-amber-900">NO ASSIGNMENT</td>
+                              <td className="p-3">—</td>
+                              <td className="p-3">—</td>
+                              <td className="p-3">—</td>
+                              <td className="p-3">—</td>
+                            </tr>,
+                          ];
+                        }
+
+                        const weekRows = dedupeAssignmentRows(
+                          allWeekAssignments.filter((row) => row.week === week),
+                        );
+                        const lessonId = weekRows[0]?.lessonId ?? null;
+                        const canonical = getCanonicalStudentWorkForWeek(week);
+                        const prebuilt = getPlannerPrebuiltAssignment(week);
+
+                        const canonicalRows = canonical.map((item) => {
+                          const savedRow = weekRows.find(({assignment}) =>
+                            assignment.status === "ACTIVE" &&
+                            assignmentMatchesCanonical(assignment, item),
+                          );
+                          const isAdded = Boolean(savedRow);
+
+                          const completionRow =
+                            weekRows.find(
+                              ({assignment}) =>
+                                assignmentMatchesCanonical(
+                                  assignment,
+                                  item,
+                                ) &&
+                                (assignment.submissionSummary?.completedCount ??
+                                  0) > 0,
+                            ) ?? savedRow;
+
+                          const completion =
+                            completionRow?.assignment.submissionSummary ?? null;
+
+                          const hasCompletedStudent =
+                            (completion?.completedCount ?? 0) > 0;
+
+                          return (
+                            <tr key={item.key} className="border-b border-slate-200 align-top">
+                              <td className="p-3 font-black">{week}</td>
+                              <td className="p-3 font-bold">Day {item.dayNumber}</td>
+                              <td className="p-3">
+                                <div className="font-black text-[#0D1B3D]">{item.title}</div>
+                                <div className="mt-1 max-w-2xl text-xs leading-5 text-slate-600">{item.instructions}</div>
+                              </td>
+                              <td className="p-3">
+                                <span className={`rounded-full px-3 py-1 text-xs font-black ${
+                                  isAdded ? "bg-emerald-100 text-emerald-900" : "bg-slate-100 text-slate-600"
+                                }`}>
+                                  {isAdded ? "ADDED" : "NOT ADDED"}
+                                </span>
+                              </td>
+
+                              <td className="p-3">
+                                <div className="flex min-w-[135px] items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={hasCompletedStudent}
+                                    readOnly
+                                    disabled
+                                    aria-label={`Week ${week} Day ${item.dayNumber} student completion`}
+                                    className="h-5 w-5 accent-emerald-600 disabled:opacity-100"
+                                  />
+
+                                  <span
+                                    className={`text-xs font-black ${
+                                      hasCompletedStudent
+                                        ? "text-emerald-800"
+                                        : "text-slate-500"
+                                    }`}
+                                  >
+                                    {completion
+                                      ? `${completion.completedCount} / ${completion.enrolledStudentCount}`
+                                      : "0 / —"}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="p-3">
+                                <input
+                                  type="checkbox"
+                                  checked={isAdded}
+                                  disabled={isAdded || assignmentTableBusy}
+                                  onChange={(event) => {
+                                    if (event.target.checked) {
+                                      void addCanonicalStudentWork(week, lessonId, item);
+                                    }
+                                  }}
+                                  className="h-5 w-5"
+                                />
+                              </td>
+                              <td className="p-3">
+                                <input
+                                  type="checkbox"
+                                  checked={false}
+                                  disabled={!savedRow || assignmentTableBusy}
+                                  onChange={(event) => {
+                                    if (event.target.checked && savedRow) {
+                                      void removeFromAssignmentTable(
+                                        week,
+                                        savedRow.lessonId,
+                                        savedRow.assignment,
+                                      );
+                                    }
+                                  }}
+                                  className="h-5 w-5"
+                                />
+                              </td>
+                              <td className="p-3">
+                                {savedRow ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => navigateToAssignment(week, savedRow.assignment.id)}
+                                    className="rounded-md border border-[#0D1B3D] px-3 py-2 text-xs font-bold text-[#0D1B3D]"
+                                  >
+                                    Edit
+                                  </button>
+                                ) : "—"}
+                              </td>
+                            </tr>
+                          );
+                        });
+
+                        const preservedRows = weekRows.filter(
+                          ({assignment}) =>
+                            assignment.status !== "ACTIVE" ||
+                            !canonical.some((item) =>
+                              assignmentMatchesCanonical(assignment, item),
+                            ),
+                        );
+
+                        const preservedSection =
+                          preservedRows.length > 0
+                            ? [
+                                <tr
+                                  key={`preserved-${week}`}
+                                  className="border-b border-slate-200 bg-[#FAFAFC]"
+                                >
+                                  <td className="p-3 font-black">{week}</td>
+                                  <td className="p-3">—</td>
+                                  <td className="p-3" colSpan={6}>
+                                    <details>
+                                      <summary className="cursor-pointer font-black text-[#0D1B3D]">
+                                        Preserved Student Work · {preservedRows.length} item{preservedRows.length === 1 ? "" : "s"}
+                                      </summary>
+
+                                      <p className="mt-2 text-xs leading-5 text-slate-600">
+                                        Completed assignments, reflections, professional-experience work,
+                                        portfolio evidence, capstone work, and legacy records remain saved.
+                                        They are collapsed here so the assignment planner stays readable.
+                                      </p>
+
+                                      <div className="mt-3 space-y-2">
+                                        {preservedRows.map(({lessonId: savedLessonId, assignment}) => (
+                                          <div
+                                            key={assignment.id}
+                                            className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-3 md:flex-row md:items-start md:justify-between"
+                                          >
+                                            <div className="min-w-0">
+                                              <div className="flex flex-wrap items-center gap-2">
+                                                <span className="font-bold text-[#0D1B3D]">
+                                                  {assignment.title}
+                                                </span>
+
+                                                <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-600">
+                                                  {assignment.dayNumber ? `DAY ${assignment.dayNumber}` : "SHARED"}
+                                                </span>
+
+                                                {isSupportingOrLegacyAssignment(assignment) && (
+                                                  <span className="rounded-full bg-[#F4F3FF] px-2 py-1 text-[10px] font-black text-[#4B2265]">
+                                                    PRESERVED
+                                                  </span>
+                                                )}
+                                              </div>
+
+                                              <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-600">
+                                                {assignment.instructions}
+                                              </p>
+                                            </div>
+
+                                            <div className="flex shrink-0 items-center gap-2">
+                                              <button
+                                                type="button"
+                                                onClick={() => navigateToAssignment(week, assignment.id)}
+                                                className="rounded-md border border-[#0D1B3D] px-3 py-2 text-xs font-bold text-[#0D1B3D]"
+                                              >
+                                                Edit
+                                              </button>
+
+                                              <label className="flex items-center gap-2 rounded-md border border-red-200 px-3 py-2 text-xs font-bold text-red-700">
+                                                <input
+                                                  type="checkbox"
+                                                  checked={false}
+                                                  disabled={assignmentTableBusy}
+                                                  onChange={(event) => {
+                                                    if (event.target.checked) {
+                                                      void removeFromAssignmentTable(
+                                                        week,
+                                                        savedLessonId,
+                                                        assignment,
+                                                      );
+                                                    }
+                                                  }}
+                                                  className="h-4 w-4"
+                                                />
+                                                Remove
+                                              </label>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </details>
+                                  </td>
+                                </tr>,
+                              ]
+                            : [];
+
+                        return [...canonicalRows, ...preservedSection];
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                <p className="mt-4 text-xs leading-5 text-slate-500">
+                  Duplicate saved records are hidden here by week + day + title + instructions. This planner does not delete database records automatically.
+                </p>
+              </section>
+
               <ContentCard title="Assignment / Evidence">
                 <p className="font-bold text-[#0D1B3D]">{portfolioEvidence}</p>
 
@@ -5120,7 +5696,7 @@ Your capstone response must be your own thinking and experience.`,
                     </div>
                   )}
 
-                <div className="flex flex-col gap-1">
+                <div id="build6-assignment-editor" className="flex flex-col gap-1">
                   <h3 className="text-lg font-black text-[#0D1B3D]">
                     {editingAssignmentId ? "Edit Assignment" : "+ Add Assignment"}
                   </h3>
@@ -6068,22 +6644,72 @@ function DailyPilotCard({
   eyebrow,
   title,
   children,
+  className = "",
 }: {
   eyebrow: string;
   title: string;
   children: React.ReactNode;
+  className?: string;
 }) {
+  /* BUILD6_COMPACT_SECONDARY_SECTIONS_V1
+     Core teaching/workbook content stays visible.
+     Materials, assets, add-ons and optional enhancements
+     stay collapsed until intentionally opened.
+  */
+  const compactLabel = `${eyebrow} ${title}`.toLowerCase();
+
+  const isSecondarySection =
+    compactLabel.includes("materials") ||
+    compactLabel.includes("assets") ||
+    compactLabel.includes("add-on") ||
+    compactLabel.includes("add on") ||
+    compactLabel.includes("optional") ||
+    compactLabel.includes("enhancement") ||
+    compactLabel.includes("more tools");
+
+  if (isSecondarySection) {
+    return (
+      <details
+        className={`min-w-0 rounded-2xl border border-slate-200 bg-white shadow-sm ${className}`}
+      >
+        <summary className="cursor-pointer list-none p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#4B2265]">
+                {eyebrow}
+              </p>
+
+              <h4 className="mt-1 font-black text-[#0D1B3D]">
+                {title}
+              </h4>
+            </div>
+
+            <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+              Open ▼
+            </span>
+          </div>
+        </summary>
+
+        <div className="border-t border-slate-200 p-5">
+          {children}
+        </div>
+      </details>
+    );
+  }
+
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#4B2265]">
+    <article
+      className={`min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}
+    >
+      <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#4B2265]">
         {eyebrow}
       </p>
 
-      <h4 className="mt-2 text-lg font-black text-[#0D1B3D]">
+      <h4 className="mt-1 font-black text-[#0D1B3D]">
         {title}
       </h4>
 
-      <div className="mt-4 text-sm leading-6 text-slate-600">
+      <div className="mt-4">
         {children}
       </div>
     </article>

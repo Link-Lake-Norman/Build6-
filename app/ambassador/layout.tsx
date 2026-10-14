@@ -4,6 +4,7 @@ import AmbassadorWorkspaceShell from "@/components/ambassador/AmbassadorWorkspac
 import { getSessionUser } from "@/lib/auth/session";
 
 import AccessibilityLearningTools from "@/components/student/AccessibilityLearningTools";
+import Build6StudentPriorityAlert from "@/components/student/Build6StudentPriorityAlert";
 
 export default async function AmbassadorLayout({
   children,
@@ -14,6 +15,9 @@ export default async function AmbassadorLayout({
 
   return (
     <AmbassadorWorkspaceShell session={session}>
+      {session?.role === "STUDENT" && session.studentId ? (
+        <Build6StudentPriorityAlert studentId={session.studentId} />
+      ) : null}
       {children}
       <AccessibilityLearningTools
         role={session?.role ?? null}

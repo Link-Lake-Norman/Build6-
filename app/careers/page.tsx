@@ -33,7 +33,7 @@ export default function CareersPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Career Pathways
+          BUILD6™ Career Pathways
         </h1>
 
         <p>

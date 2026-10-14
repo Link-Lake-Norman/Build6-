@@ -43,7 +43,7 @@ export function generateActivityOptions(
 
       whyThisMatters:
         lessonContext?.workplaceConnection ??
-        "Students practice applying Future Ready skills in realistic workplace situations.",
+        "Students practice applying BUILD6 skills in realistic workplace situations.",
 
       facilitatorBackground:
         lessonContext?.facilitatorGuide ??
@@ -53,7 +53,7 @@ export function generateActivityOptions(
     "Arrange students in pairs or small groups with enough space for discussion, role play, collaboration, or presentation.",
 
   materials: [
-    "Future Ready student workbook or reflection journal",
+    "BUILD6 student workbook or reflection journal",
     "Pens or pencils",
     "Activity instructions or scenario prompts",
     "Optional presentation materials",
@@ -110,7 +110,7 @@ export function generateActivityOptions(
       ],
 
       facilitatorScript: [
-        "Opening (5 minutes): Explain that today's activity develops Future Ready skills connected to school, careers, and workplace success.",
+        "Opening (5 minutes): Explain that today's activity develops BUILD6 skills connected to school, careers, and workplace success.",
         "Set expectations: Students should participate professionally, communicate clearly, support teammates, and demonstrate confidence.",
         "Activity launch: Review the challenge, explain success criteria, and assign student roles.",
         "During the activity: Observe communication, teamwork, problem-solving, and adaptability. Provide coaching questions when needed.",
@@ -140,7 +140,7 @@ export function generateActivityOptions(
         "The strongest skill I demonstrated today was ______ because ______.",
         "A challenge I faced was ______ and I responded by ______.",
         "A workplace situation where I can use this skill is ______.",
-        "One Future Ready skill I want to continue developing is ______.",
+        "One BUILD6™ skill I want to continue developing is ______.",
       ],
       assessmentRubric: [
         "Communication",
@@ -153,7 +153,7 @@ export function generateActivityOptions(
         "Completed activity reflection and feedback sheet.",
 
       capstoneConnection:
-        "Student connects skill growth to their Future Ready portfolio.",
+        "Student connects skill growth to their BUILD6™ portfolio.",
     },
   ];
 }

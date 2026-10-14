@@ -12,7 +12,7 @@ export default function EmployerHubPage() {
     <main>
 
       <SectionHeader
-        title="Future Ready™ Employer Hub"
+        title="BUILD6™ Employer Hub"
         description="Connect employers with emerging talent, career pathways, and workforce development."
       />
 

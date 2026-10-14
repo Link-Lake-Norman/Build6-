@@ -22,7 +22,7 @@ export default function EmployerPortal() {
       <section>
 
         <h1 className="text-4xl font-bold">
-          Future Ready™ Employer Portal
+          BUILD6™ Employer Portal
         </h1>
 
 
@@ -110,7 +110,7 @@ export default function EmployerPortal() {
 
 
         <h2 className="text-2xl font-bold">
-          Future Ready™ Talent Pool
+          BUILD6™ Talent Pool
         </h2>
 
 
@@ -250,7 +250,7 @@ export default function EmployerPortal() {
 
         <ul className="mt-4 space-y-3">
 
-          <li>✓ Review Future Ready™ student talent</li>
+          <li>✓ Review BUILD6™ student talent</li>
 
           <li>✓ Identify aligned skills and interests</li>
 

@@ -30,7 +30,7 @@ export default function CapstoneGuidePage() {
     ],
     [
       "MY GROWTH",
-      "What changes from the person who started Future Ready™ to the person who finishes it.",
+      "What changes from the person who started BUILD6™ to the person who finishes it.",
     ],
   ];
 
@@ -89,7 +89,7 @@ export default function CapstoneGuidePage() {
             textDecoration: "none",
           }}
         >
-          ← Back to Future Ready™
+          ← Back to BUILD6™
         </Link>
 
         <PrintCapstoneButton />
@@ -135,7 +135,7 @@ export default function CapstoneGuidePage() {
         </p>
 
         <p style={{ lineHeight: 1.75 }}>
-          Throughout Future Ready™, you will collect pieces of your story:
+          Throughout BUILD6™, you will collect pieces of your story:
           experiences, strengths, interests, values, ideas, writing, skills,
           accomplishments, challenges, people, places, career possibilities, and
           moments that change how you think about your future.

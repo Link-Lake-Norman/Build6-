@@ -14,7 +14,7 @@ export const licenses = [
 
   {
     id: "license-002",
-    organization: "Future Ready Partner School",
+    organization: "BUILD6 Partner School",
     type: "School License",
     status: "Pending",
     students: 0,

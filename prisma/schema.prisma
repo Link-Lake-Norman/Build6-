@@ -257,6 +257,7 @@ model Cohort {
   lessonPlanTasks        LessonPlanTask[]
   experiences            CohortExperience[]
   dayCompletions         LessonDayCompletion[]
+  studentChallenges      StudentChallenge[]
 
   lifeAccounts      LifeAccount[]
   economySettings   EconomySettings?
@@ -319,6 +320,8 @@ model Student {
   loansFunded          PeerLoan[]                   @relation("PeerLoanLender")
   fundContributions    CommunityFundContribution[]
   accessibilityProfile StudentAccessibilityProfile?
+  sentChallenges       StudentChallenge[]           @relation("StudentChallengeSender")
+  receivedChallenges   StudentChallenge[]           @relation("StudentChallengeRecipient")
 
   @@index([schoolId, graduationYear])
 }
@@ -748,6 +751,67 @@ model Goal {
   updatedAt   DateTime     @updatedAt
 
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+enum StudentChallengeStatus {
+  SENT
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  DECLINED
+  REVOKED
+}
+
+enum StudentChallengeAudience {
+  COHORT
+  EXTERNAL
+}
+
+enum StudentChallengeType {
+  FINISH_IT
+  GO_BEYOND
+  COMMUNITY_AMBASSADOR
+  LEARN_SHARE
+  FIND_OPPORTUNITY
+  MAKE_CONNECTION
+  PROFESSIONAL_COURAGE
+  THANK_SOMEONE
+  OWN_WEEK
+}
+
+model StudentChallenge {
+  id                     String                   @id @default(cuid())
+  senderStudentId        String
+  recipientStudentId     String?
+  cohortId               String?
+  audience               StudentChallengeAudience
+  type                   StudentChallengeType
+  title                  String
+  prompt                 String
+  personalNote           String?
+  points                 Int                      @default(10)
+  status                 StudentChallengeStatus   @default(SENT)
+  dueAt                  DateTime?
+  acceptedAt             DateTime?
+  completedAt            DateTime?
+  declinedAt             DateTime?
+  expiresAt              DateTime?
+  revokedAt              DateTime?
+  moderationReason       String?
+  evidenceText           String?
+  externalRecipientLabel String?
+  shareTokenHash         String?                  @unique
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+
+  sender    Student  @relation("StudentChallengeSender", fields: [senderStudentId], references: [id], onDelete: Cascade)
+  recipient Student? @relation("StudentChallengeRecipient", fields: [recipientStudentId], references: [id], onDelete: SetNull)
+  cohort    Cohort?  @relation(fields: [cohortId], references: [id], onDelete: SetNull)
+
+  @@index([senderStudentId, createdAt])
+  @@index([recipientStudentId, status, createdAt])
+  @@index([cohortId, createdAt])
+  @@index([status, expiresAt])
 }
 
 model Notification {
@@ -1824,25 +1888,30 @@ model PasswordResetRequest {
 }
 
 model PublicAssessmentSubmission {
-  id                 String   @id @default(cuid())
-  firstName          String
-  lastName           String
-  email              String
-  audienceType       String
-  ageBand            String?
-  gradeLevel         String?
-  careerStage        String?
-  schoolOrganization String?
-  guardianName       String?
-  guardianEmail      String?
-  consent            Boolean  @default(false)
-  answers            Json
-  categoryScores     Json
-  overallScore       Int
-  source             String   @default("PUBLIC_BUILD6_ASSESSMENT")
-  completedAt        DateTime @default(now())
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  firstName             String
+  lastName              String
+  email                 String
+  audienceType          String
+  ageBand               String?
+  gradeLevel            String?
+  careerStage           String?
+  schoolOrganization    String?
+  guardianName          String?
+  guardianEmail         String?
+  consent               Boolean   @default(false)
+  answers               Json
+  categoryScores        Json
+  overallScore          Int
+  careerClaimHash       String?   @unique
+  careerProfile         Json?
+  careerRecommendations Json?
+  careerCompletedAt     DateTime?
+  source                String    @default("PUBLIC_BUILD6_ASSESSMENT")
+  completedAt           DateTime  @default(now())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
   @@index([email])
   @@index([completedAt])
   @@index([audienceType])

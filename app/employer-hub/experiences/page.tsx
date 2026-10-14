@@ -13,7 +13,7 @@ export default function EmployerExperiencesPage() {
       status: "Active",
     },
     {
-      title: "Future Ready Internship",
+      title: "BUILD6 Internship",
       type: "Internship Pipeline",
       students: 5,
       status: "Building",
@@ -26,7 +26,7 @@ export default function EmployerExperiencesPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Employer Experience Dashboard
+          BUILD6™ Employer Experience Dashboard
         </h1>
 
         <p>

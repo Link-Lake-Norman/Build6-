@@ -199,7 +199,7 @@ export default function LessonCompletion({
 
           <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-700">
             {isComplete
-              ? `${title} is permanently saved as complete in your Future Ready™ record.`
+              ? `${title} is permanently saved as complete in your BUILD6™ record.`
               : `Complete the discussion, activity, reflection, and portfolio evidence before marking Week ${week} complete.`}
           </p>
 

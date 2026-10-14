@@ -73,7 +73,7 @@ export const facilitatorStats = [
   {
     label: "Current Week",
     value: "12",
-    detail: "Of 36 Future Ready™ weeks",
+    detail: "Of 36 BUILD6™ weeks",
     accent: "gold",
   },
   {
@@ -102,7 +102,7 @@ export const facilitatorCohorts = [
     currentWeek: 12,
     totalWeeks: 36,
     progress: 33,
-    nextLesson: "Future Ready Skills",
+    nextLesson: "BUILD6 Skills",
     nextLessonHref: "/ambassador/curriculum/12",
     meetingTime: "Friday · 10:00 AM",
     facilitator: "Coach Jones",
@@ -253,9 +253,9 @@ export const pendingReflections = [
     studentId: "ambassador-student-001",
     studentName: "Jordan Williams",
     week: 12,
-    lesson: "Future Ready Skills",
+    lesson: "BUILD6 Skills",
     prompt:
-      "Which Future Ready skill will be most important in your next opportunity, and why?",
+      "Which BUILD6™ skill will be most important in your next opportunity, and why?",
     response:
       "Adaptability will matter most because every workplace changes. I want to become better at learning new systems, asking questions, and staying calm when expectations shift.",
     status: "SUBMITTED",
@@ -266,9 +266,9 @@ export const pendingReflections = [
     studentId: "ambassador-student-004",
     studentName: "Cameron Reed",
     week: 12,
-    lesson: "Future Ready Skills",
+    lesson: "BUILD6 Skills",
     prompt:
-      "Which Future Ready skill will be most important in your next opportunity, and why?",
+      "Which BUILD6™ skill will be most important in your next opportunity, and why?",
     response:
       "Communication is the skill I need to strengthen. I can contribute more when I clearly explain my ideas and listen before responding.",
     status: "SUBMITTED",
@@ -340,7 +340,7 @@ export const badgeRequests = [
 export const recentFacilitatorActivity = [
   {
     title: "Jordan Williams submitted a reflection",
-    detail: "Week 12 · Future Ready Skills",
+    detail: "Week 12 · BUILD6 Skills",
     time: "18 minutes ago",
   },
   {

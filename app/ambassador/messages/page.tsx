@@ -26,7 +26,7 @@ export default async function AmbassadorMessagesPage() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-6">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#00A6A6]">
-            Future Ready™ Communication
+            BUILD6™ Communication
           </p>
 
           <h1 className="mt-2 text-3xl font-black text-[#0B3B60]">Messages</h1>

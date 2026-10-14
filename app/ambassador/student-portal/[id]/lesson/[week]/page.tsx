@@ -34,6 +34,14 @@ export default async function StudentLessonPage({ params }: PageProps) {
     notFound();
   }
 
+  /* BUILD6_AUTOMATIC_WEEK_WORKBOOK_V1 */
+  const workbookWeekCode = `week-${String(weekNumber).padStart(2, "0")}`;
+  const workbookFileName =
+    `Future-Ready-Week-${String(weekNumber).padStart(2, "0")}-Student-Workbook.pdf`;
+  const workbookHref =
+    `/api/ambassador/download/${workbookWeekCode}/${encodeURIComponent(workbookFileName)}`;
+
+
   const access = await authorizeStudentAccess(id);
 
   if (!access.allowed) {
@@ -155,7 +163,7 @@ export default async function StudentLessonPage({ params }: PageProps) {
       <main className="space-y-8">
         <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#F2B705]">
-            Future Ready™ Student Experience
+            BUILD6™ Student Experience
           </p>
 
           <h1 className="mt-3 text-4xl font-black">Week {weekNumber}</h1>
@@ -195,7 +203,7 @@ export default async function StudentLessonPage({ params }: PageProps) {
   const focus = content.focus || lesson.summary || "";
 
   const badgeEarned = delivery?.badgeEnabled
-    ? `Week ${weekNumber} Future Ready™ Milestone`
+    ? `Week ${weekNumber} BUILD6™ Milestone`
     : "Lesson Completion";
 
   const portfolioEvidence =
@@ -255,7 +263,7 @@ export default async function StudentLessonPage({ params }: PageProps) {
     <main className="space-y-8">
       <section className="rounded-3xl bg-[#0D1B3D] px-8 py-10 text-white">
         <p className="text-sm font-black uppercase tracking-[0.18em] text-[#F2B705]">
-          Future Ready™ Student Experience
+          BUILD6™ Student Experience
         </p>
 
         <p className="mt-5 font-bold text-slate-300">
@@ -283,7 +291,20 @@ export default async function StudentLessonPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+              {weekNumber !== 15 ? (
+          <section className="rounded-2xl border-2 border-[#F2B705] bg-[#FFF9DF] p-5 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#725500]">TODAY'S WORKBOOK</p>
+            <h2 className="mt-1 text-xl font-black text-[#0D1B3D]">Week {weekNumber} Student Workbook</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              Use this workbook for every class day this week. Complete the section for today's Day 1–5 assignment, then submit the required evidence. These pages build your reflections, Passport evidence, and Capstone.
+            </p>
+            <a href={workbookHref} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-xl bg-[#0D1B3D] px-4 py-2.5 text-sm font-black text-white">
+              Open Week {weekNumber} Workbook →
+            </a>
+          </section>
+        ) : null}
+
+<section className="grid gap-6 lg:grid-cols-2">
         <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-black uppercase tracking-[0.16em] text-[#725500]">
             My Activity
@@ -319,7 +340,7 @@ export default async function StudentLessonPage({ params }: PageProps) {
         </p>
 
         <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">
-          Build My Future Ready™ Record
+          Build My BUILD6™ Record
         </h2>
 
         <p className="mt-4 text-lg leading-8 text-slate-700">

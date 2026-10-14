@@ -93,7 +93,7 @@ export default function AssessmentForm({
       }
 
       router.replace(
-        `/ambassador/student-portal/${studentId}?assessment=complete`
+        `/ambassador/student-portal/${studentId}/career-pathways?assessment=complete`
       );
       router.refresh();
     } catch (caughtError) {
@@ -111,7 +111,7 @@ export default function AssessmentForm({
     <main className="space-y-8">
       <section className="rounded-[32px] bg-[#0D1B3D] p-8 text-white shadow-lg md:p-10">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Day 1
+          BUILD6™ Day 1
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -122,7 +122,7 @@ export default function AssessmentForm({
           {studentName}, this is not a test and there are no
           “right” answers. Be honest about where you are today.
           We will use this baseline to show how much you grow
-          throughout Future Ready™.
+          throughout BUILD6™.
         </p>
 
         <div className="mt-6 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-black">
@@ -158,7 +158,7 @@ export default function AssessmentForm({
           className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"
         >
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#725500]">
-            Future Ready™ Dimension
+            BUILD6™ Dimension
           </p>
 
           <h2 className="mt-2 text-2xl font-black text-[#0D1B3D]">

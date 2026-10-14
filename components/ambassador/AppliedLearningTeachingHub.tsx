@@ -352,7 +352,7 @@ export default function AppliedLearningTeachingHub({ week }: Props) {
                 </p>
 
                 <p className="mt-2 text-sm font-semibold leading-6 text-emerald-800">
-                  Future Ready™ students get another rep. Improvement matters
+                  BUILD6™ students get another rep. Improvement matters
                   more than getting the first answer perfect.
                 </p>
               </div>

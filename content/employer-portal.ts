@@ -1,6 +1,6 @@
 export const employerProfile = {
   contactName: "Employer Partner",
-  companyName: "Future Ready™ Employer Partner",
+  companyName: "BUILD6™ Employer Partner",
   initials: "EP",
 };
 

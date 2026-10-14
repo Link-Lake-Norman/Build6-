@@ -1,5 +1,5 @@
 export const DAY_ONE_ASSESSMENT = {
-  name: "Future Ready™ Day 1 Baseline Assessment",
+  name: "BUILD6™ Day 1 Baseline Assessment",
   type: "BASELINE",
   version: "1.0",
 };

@@ -38,7 +38,7 @@ export const badges = [
     name: "LAUNCH™ Graduate",
     phase: "LAUNCH™",
     description:
-      "Completed the Future Ready™ journey.",
+      "Completed the BUILD6™ journey.",
     requiredLessons: 36,
   },
 ];

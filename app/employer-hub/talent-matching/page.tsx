@@ -5,7 +5,7 @@ export default function TalentMatchingPage() {
     <main className="max-w-7xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] p-10 text-white">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Employer Hub
+          BUILD6™ Employer Hub
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">

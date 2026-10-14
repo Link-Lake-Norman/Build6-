@@ -13,12 +13,12 @@ return (
 <section>
 
 <h1 className="text-4xl font-bold">
-Future Ready™ Talent Marketplace
+BUILD6™ Talent Marketplace
 </h1>
 
 
 <p className="mt-3 text-lg">
-Employer connection to Future Ready students.
+Employer connection to BUILD6 students.
 </p>
 
 

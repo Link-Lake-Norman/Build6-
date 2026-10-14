@@ -3,6 +3,7 @@ import AudienceLanding from "../components/AudienceLanding";
 
 export default function PartnersPage() {
   return (
+    <>
     <AudienceLanding
       eyebrow="EMPLOYERS + MENTORS + PARTNERS"
       title="HELP PEOPLE SEE"
@@ -39,5 +40,6 @@ export default function PartnersPage() {
       ctaLabel="GET INVOLVED →"
       tone="gold"
     />
+    </>
   );
 }

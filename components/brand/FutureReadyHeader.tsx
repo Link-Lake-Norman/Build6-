@@ -15,7 +15,7 @@ export default function FutureReadyHeader() {
 
           <Image
             src="/brand/future-ready-logo.svg"
-            alt="Future Ready"
+            alt="BUILD6"
             width={280}
             height={60}
             priority

@@ -1,4 +1,5 @@
 import PublicFooter from "./components/PublicFooter";
+import Build6DifferenceAndWorkshops from "./components/Build6DifferenceAndWorkshops";
 import "./approved-public-pages.css";
 type Stage = {
   number: string;
@@ -148,7 +149,7 @@ const applications = [
     label: "STUDENT ATHLETES + TEAMS",
     heading: "Build beyond the game.",
     copy: "Translate teamwork, discipline and performance into leadership, communication, financial readiness, career exploration and confidence for life beyond competition.",
-    href: "/interest?for=athletics",
+    href: "/athletes",
     action: "BUILD6 FOR ATHLETES + TEAMS",
     tone: "gold",
   },
@@ -156,7 +157,7 @@ const applications = [
     label: "EMPLOYEES + WORKFORCES",
     heading: "Develop people. Strengthen teams.",
     copy: "Customize BUILD6™ for onboarding, communication, professional development, leadership, workplace expectations, AI readiness and employee growth.",
-    href: "/interest?for=workforce",
+    href: "/workforces",
     action: "BUILD6 FOR WORKFORCES",
     tone: "purple",
   },
@@ -164,7 +165,7 @@ const applications = [
     label: "COLLEGES + WORKFORCE PROGRAMS",
     heading: "Connect learning to the next move.",
     copy: "Support career transition, professional readiness, employer connection and the practical skills people need to move confidently into work and opportunity.",
-    href: "/interest?for=postsecondary",
+    href: "/academy",
     action: "BUILD6 FOR PROGRAMS",
     tone: "blue",
   },
@@ -218,6 +219,7 @@ import "./build6-home-recovered.css";
 export default function Home() {
   return (
     <main className="build6-public-home">
+      <link rel="stylesheet" href="/build6-public-stable.css?v=20260924a" />
 
 <style>{`
 /* BUILD6-HOMEPAGE-120-SCALE */
@@ -306,19 +308,20 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
         </a>
 
         <nav className="navlinks" aria-label="Primary">
+          <a href="/assessment" style={{fontWeight:900,color:"#0f766e"}}>FREE ASSESSMENT</a>
           <a href="#journey">Experience</a>
-          <a href="/educators">Schools</a>
-          <a href="#applications">Athletes + Teams</a>
-          <a href="#applications">Workforces</a>
-          <a href="#ecosystem">Partners</a>
-          <a href="#difference">About</a>
+          <a href="/schools">Schools</a>
+          <a href="/athletes">Athletes + Teams</a>
+          <a href="/workforces">Workforces</a>
+          <a href="/partners">Partners</a>
+          <a href="/about">About</a>
         </nav>
 
         <div className="top-actions">
           <a className="login" href="/ambassador/login">
             LOG IN
           </a>
-          <a className="school-button" href="/interest">
+          <a className="school-button" href="/schools">
             BRING BUILD6™
           </a>
         </div>
@@ -327,17 +330,20 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
       <section id="top" className="hero">
         <div className="hero-left">
           <div className="hero-lockup" aria-label="BUILD6">
-            <span className="hero-build">BUILD</span>
-            <span className="hero-six">
-              <sup className="hero-tm">™</sup>
-              <span className="six-number">6</span>
-              <span className="six-wheel">
-                <span>✦</span>
-              </span>
-            </span>
+            <img
+              src="/brand/build6-primary-logo.png"
+              alt="BUILD6™"
+              style={{
+                display: "block",
+                width: "100%",
+                maxWidth: "370px",
+                height: "auto",
+                objectFit: "contain",
+                objectPosition: "left center",
+              }}
+            />
           </div>
-
-          <h1>BUILD WHAT’S NEXT.</h1>
+<h1>BUILD WHAT’S NEXT.</h1>
           <span className="hero-rule" />
 
           <h2>
@@ -365,7 +371,7 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
 
         <div className="hero-right">
           <img
-            src="/images/build6-hero-approved.png"
+            src="/images/build6-hero-clean.png"
             alt="People connecting through the BUILD6 experience"
           />
         </div>
@@ -577,6 +583,8 @@ main section:first-of-type img:not([alt*="logo" i]):not([alt*="BUILD6" i]) {
         </div>
       </section>
 
+      <section className="b6-home-sponsor-feature" aria-label="Sponsor BUILD6"><div className="b6-home-sponsor-photo" role="img" aria-label="Illustrative image of students collaborating"/><div className="b6-home-sponsor-copy"><p className="b6-home-sponsor-kicker">SPONSOR WHAT’S NEXT™</p><h2>Invest in potential.<br/><span>Build stronger futures.</span></h2><p>Help students, athletes, teams, schools and emerging professionals access real-world learning and career opportunities.</p><div className="b6-home-sponsor-links"><a href="/sponsor">EXPLORE SPONSORSHIPS →</a><a href="/connect">BECOME A PARTNER →</a></div></div></section>
+      <Build6DifferenceAndWorkshops />
       <PublicFooter />
     </main>
   );

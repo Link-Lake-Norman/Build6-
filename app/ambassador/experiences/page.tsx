@@ -264,7 +264,7 @@ export default function ExperiencesPage() {
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
               Organize guest speakers, field trips, employer visits,
               career panels, workshops and community experiences around the
-              Future Ready™ lesson plan.
+              BUILD6™ lesson plan.
             </p>
           </div>
 
@@ -503,7 +503,7 @@ export default function ExperiencesPage() {
             />
 
             <TextField
-              label="Future Ready™ Learning Objective"
+              label="BUILD6™ Learning Objective"
               value={draft.learningObjective}
               onChange={(value) => update("learningObjective", value)}
               placeholder="What should students learn or demonstrate?"
@@ -600,7 +600,7 @@ export default function ExperiencesPage() {
             </p>
 
             <p className="mt-2 text-sm text-slate-500">
-              The Future Ready™ lesson still runs normally. Add an
+              The BUILD6™ lesson still runs normally. Add an
               experience only when it strengthens the week.
             </p>
           </div>

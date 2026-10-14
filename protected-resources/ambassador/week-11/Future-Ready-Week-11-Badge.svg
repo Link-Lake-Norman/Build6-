@@ -1,29 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-width="900" height="900" viewBox="0 0 900 900">
-<rect width="900" height="900" rx="80" fill="#062b3f"/>
-<circle cx="450" cy="360" r="210" fill="#00a6a6"/>
-<circle cx="450" cy="360" r="145" fill="#f4c542"/>
-<text x="450" y="330"
-text-anchor="middle"
-font-family="Arial, sans-serif"
-font-size="72"
-font-weight="800"
-fill="#062b3f">WEEK 11</text>
-<text x="450" y="420"
-text-anchor="middle"
-font-family="Arial, sans-serif"
-font-size="50"
-font-weight="800"
-fill="#062b3f">EXPERIENCE</text>
-<text x="450" y="650"
-text-anchor="middle"
-font-family="Arial, sans-serif"
-font-size="34"
-font-weight="700"
-fill="#ffffff">Champion Tire Tour + Michelle Boudin Prep</text>
-<text x="450" y="710"
-text-anchor="middle"
-font-family="Arial, sans-serif"
-font-size="24"
-fill="#ffffff">BUILD6™ · BUILD WHAT’S NEXT.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" role="img" aria-label="BUILD6 Week 11 BUSINESS SYSTEMS">
+<rect width="900" height="900" rx="90" fill="#0D1B3D"/>
+<circle cx="450" cy="390" r="285" fill="#F8F7F1" stroke="#F2B705" stroke-width="28"/>
+<text x="450" y="190" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="700" fill="#0D1B3D">BUILD6™</text>
+<text x="450" y="355" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="150" font-weight="800" fill="#0D1B3D">11</text>
+<text x="450" y="460" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#0D1B3D">BUSINESS SYSTEMS</text>
+<text x="450" y="530" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#4B2265">Business Systems Explorer</text>
+<text x="450" y="760" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#F2B705">BUILD WHAT'S NEXT.</text>
 </svg>

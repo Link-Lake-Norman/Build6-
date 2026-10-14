@@ -3,7 +3,7 @@ export const opportunities = [
     id: 1,
     title: "Healthcare Career Exploration",
     type: "Career Exploration",
-    employer: "Future Ready Employer Partner",
+    employer: "BUILD6 Employer Partner",
     industry: "Healthcare",
     skills: [
       "Communication",
@@ -17,7 +17,7 @@ export const opportunities = [
     id: 2,
     title: "Technology Internship",
     type: "Internship",
-    employer: "Future Ready Employer Partner",
+    employer: "BUILD6 Employer Partner",
     industry: "Technology",
     skills: [
       "Problem Solving",

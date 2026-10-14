@@ -253,11 +253,18 @@ export async function GET(request: NextRequest) {
     const delivery =
       lesson.deliverySettings[0] ?? null;
 
-    const assignments =
+    const assignmentRows =
       await prisma.assignment.findMany({
         where: {
           lessonId: lesson.id,
           cohortId: AMBASSADOR_COHORT_ID,
+        },
+        include: {
+          submissions: {
+            select: {
+              status: true,
+            },
+          },
         },
         orderBy: [
           {
@@ -268,6 +275,47 @@ export async function GET(request: NextRequest) {
           },
         ],
       });
+
+    const enrolledStudentCount = await prisma.enrollment.count({
+      where: {
+        cohortId: AMBASSADOR_COHORT_ID,
+        status: {
+          in: ["ACTIVE", "COMPLETED"],
+        },
+      },
+    });
+
+    const assignments = assignmentRows.map(
+      ({ submissions, ...assignment }) => {
+        const submittedCount = submissions.filter(
+          (submission) => submission.status === "SUBMITTED",
+        ).length;
+
+        const approvedCount = submissions.filter(
+          (submission) => submission.status === "APPROVED",
+        ).length;
+
+        return {
+          ...assignment,
+          submissionSummary: {
+            enrolledStudentCount,
+            submissionRecords: submissions.length,
+            completedCount: submittedCount + approvedCount,
+            draftCount: submissions.filter(
+              (submission) => submission.status === "DRAFT",
+            ).length,
+            submittedCount,
+            approvedCount,
+            needsRevisionCount: submissions.filter(
+              (submission) => submission.status === "NEEDS_REVISION",
+            ).length,
+            rejectedCount: submissions.filter(
+              (submission) => submission.status === "REJECTED",
+            ).length,
+          },
+        };
+      },
+    );
 
     const dailyNotes =
       await prisma.facilitatorDailyNote.findMany({
@@ -864,7 +912,15 @@ export async function POST(
           lessonId,
           cohortId: AMBASSADOR_COHORT_ID,
         },
-        select: { id: true },
+        select: {
+          id: true,
+          status: true,
+          _count: {
+            select: {
+              submissions: true,
+            },
+          },
+        },
       });
 
       if (!existingAssignment) {
@@ -874,12 +930,26 @@ export async function POST(
         );
       }
 
-      await prisma.assignment.delete({
+      // BUILD6_ASSIGNMENT_PRESERVATION_LOCK_V1
+      // Never physically delete an assignment from the Teaching Hub.
+      // AssignmentSubmission currently relates with onDelete: Cascade, so a
+      // hard delete could destroy a student's DRAFT/SUBMITTED work. Archiving
+      // removes it from the active plan while preserving every submission,
+      // uploaded file, note and portfolio/capstone connection.
+      const assignment = await prisma.assignment.update({
         where: { id: assignmentId },
+        data: { status: "ARCHIVED" },
+        select: {
+          id: true,
+          status: true,
+        },
       });
 
       return NextResponse.json({
         success: true,
+        archived: true,
+        preservedSubmissionCount: existingAssignment._count.submissions,
+        assignment,
       });
     }
 
@@ -1024,7 +1094,7 @@ export async function POST(
 
       // Protected packaged assets are NOT copied.
       // We create/reuse only a LessonResource reference to the
-      // already-existing protected Future Ready™ file.
+      // already-existing protected BUILD6™ file.
       if (!resourceId && packagedAsset) {
         const assetTitle =
           typeof packagedAsset.title === "string"
@@ -1082,7 +1152,7 @@ export async function POST(
                 cohortId: AMBASSADOR_COHORT_ID,
                 title: assetTitle,
                 description:
-                  "Protected Future Ready™ curriculum asset.",
+                  "Protected BUILD6™ curriculum asset.",
                 kind: "LINK",
                 url: assetUrl,
                 fileName: assetFileName,
@@ -1176,7 +1246,7 @@ export async function POST(
               taskType: "Lesson Resources",
               title: "Lesson Resources",
               instructions:
-                "Resources selected for today's Future Ready™ lesson.",
+                "Resources selected for today's BUILD6™ lesson.",
               dayNumber,
               durationMinutes: 0,
               requirement: "OPTIONAL",

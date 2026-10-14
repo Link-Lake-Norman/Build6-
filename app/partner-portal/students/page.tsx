@@ -9,7 +9,7 @@ export default async function PartnerStudentsPage() {
 
       <section className="hero">
         <h1>
-          Future Ready™ Partner Student Engagement
+          BUILD6™ Partner Student Engagement
         </h1>
 
         <p>

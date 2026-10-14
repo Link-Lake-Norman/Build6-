@@ -7,7 +7,7 @@ export default function StudentProfilePage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Student Profile
+          BUILD6™ Student Profile
         </h1>
 
         <p>

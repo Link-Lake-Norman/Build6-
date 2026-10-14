@@ -179,7 +179,7 @@ export default async function AmbassadorDashboardPage() {
     <main className="space-y-8">
       <header className="rounded-3xl bg-[#0D1B3D] px-7 py-8 text-white shadow-lg md:px-9">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          Ambassador Christian School · Future Ready™ Pilot
+          Ambassador Christian School · BUILD6™
         </p>
 
         <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -214,7 +214,7 @@ export default async function AmbassadorDashboardPage() {
 
             <h2 className="mt-2 text-3xl font-black text-[#0D1B3D]">
               {curriculumWeek?.title ??
-                `Week ${currentWeek} Future Ready™ Lesson`}
+                `Week ${currentWeek} BUILD6™ Lesson`}
             </h2>
 
             <p className="mt-3 text-base leading-7 text-slate-700">

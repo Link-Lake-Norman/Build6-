@@ -6,7 +6,7 @@ export default function StudentDashboardPage() {
     <main className="max-w-7xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] text-white p-10">
         <p className="text-sm uppercase tracking-[0.2em] text-[#F2B705] font-bold">
-          Future Ready™
+          BUILD6™
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -14,7 +14,7 @@ export default function StudentDashboardPage() {
         </h1>
 
         <p className="mt-4 text-lg text-slate-200">
-          Discover Purpose. Build Skills. Launch Your Future.
+          Real skills. Real experiences. Real-world readiness.
         </p>
       </div>
 

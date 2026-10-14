@@ -154,7 +154,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message:
-        "Student removed from cohort. Their Future Ready account and Passport remain intact.",
+        "Student removed from cohort. Their BUILD6™ account and Passport remain intact.",
     });
   } catch (error) {
     console.error(

@@ -20,7 +20,7 @@ export default function StudentOpportunitiesPage() {
 
       <section className="hero">
         <h1>
-          Future Ready™ Opportunities
+          BUILD6™ Opportunities
         </h1>
 
         <p>

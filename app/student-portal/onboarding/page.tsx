@@ -33,7 +33,7 @@ export default function StudentOnboardingPage() {
       <section>
 
         <h1 className="text-4xl font-bold">
-          Welcome to Future Ready™
+          Welcome to BUILD6™
         </h1>
 
         <p className="mt-3 text-lg">
@@ -144,7 +144,7 @@ export default function StudentOnboardingPage() {
           onClick={submitProfile}
           className="rounded-lg bg-blue-600 text-white px-6 py-3"
         >
-          Complete My Future Ready Profile
+          Complete My BUILD6 Profile
         </button>
 
 

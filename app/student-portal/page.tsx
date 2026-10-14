@@ -6,7 +6,7 @@ export default function StudentPortalPage() {
     <main>
       <section className="hero">
         <h1>
-          Future Ready™ Student Portal
+          BUILD6™ Student Portal
         </h1>
 
         <p>

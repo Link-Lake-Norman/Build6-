@@ -20,7 +20,7 @@ export default function RemoveStudentButton({
   async function removeStudent() {
     const confirmed =
       window.confirm(
-        `Remove ${studentName} from this cohort?\n\nTheir Future Ready™ account, Passport, work, and history will NOT be deleted.`
+        `Remove ${studentName} from this cohort?\n\nTheir BUILD6™ account, Passport, work, and history will NOT be deleted.`
       );
 
     if (!confirmed) {

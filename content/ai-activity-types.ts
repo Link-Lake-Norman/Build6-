@@ -10,7 +10,10 @@ export type AIActivityType =
   | "Capstone Workshop"
   | "Guest Speaker Preparation";
 
+import type { Build6Case } from "./build6-case-library";
+
 export type AIGeneratedActivity = {
+  presentationCases?: Build6Case[];
   title: string;
   activityType: AIActivityType;
   durationMinutes?: number;

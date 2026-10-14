@@ -19,7 +19,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
     lessonConnection: "AI Literacy",
 
     whyItMatters:
-      "Future Ready™ students need to know how to use AI without surrendering judgment. A polished answer can still be incomplete, inaccurate, biased, inappropriate, or unsafe to submit.",
+      "BUILD6™ students need to know how to use AI without surrendering judgment. A polished answer can still be incomplete, inaccurate, biased, inappropriate, or unsafe to submit.",
 
     scenario:
       "You use AI to prepare information for an important school, workplace, or career task. The response sounds confident and professional, but one detail feels questionable.",
@@ -832,7 +832,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "Presentation confidence develops from repeated speaking, feedback, adjustment, and recovery—not memorizing every word.",
 
     scenario:
-      "You have two minutes to explain something you learned during Future Ready™ to a panel of adults who have never met you.",
+      "You have two minutes to explain something you learned during BUILD6™ to a panel of adults who have never met you.",
 
     studentChallenge: [
       "Open with a clear point.",
@@ -894,7 +894,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "My next speaking adjustment is...",
     ],
 
-    portfolioEvidence: "Two-minute Future Ready™ professional presentation.",
+    portfolioEvidence: "Two-minute BUILD6™ professional presentation.",
 
     athleteExtension: {
       title: "Post-Game to Boardroom",
@@ -1051,7 +1051,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "If Plan A changes, I can...",
     ],
 
-    portfolioEvidence: "Future Ready™ next-step action plan.",
+    portfolioEvidence: "BUILD6™ next-step action plan.",
 
     athleteExtension: {
       title: "What If the Sport Changes?",
@@ -1125,13 +1125,13 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "One thing I need to stop or reduce is...",
     ],
 
-    portfolioEvidence: "30-day Future Ready™ action calendar.",
+    portfolioEvidence: "30-day BUILD6™ action calendar.",
   },
 
   {
     id: "week-16-showcase-story",
     week: 16,
-    title: "My Future Ready™ Story",
+    title: "My BUILD6™ Story",
     format: "Public Speaking",
     audience: "Both",
 
@@ -1198,7 +1198,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
         "Student communicates a concrete next step.",
       ],
       reasoning: [
-        "Future Ready™ is demonstrated through evidence and self-awareness, not participation alone.",
+        "BUILD6™ is demonstrated through evidence and self-awareness, not participation alone.",
         "A strong final presentation connects learning to future behavior.",
       ],
       coachingPoints: [
@@ -1209,12 +1209,12 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
     },
 
     reflectionPrompts: [
-      "The Future Ready skill I am most proud of is...",
+      "The BUILD6™ skill I am most proud of is...",
       "The evidence that proves it is...",
       "My next chapter begins with...",
     ],
 
-    portfolioEvidence: "Final Future Ready™ Showcase presentation + evidence.",
+    portfolioEvidence: "Final BUILD6™ Showcase presentation + evidence.",
 
     athleteExtension: {
       title: "More Than the Jersey — Final Reflection",
@@ -1255,7 +1255,7 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "Students demonstrate maturity when they can turn their own learning into useful guidance for someone coming behind them.",
 
     scenario:
-      "Imagine next year's Future Ready™ students are sitting in front of you. They ask what they should know before starting.",
+      "Imagine next year's BUILD6™ students are sitting in front of you. They ask what they should know before starting.",
 
     studentChallenge: [
       "Answer one question about communication.",
@@ -1293,6 +1293,6 @@ export const weeks09To16AppliedLearning: AppliedLearningAsset[] = [
       "One thing I understand differently now is...",
     ],
 
-    portfolioEvidence: "Future Ready™ Pass-It-Forward leadership reflection.",
+    portfolioEvidence: "BUILD6™ Pass-It-Forward leadership reflection.",
   },
 ];

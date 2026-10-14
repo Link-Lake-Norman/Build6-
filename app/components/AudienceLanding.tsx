@@ -1,3 +1,4 @@
+import SponsorBanner from "./SponsorBanner";
 import Link from "next/link";
 import SiteHeader from "./SiteHeader";
 
@@ -54,7 +55,7 @@ export default function AudienceLanding({
       <SiteHeader />
 
       <section
-        className={`b6-audience-hero b6-audience-hero-${tone}`}
+        className={`b6-audience-hero b6-audience-hero-${tone} b6-visual-hero ${eyebrow.includes("ATHLETES") ? "b6-visual-athletes" : eyebrow.includes("WORKFORCES") ? "b6-visual-workforce" : eyebrow.includes("PARTNERS") ? "b6-visual-partners" : "b6-visual-schools"}`}
       >
         <div className="b6-audience-hero-content">
           <p className="eyebrow">
@@ -129,6 +130,7 @@ export default function AudienceLanding({
           {ctaLabel}
         </Link>
       </section>
+      <SponsorBanner />
       <PublicFooter />
     </main>
   );

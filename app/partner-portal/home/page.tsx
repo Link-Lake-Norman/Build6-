@@ -5,7 +5,7 @@ export default function PartnerHomePage() {
     <main>
 
       <h1>
-        Future Ready™ Partner Home
+        BUILD6™ Partner Home
       </h1>
 
       <p>

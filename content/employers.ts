@@ -1,7 +1,7 @@
 export const employers = [
   {
     id: 1,
-    name: "Future Ready Employer Partner",
+    name: "BUILD6 Employer Partner",
     industry: "Healthcare",
     location: "Charlotte Region",
     opportunities: [

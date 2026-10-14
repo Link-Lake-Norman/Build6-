@@ -77,7 +77,7 @@ export default function ChangePasswordPage() {
     <main className="min-h-screen bg-[#F5F7FA] px-6 py-12">
       <div className="mx-auto max-w-xl rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#725500]">
-          Future Ready™ Account
+          BUILD6™ Account
         </p>
 
         <h1 className="mt-3 text-3xl font-black text-[#0D1B3D]">
@@ -133,7 +133,7 @@ export default function ChangePasswordPage() {
           href="/ambassador"
           className="mt-6 inline-block font-bold text-[#4B2265]"
         >
-          ← Back to Future Ready™
+          ← Back to BUILD6™
         </Link>
       </div>
     </main>

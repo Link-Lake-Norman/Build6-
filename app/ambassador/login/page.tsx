@@ -1,12 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AmbassadorLoginPage() {
   const router = useRouter();
+  const [projectLabel, setProjectLabel] =
+    useState("Project 26ACNC");
+
+  useEffect(() => {
+    const code = new URLSearchParams(
+      window.location.search
+    ).get("project");
+
+    if (code && /^[a-zA-Z0-9_-]{2,30}$/.test(code)) {
+      setProjectLabel(`Project ${code.toUpperCase()}`);
+    }
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,8 +85,16 @@ export default function AmbassadorLoginPage() {
 
         <section className="bg-[#0D1B3D] p-8 text-white md:p-12">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F2B705]">
-            Future Ready™
+            BUILD6™ · BUILD WHAT'S NEXT
           </p>
+          <Image
+            src="/brand/build6-logo-approved.png"
+            alt="BUILD6"
+            width={200}
+            height={90}
+            priority
+            className="mt-5 h-auto max-h-24 w-auto object-contain"
+          />
 
           <h1 className="mt-5 max-w-xl text-4xl font-black leading-tight md:text-5xl">
             Discover Purpose.
@@ -108,13 +129,13 @@ export default function AmbassadorLoginPage() {
 
           <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-5">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#F2B705]">
-              Ambassador Christian School
+              {projectLabel}
             </p>
 
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Authorized Ambassador users
-              sign in here using their
-              approved Future Ready™ account.
+              Sign in with your existing BUILD6™
+              account. Your project and cohort access
+              are assigned by your administrator.
             </p>
           </div>
         </section>
@@ -131,7 +152,7 @@ export default function AmbassadorLoginPage() {
           <p className="mt-3 text-sm leading-6 text-slate-600">
             Enter the email address and
             password associated with your
-            Future Ready™ account.
+            BUILD6™ account.
           </p>
 
           <form
@@ -229,7 +250,7 @@ export default function AmbassadorLoginPage() {
 
           <div className="mt-6 rounded-2xl border border-[#F2B705] bg-[#FFF9DF] p-5 text-center">
             <p className="font-black text-[#0D1B3D]">
-              New Future Ready™ Student?
+              New BUILD6™ Student?
             </p>
 
             <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -249,7 +270,7 @@ export default function AmbassadorLoginPage() {
             <p className="text-sm leading-6 text-slate-500">
               Password recovery and new
               account activation are managed
-              through the Future Ready™
+              through the BUILD6™
               account approval process. Those
               secure recovery controls will
               be connected before launch.

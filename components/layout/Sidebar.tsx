@@ -7,7 +7,7 @@ export default function Sidebar() {
     <aside className="sidebar">
 
       <h2>
-        Future Ready™
+        BUILD6™
       </h2>
 
 

@@ -196,7 +196,7 @@ export default function AdminCohortsPage() {
     <main className="space-y-8 p-8">
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Administration
+          BUILD6™ Administration
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -204,7 +204,7 @@ export default function AdminCohortsPage() {
         </h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
-          Manage Future Ready™ classes
+          Manage BUILD6™ classes
           and the registration codes
           students use to join them.
         </p>

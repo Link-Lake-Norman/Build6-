@@ -27,13 +27,14 @@ export default function PublicFooter() {
           <Link href="/athletes">Athletes + Teams</Link>
           <Link href="/workforces">Workforces</Link>
           <Link href="/partners">Partners</Link>
+          <Link href="/sponsor">Sponsor BUILD6</Link>
           <Link href="/about">About BUILD6</Link>
         </nav>
 
         <nav className="b6-approved-footer-column" aria-label="Footer Resources">
           <h2>RESOURCES</h2>
           <Link href="/ambassador/student">Student Portal</Link>
-          <Link href="/educators">Educator Tools</Link>
+          <Link href="/schools">Educator Tools</Link>
           <Link href="/assessment">Free Assessment</Link>
           <Link href="/interest">Program Inquiry</Link>
           <Link href="/connect">Get Involved</Link>

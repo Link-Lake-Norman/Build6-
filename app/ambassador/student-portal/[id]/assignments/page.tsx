@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import StudentAccountabilityPanel from "@/components/student/StudentAccountabilityPanel";
 import StudentAssignments from "@/components/student/StudentAssignments";
 import { authorizeStudentAccess } from "@/lib/auth/student-access";
 import { prisma } from "@/lib/prisma";
@@ -136,17 +135,12 @@ export default async function StudentAssignmentsPage({
         <h1 className="mt-2 text-3xl font-black">What I Need to Finish</h1>
 
         <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-300">
-          There is no guessing here. Red ✕ means required work is not complete.
-          Green ✓ means it has been submitted. Saving a draft does not count as
-          finishing an assignment.
+          Your weekly workbook and current assignments are here. Green ✓ means
+          submitted. If you already completed work but saved it as a draft,
+          you will see an amber reminder to review it and click Submit.
         </p>
       </section>
 
-      <StudentAccountabilityPanel
-        studentId={student.id}
-        cohortId={enrollment.cohort.id}
-        variant="full"
-      />
 
       {currentLesson ? (
         <section className="space-y-4">
@@ -160,7 +154,21 @@ export default async function StudentAssignmentsPage({
             </h2>
 
             <div className="mt-3 flex flex-wrap gap-4">
-              <Link
+                          {/* BUILD6_ASSIGNMENTS_WORKBOOK_CTA_V1 */}
+            {currentLesson.weekNumber !== 15 ? (
+              <a
+                href={`/api/ambassador/download/week-${String(currentLesson.weekNumber).padStart(2, "0")}/${encodeURIComponent(
+                  `Future-Ready-Week-${String(currentLesson.weekNumber).padStart(2, "0")}-Student-Workbook.pdf`,
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mb-3 inline-flex rounded-xl border-2 border-[#F2B705] bg-[#FFF9DF] px-4 py-2.5 text-sm font-black text-[#0D1B3D]"
+              >
+                📘 Open Week {currentLesson.weekNumber} Workbook — use it for every assigned day
+              </a>
+            ) : null}
+
+<Link
                 href={`/ambassador/student-portal/${student.id}/lesson/${currentLesson.weekNumber}`}
                 className="text-sm font-black text-[#4B2265]"
               >

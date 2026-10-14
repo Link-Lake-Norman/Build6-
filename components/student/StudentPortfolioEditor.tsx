@@ -350,7 +350,7 @@ export default function StudentPortfolioEditor({
         </Link>
 
         <p className="mt-7 text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Digital Portfolio
+          BUILD6™ Digital Portfolio
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
@@ -665,7 +665,7 @@ export default function StudentPortfolioEditor({
 
           <p className="mx-auto mt-3 max-w-xl leading-7 text-slate-600">
             As work is completed, add evidence here to build the
-            student's permanent Future Ready™ portfolio.
+            student's permanent BUILD6™ portfolio.
           </p>
 
           <button

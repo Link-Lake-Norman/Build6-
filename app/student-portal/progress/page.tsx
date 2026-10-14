@@ -24,11 +24,11 @@ export default function StudentProgressPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Student Progress
+          BUILD6™ Student Progress
         </h1>
 
         <p>
-          Track your growth throughout the Future Ready™ journey.
+          Track your growth throughout the BUILD6™ journey.
         </p>
 
       </section>

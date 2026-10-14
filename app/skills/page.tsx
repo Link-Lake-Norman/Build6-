@@ -39,7 +39,7 @@ export default function SkillsPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Skills Library
+          BUILD6™ Skills Library
         </h1>
 
         <p>

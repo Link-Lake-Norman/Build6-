@@ -434,7 +434,7 @@ export default async function FacilitatorPage() {
             />
             <ToolLink
               title="Add Student"
-              description="Enroll a new student into your assigned Future Ready™ cohort."
+              description="Enroll a new student into your assigned BUILD6™ cohort."
               href="/ambassador/facilitator/students/new"
               action="Add Student"
             />
@@ -482,7 +482,7 @@ export default async function FacilitatorPage() {
           <div style={toolGridStyle}>
             <ToolLink
               title="Messages"
-              description="Communicate directly with students and authorized Future Ready™ program administrators."
+              description="Communicate directly with students and authorized BUILD6™ program administrators."
               href="/ambassador/messages"
               action="Open Messages"
             />

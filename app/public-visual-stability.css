@@ -1,0 +1,30 @@
+/* Global public marketing styling: imported from root layout, not route-specific CSS chunks. */
+.b6-approved-footer{background:#04192b!important;color:#fff!important;border-top:7px solid #f4b942!important;width:100%;clear:both}
+.b6-approved-footer-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.75fr) minmax(0,.85fr) minmax(0,1.4fr);gap:clamp(22px,3vw,65px);max-width:1440px;width:calc(100% - 72px);margin:auto;padding:68px 0;align-items:start}
+.b6-approved-footer-column{display:flex;flex-direction:column;gap:13px}
+.b6-approved-footer-column a{display:block;color:#fff!important;font-size:clamp(17px,1.2vw,19px)!important;line-height:1.45!important}
+.b6-approved-footer-column h2,.b6-approved-footer-action-kicker{color:#66c2c6!important}
+.b6-approved-footer-brand p,.b6-approved-footer-action p{color:#e4edf2!important;font-size:clamp(18px,1.25vw,20px)!important;line-height:1.6!important}
+.b6-approved-footer-action{background:rgba(255,255,255,.055);border:1px solid rgba(102,194,198,.42);border-radius:16px;padding:30px;min-width:0}
+.b6-approved-footer-action h2{color:#fff!important;overflow-wrap:anywhere}
+.b6-approved-footer-bottom{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;color:#c8d6df!important}
+.b6-audience-page,.audience-page,.public-page,.b6-sponsor{overflow-x:clip}
+.b6-audience-page .b6-audience-benefits p,.audience-page .audience-benefits p{font-size:clamp(19px,1.55vw,23px)!important;line-height:1.65!important}
+.b6-audience-page .b6-audience-lead,.audience-page .audience-lead{font-size:clamp(22px,1.9vw,27px)!important;line-height:1.55!important}
+.b6-audience-page .b6-audience-intro>p:last-child,.audience-page .audience-intro>p:last-child{font-size:clamp(21px,1.65vw,25px)!important;line-height:1.65!important}
+.b6-public-sponsor-banner{clear:both}
+@media(max-width:1100px){.b6-approved-footer-main{grid-template-columns:repeat(2,minmax(0,1fr))}.b6-approved-footer-action{grid-column:1/-1}}
+@media(max-width:650px){.b6-approved-footer-main{grid-template-columns:1fr;width:calc(100% - 40px);padding:48px 0;gap:32px}.b6-approved-footer-action{grid-column:auto}.b6-approved-footer-bottom{width:calc(100% - 40px);flex-direction:column}}
+
+
+/* BUILD6:AUDIENCE-HERO-IMAGE-FIT-20260924 */
+@media (min-width: 901px) {
+  .b6-audience-hero.b6-visual-hero::before,
+  .audience-hero.b6-visual-hero::before {
+    inset: 0 0 0 52% !important;
+    background-size: auto 62% !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-color: #0b2b43 !important;
+  }
+}

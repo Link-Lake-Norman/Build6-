@@ -7,7 +7,7 @@ export default function ResourcePreviewPage() {
   const searchParams = useSearchParams();
 
   const src = searchParams.get("src") ?? "";
-  const name = searchParams.get("name") ?? "Future Ready™ Resource";
+  const name = searchParams.get("name") ?? "BUILD6™ Resource";
   const type = (searchParams.get("type") ?? "").toLowerCase();
 
   const docxContainer = useRef<HTMLDivElement>(null);

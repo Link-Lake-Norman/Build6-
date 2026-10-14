@@ -1137,7 +1137,7 @@ export const weeks02To08AppliedLearning: AppliedLearningAsset[] = [
       ],
       reasoning: [
         "The strongest decision is not automatically yes or no.",
-        "The Future Ready behavior is slowing the decision down until the student has enough information.",
+        "The BUILD6™ behavior is slowing the decision down until the student has enough information.",
         "Professional self-advocacy protects both opportunity and boundaries.",
       ],
       coachingPoints: [

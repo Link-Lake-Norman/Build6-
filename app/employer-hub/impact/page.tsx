@@ -7,7 +7,7 @@ export default function EmployerImpactPage() {
     <main>
 
       <h1>
-        Future Ready™ Employer Impact
+        BUILD6™ Employer Impact
       </h1>
 
       <p>

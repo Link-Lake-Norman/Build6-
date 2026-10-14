@@ -23,7 +23,7 @@ export default function LessonPage() {
     <main className="max-w-5xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] text-white p-10">
         <p className="text-sm uppercase tracking-[0.2em] text-[#F2B705] font-bold">
-          Future Ready™ Academy
+          BUILD6™ Academy
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">

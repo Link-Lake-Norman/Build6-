@@ -1,0 +1,47 @@
+.section{background:#f7f8f6;padding:84px 22px;color:#11283d}
+.inner{max-width:1180px;margin:0 auto}
+.eyebrow{font-size:13px;letter-spacing:.16em;font-weight:900;color:#087f83;margin-bottom:10px}
+.headingRow{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:44px;align-items:center}
+.headingRow h2,.workshopHeader h2{font-size:clamp(32px,4vw,52px);line-height:1.04;margin:0 0 18px;color:#061f35}
+.lead,.workshopHeader p{font-size:19px;line-height:1.65;color:#526372;max-width:850px;margin:0}
+.logo{width:100%;max-width:270px;justify-self:end}
+.statement{margin:42px 0 34px;background:#061f35;color:white;border-radius:18px;padding:24px 28px;display:flex;gap:10px;flex-wrap:wrap;font-size:19px;line-height:1.5}
+.statement strong{color:#f4b942}
+.compareGrid{display:grid;grid-template-columns:1fr 1.35fr;border:1px solid #dfe5e8;border-radius:18px;overflow:hidden;background:white}
+.compareHead{padding:14px 20px;font-weight:900;background:#e9eef1;color:#061f35}
+.compareHead:nth-child(2){background:#dff4f2;color:#075e61}
+.compareRow{display:contents}
+.typical,.build6{padding:18px 20px;border-top:1px solid #e4e8eb;line-height:1.5}
+.typical{color:#526372;background:#fff}
+.build6{font-weight:700;color:#11283d;background:#fbfffe;border-left:1px solid #e4e8eb}
+.optionalBox{margin:34px 0 78px;background:white;border:2px solid #f4b942;border-radius:18px;padding:26px 28px;display:grid;grid-template-columns:.8fr 1.4fr;gap:34px;align-items:start}
+.optionalBox h3,.workshopCard h3,.fullProgram h3{font-size:25px;line-height:1.2;margin:8px 0;color:#061f35}
+.optionalBox p,.workshopCard p,.fullProgram p{line-height:1.65;color:#526372;margin:0}
+.optionalTag{display:inline-block;font-size:11px;letter-spacing:.12em;font-weight:900;color:#78570b;background:#fff2c9;border-radius:999px;padding:7px 10px}
+.workshopHeader{margin-bottom:30px}
+.workshopGrid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.workshopCard{background:white;border:1px solid #dfe5e8;border-radius:20px;padding:30px;box-shadow:0 10px 34px rgba(6,31,53,.06)}
+.dayBadge{display:inline-flex;align-items:center;justify-content:center;background:#061f35;color:white;border-radius:999px;font-size:12px;letter-spacing:.12em;font-weight:900;padding:8px 12px}
+.duration{font-weight:800!important;color:#087f83!important;margin:0 0 15px!important}
+.workshopCard ul{padding-left:20px;margin:22px 0}
+.workshopCard li{margin:10px 0;line-height:1.48}
+.outcome{border-top:1px solid #e5e9eb;padding-top:18px;line-height:1.55;color:#11283d}
+.fullProgram{margin-top:28px;background:#061f35;color:white;border-radius:20px;padding:30px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
+.fullProgram h3{color:white}
+.fullProgram p{color:#d7e0e7;max-width:790px}
+.cta{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:10px;background:#f4b942;color:#061f35;font-weight:900;white-space:nowrap}
+.cta:hover{filter:brightness(.97)}
+@media(max-width:820px){
+  .section{padding:58px 16px}
+  .headingRow,.optionalBox,.workshopGrid,.fullProgram{grid-template-columns:1fr}
+  .logo{justify-self:start;max-width:230px}
+  .compareGrid{grid-template-columns:1fr}
+  .compareHead:nth-child(2){display:none}
+  .compareHead:first-child{display:none}
+  .compareRow{display:block;border-top:1px solid #e4e8eb}
+  .typical,.build6{border:0;padding:14px 18px}
+  .typical:before{content:"Typical: ";font-weight:900;color:#526372}
+  .build6:before{content:"BUILD6™: ";font-weight:900;color:#087f83}
+  .fullProgram{align-items:start}
+  .cta{white-space:normal;text-align:center;width:100%}
+}

@@ -11,7 +11,7 @@ export default function StudentExperiencesPage() {
       status: "In Progress",
     },
     {
-      title: "Future Ready Internship",
+      title: "BUILD6 Internship",
       type: "Internship",
       status: "Upcoming",
     },
@@ -22,7 +22,7 @@ export default function StudentExperiencesPage() {
 
       <section className="hero">
         <h1>
-          Future Ready™ Experience Tracker
+          BUILD6™ Experience Tracker
         </h1>
 
         <p>

@@ -2,7 +2,7 @@ export const employerOpportunities = [
 
   {
     id: "opp-001",
-    company: "Future Ready Healthcare Partner",
+    company: "BUILD6 Healthcare Partner",
     title: "Healthcare Career Exploration",
     industry: "Healthcare",
     skills: [
@@ -17,7 +17,7 @@ export const employerOpportunities = [
 
   {
     id: "opp-002",
-    company: "Future Ready Technology Partner",
+    company: "BUILD6 Technology Partner",
     title: "Technology Internship",
     industry: "Technology",
     skills: [

@@ -5,7 +5,7 @@ export default function ImpactDashboardPage() {
     <main className="space-y-10">
       <header className="rounded-3xl bg-[#0D1B3D] px-8 py-10 text-white shadow-lg">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#F2B705]">
-          Future Ready™ Impact
+          BUILD6™ Impact
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -15,7 +15,7 @@ export default function ImpactDashboardPage() {
         <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-200">
           Track student participation, employer engagement,
           internship growth, skills development, and program
-          completion across the Future Ready™ ecosystem.
+          completion across the BUILD6™ ecosystem.
         </p>
       </header>
 
@@ -23,7 +23,7 @@ export default function ImpactDashboardPage() {
         <ImpactCard
           label="Students Served"
           value={impact.studentsServed}
-          detail="Students participating in Future Ready™"
+          detail="Students participating in BUILD6™"
         />
 
         <ImpactCard

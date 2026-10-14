@@ -4,7 +4,7 @@ export const studentRoster = [
     name: "Student One",
     grade: "10",
     school: "Ambassador Christian School",
-    cohort: "Future Ready Pilot",
+    cohort: "BUILD6 Program",
     status: "Active",
   },
   {
@@ -12,7 +12,7 @@ export const studentRoster = [
     name: "Student Two",
     grade: "10",
     school: "Ambassador Christian School",
-    cohort: "Future Ready Pilot",
+    cohort: "BUILD6 Program",
     status: "Active",
   },
 ];

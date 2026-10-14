@@ -14,6 +14,13 @@ type Submission = {
   reviewedAt: string | null;
   feedback: string | null;
   updatedAt: string;
+  files?: {
+    id: string;
+    fileName: string;
+    filePath: string;
+    mimeType: string | null;
+    fileSize: number | null;
+  }[];
 };
 
 type Assignment = {
@@ -48,6 +55,22 @@ function getResponseText(value: unknown) {
   }
 
   return typeof value === "string" ? value : "";
+}
+
+function draftHasSavedWork(assignment: Assignment) {
+  if (assignment.submission?.status !== "DRAFT") return false;
+
+  const response = getResponseText(
+    assignment.submission.onlineResponse,
+  ).trim();
+
+  const note = (assignment.submission.studentNote ?? "").trim();
+
+  const hasFiles =
+    Array.isArray(assignment.submission.files) &&
+    assignment.submission.files.length > 0;
+
+  return Boolean(response || note || hasFiles);
 }
 
 function getStatusLabel(status: string | undefined) {
@@ -230,6 +253,7 @@ export default function StudentAssignments({
           const status = assignment.submission?.status;
           const required = assignment.requirement === "REQUIRED";
           const complete = status === "SUBMITTED" || status === "APPROVED";
+          const savedDraftNeedsSubmit = draftHasSavedWork(assignment);
           const needsRevision =
             status === "NEEDS_REVISION" || status === "REJECTED";
           const notDueYet =
@@ -303,12 +327,37 @@ export default function StudentAssignments({
                 ) : (
                   <span
                     title={getStatusLabel(status)}
-                    className="rounded-full border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700"
+                    className={
+                      savedDraftNeedsSubmit
+                        ? "rounded-full border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-black text-amber-800"
+                        : "rounded-full border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700"
+                    }
                   >
-                    ✕ {needsRevision ? "ACTION REQUIRED" : "NOT COMPLETE"}
+                    {savedDraftNeedsSubmit
+                      ? "⚠ SAVED — PLEASE SUBMIT"
+                      : `✕ ${
+                          needsRevision
+                            ? "ACTION REQUIRED"
+                            : "NOT COMPLETE"
+                        }`}
                   </span>
                 )}
               </div>
+
+              {savedDraftNeedsSubmit ? (
+                <div className="mt-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
+                  <p className="text-sm font-black text-amber-900">
+                    ⚠️ You already have work saved here — please submit it.
+                  </p>
+
+                  <p className="mt-2 text-sm font-semibold leading-6 text-amber-900">
+                    Your work is safe, but it is still marked as a draft.
+                    Review what you completed, make any final changes, then
+                    click <strong>SUBMIT ASSIGNMENT</strong> so your facilitator
+                    can count it as complete.
+                  </p>
+                </div>
+              ) : null}
 
               <div className="mt-4 rounded-xl bg-white p-4">
                 <p className="text-xs font-black uppercase tracking-wide text-slate-400">
@@ -372,7 +421,7 @@ export default function StudentAssignments({
 
               {assignment.portfolioEligible ? (
                 <div className="mt-4 rounded-xl border border-[#F2B705]/40 bg-[#FFF9DF] p-3 text-xs font-bold leading-5 text-[#725500]">
-                  This work can become part of your Future Ready™ record and
+                  This work can become part of your BUILD6™ record and
                   evidence of what you are building.
                 </div>
               ) : null}

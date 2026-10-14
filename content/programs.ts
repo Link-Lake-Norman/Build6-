@@ -1,9 +1,9 @@
 export const programs = [
   {
     id: "future-ready-core",
-    name: "Future Ready™ Core Experience",
+    name: "BUILD6™ Core Experience",
     description:
-      "The complete 36-week Future Ready™ student journey.",
+      "The complete 36-week BUILD6™ student journey.",
     duration: "36 weeks",
     curriculum: "future-ready-core",
     status: "active",

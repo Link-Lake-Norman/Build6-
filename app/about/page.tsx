@@ -1,3 +1,4 @@
+import SponsorBanner from "../components/SponsorBanner";
 import "../approved-public-pages.css";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
@@ -20,7 +21,7 @@ export default function AboutPage() {
     <main className="public-page">
       <SiteHeader />
 
-      <section className="about-hero">
+      <section className="about-hero b6-visual-hero b6-visual-about">
         <div>
           <p className="public-eyebrow">
             THE BUILD6™ EXPERIENCE
@@ -161,6 +162,7 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+      <SponsorBanner />
       <PublicFooter />
     </main>
   );

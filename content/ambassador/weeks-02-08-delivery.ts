@@ -195,7 +195,7 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
         "What changed in your understanding of work?",
         "What human skill mattered?",
         "What technical or systems skill did you notice?",
-        "What evidence from this experience belongs in your Future Ready™ story?",
+        "What evidence from this experience belongs in your BUILD6™ story?",
       ],
     },
   },
@@ -276,59 +276,54 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
   {
     week: 6,
-
     monday: {
       reflectionPrompt: [
-        "What creates a strong first impression before you ever explain yourself?",
-        "What professional behavior makes other people trust and rely on you?",
-        "Where do communication, judgment, and accountability show up in everyday work?",
+        "What did you learn about yourself in last week's opportunity exploration?",
+        "What does a strong first impression communicate before you speak?",
+        "What professional habit would you like to strengthen this week?",
       ],
       organizationTasks: [
-        "Open the Week 6 Professional Etiquette student work.",
-        "Identify expectations for arrival, communication, meetings, networking, and follow-through.",
-        "Prepare for role play, peer feedback, and immediate retry.",
+        "Review Week 5 Opportunity Map and outstanding portfolio evidence.",
+        "Prepare for Week 6 Professional Etiquette in Action.",
+        "Practice a clear introduction and identify one first-impression goal.",
       ],
-      projectWork: ["Build a personal Professional Etiquette Code."],
-      capstoneWork: ["Preserve one Professional Etiquette Evidence Story."],
+      projectWork: ["Create a professional introduction and first-impression checklist."],
+      capstoneWork: ["Preserve a first attempt, peer feedback, and a revised introduction."],
     },
-
     tuesday: { lessonWeek: 6 },
-
     wednesday: { appliedLearningAssetIds: [] },
-
     thursday: {
       experience: {
         preparationQuestions: [
-          "What does professional readiness look and sound like?",
-          "How should you respond when expectations are unclear or a mistake happens?",
-          "How can you contribute in a meeting or networking conversation without taking over or disappearing?",
+          "How will you introduce yourself to a professional or guest?",
+          "What makes a question respectful, specific, and useful?",
+          "How can you recover if a conversation becomes uncomfortable?",
         ],
         duringExperience: [
-          "Practice a professional arrival and introduction.",
-          "Practice a clear professional message.",
-          "Work through a workplace judgment and accountability scenario.",
-          "Practice meeting, networking, and guest etiquette.",
-          "Use peer feedback and retry one station.",
+          "Practice a confident, concise professional introduction.",
+          "Ask open-ended questions and listen for useful follow-ups.",
+          "Demonstrate appropriate meeting and guest etiquette.",
+          "Respond to an unexpected workplace situation with accountability.",
+          "Use observer feedback and immediately retry one interaction.",
         ],
         debriefQuestions: [
-          "Which behavior created the strongest professional impression?",
-          "What feedback changed your second attempt?",
-          "Which professional behavior will you apply next week?",
+          "What changed between your first and second attempt?",
+          "Which behavior built trust?",
+          "What professional habit will you practice next?",
         ],
-        portfolioEvidence: "Professional Etiquette Evidence Story + Professional Etiquette Code",
+        portfolioEvidence: "Professional Etiquette Challenge: first attempt, feedback, retry, and reflection.",
       },
       classroom: {
         title: "Professional Etiquette in Action",
-        description: "Students practice first impressions, professional communication, workplace judgment, meetings, networking, accountability, feedback, and retry.",
+        description: "Practice first impressions, professional communication, workplace judgment, meetings, networking, and accountability with role play, feedback, and immediate retry.",
         appliedLearningAssetIds: [],
       },
     },
-
     friday: {
       closingQuestions: [
-        "Which professional behavior will help other people trust and rely on you?",
-        "What will another person see or hear when you apply it?",
-        "What did feedback improve?",
+        "Which professional behavior improved after feedback?",
+        "What would a supervisor or mentor notice about your reliability?",
+        "What will you practice in your next real professional interaction?",
       ],
     },
   },
@@ -338,17 +333,18 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
 
     monday: {
       reflectionPrompt: [
-        "What does a realistic $45,000 first-job life require you to decide?",
+        "What financial choices do you expect to face with a first full-time paycheck?",
         "What financial decision do you still not understand?",
         "What question could produce useful advice?",
       ],
       organizationTasks: [
-        "Build your Week 7 $45,000 first-job scenario and bring forward the tradeoffs you discover.",
+        "Open your Week 7 First $45,000 Job scenario.",
+        "Build a realistic take-home-pay budget and make tradeoffs.",
         "Build questions for Brad McMillan.",
         "Choose your three strongest questions.",
       ],
       projectWork: [
-        "Build a $45,000 first-job scenario and prepare a financial question and decision journal.",
+        "Prepare a financial question and decision journal.",
       ],
       capstoneWork: [
         "Preserve one financial belief that changed or became clearer.",
@@ -468,7 +464,7 @@ export const ambassadorWeeks02To08Delivery: AmbassadorWeekDelivery[] = [
       closingQuestions: [
         "What surprised you?",
         "What role or pathway interests you now?",
-        "What evidence from Terracon belongs in your Future Ready™ story?",
+        "What evidence from Terracon belongs in your BUILD6™ story?",
       ],
     },
   },

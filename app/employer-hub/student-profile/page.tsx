@@ -1,7 +1,7 @@
 export default function EmployerStudentProfilePage() {
 
   const student = {
-    name: "Future Ready Student",
+    name: "BUILD6 Student",
     readiness: 84,
     interests: [
       "Healthcare",
@@ -25,7 +25,7 @@ export default function EmployerStudentProfilePage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Employer Student Profile
+          BUILD6™ Employer Student Profile
         </h1>
 
         <p>

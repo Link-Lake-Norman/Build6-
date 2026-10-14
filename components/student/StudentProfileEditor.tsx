@@ -205,11 +205,11 @@ export default function StudentProfileEditor({
         </Link>
 
         <p className="mt-7 text-sm font-bold uppercase tracking-[0.2em] text-[#F2B705]">
-          Future Ready™ Student Profile
+          BUILD6™ Student Profile
         </p>
 
         <h1 className="mt-3 text-4xl font-black">
-          Build My Future Ready™ Profile
+          Build My BUILD6™ Profile
         </h1>
 
         <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-200">
@@ -312,7 +312,7 @@ export default function StudentProfileEditor({
 
           <ProfileField
             label="Skills I Want to Build"
-            description="Choose the skills you want to strengthen through Future Ready™."
+            description="Choose the skills you want to strengthen through BUILD6™."
             placeholder="I want to improve..."
             value={profile.skillsToBuild}
             onChange={(value) =>

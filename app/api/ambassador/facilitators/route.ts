@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
           data: {
             userId: user.id,
             schoolId: cohort.schoolId,
-            title: "Future Ready™ Facilitator",
+            title: "BUILD6™ Facilitator",
           },
         });
 

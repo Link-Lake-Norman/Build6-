@@ -27,7 +27,7 @@ export default function CurriculumPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Curriculum Hub
+          BUILD6™ Curriculum Hub
         </h1>
 
         <p>

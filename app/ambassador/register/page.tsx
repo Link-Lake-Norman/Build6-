@@ -117,20 +117,20 @@ export default function AmbassadorRegisterPage() {
 
         <section className="bg-[#0D1B3D] p-8 text-white md:p-12">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F2B705]">
-            Future Ready™
+            BUILD6™
           </p>
 
           <h1 className="mt-5 text-4xl font-black leading-tight">
             Create Your
             <br />
-            Future Ready™
+            BUILD6™
             <br />
             Account
           </h1>
 
           <p className="mt-6 max-w-lg leading-7 text-slate-300">
             Your account gives you your own
-            Future Ready™ Student Portal,
+            BUILD6™ Student Portal,
             Passport, Digital Portfolio,
             Reflection Journal, Career
             Exploration tools, and program
@@ -344,7 +344,7 @@ export default function AmbassadorRegisterPage() {
             >
               {loading
                 ? "Creating My Portal..."
-                : "Create My Future Ready™ Account"}
+                : "Create My BUILD6™ Account"}
             </button>
           </form>
 

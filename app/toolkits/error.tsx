@@ -1,0 +1,2 @@
+"use client";
+export default function Error({reset}:{reset:()=>void}) { return <main className="panel"><h1>Toolkit Request Could Not Be Completed</h1><p>Check your details and try again. An activation link may be expired or already used. Contact toolkit support if the problem continues.</p><button onClick={reset}>Try Again</button><p><a href="/toolkits/policies">Support and policies</a></p></main>; }

@@ -83,6 +83,11 @@ export default async function AmbassadorAdminPage() {
 
   return (
     <main className="space-y-8">
+      {/* BUILD6_BOOKS_TOOLKITS_ADMIN_ONLY */}
+      {session.role === "SUPER_ADMIN" ? (
+        <Link href="/ambassador/admin/books-toolkits" className="inline-block rounded-xl bg-[#F2B705] px-5 py-3 font-bold text-[#0D1B3D]">Books &amp; Toolkits · Private</Link>
+      ) : null}
+
       <section className="rounded-3xl bg-[#0D1B3D] p-8 text-white shadow-lg">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2B705]">
           BUILD6™ Administration
@@ -351,7 +356,7 @@ function AdminCard({
 
       <Link
         href={href}
-        className="mt-5 inline-flex rounded-xl bg-[#0D1B3D] px-5 py-3 font-black text-white"
+        className="mt-5 inline-flex rounded-xl bg-[#0D1B3D] px-5 py-3 font-black !text-white" style={{ color: "#ffffff" }}
       >
         {action} →
       </Link>

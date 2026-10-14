@@ -10,7 +10,7 @@ export default function OpportunityMatchPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Opportunity Match
+          BUILD6™ Opportunity Match
         </h1>
 
         <p>

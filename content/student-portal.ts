@@ -1,5 +1,5 @@
 export const studentProfile = {
-  name: "Future Ready Student",
+  name: "BUILD6 Student",
   cohort: "Ambassador 2026",
   initials: "FR",
 };

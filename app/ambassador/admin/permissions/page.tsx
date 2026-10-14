@@ -156,7 +156,7 @@ const sections: Array<{
       {
         key: "facilitatorLessonBuilder",
         label: "Use Lesson Builder",
-        detail: "Facilitators can create an Ambassador/cohort version without changing the Future Ready™ master lesson.",
+        detail: "Facilitators can create an Ambassador/cohort version without changing the BUILD6™ master lesson.",
       },
       {
         key: "facilitatorAddActivities",
@@ -176,7 +176,7 @@ const sections: Array<{
       {
         key: "facilitatorEditCoreCurriculum",
         label: "Edit protected core curriculum",
-        detail: "Keep off to protect Future Ready™ objectives, competencies, assessments, badges, and master language.",
+        detail: "Keep off to protect BUILD6™ objectives, competencies, assessments, badges, and master language.",
       },
     ],
   },

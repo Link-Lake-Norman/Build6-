@@ -12,7 +12,7 @@ export default function AcademyPage() {
     <main className="space-y-10">
       <header className="rounded-3xl bg-[#0D1B3D] px-8 py-10 text-white shadow-lg">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#F2B705]">
-          Future Ready™ Academy
+          BUILD6™ Academy
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -20,7 +20,7 @@ export default function AcademyPage() {
         </h1>
 
         <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-200">
-          Explore the complete Future Ready™ learning journey,
+          Explore the complete BUILD6™ learning journey,
           weekly activities, reflections, and skill-building
           experiences.
         </p>

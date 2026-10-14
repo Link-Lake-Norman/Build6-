@@ -10,7 +10,7 @@ export default function ImpactROIDashboardPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Impact & ROI Dashboard
+          BUILD6™ Impact & ROI Dashboard
         </h1>
 
         <p>

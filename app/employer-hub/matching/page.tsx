@@ -16,7 +16,7 @@ return (
 <section>
 
 <h1 className="text-4xl font-bold">
-Future Ready™ Talent Matching Engine
+BUILD6™ Talent Matching Engine
 </h1>
 
 <p className="mt-3 text-lg">

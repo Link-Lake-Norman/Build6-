@@ -120,7 +120,7 @@ export const activeCohort = {
   id: "ambassador-2026",
   name: "Ambassador 2026",
   organization: "Ambassador Christian School",
-  program: "Future Ready™",
+  program: "BUILD6™",
   currentWeek: 12,
   totalWeeks: 36,
   currentPhase: "DEVELOP™",
@@ -165,7 +165,7 @@ export const facilitatorStats = [
   {
     label: "Current Week",
     value: "12",
-    detail: "Of 36 Future Ready™ weeks",
+    detail: "Of 36 BUILD6™ weeks",
     accent: "gold",
   },
   {
@@ -316,12 +316,12 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     studentName: "Jordan Williams",
     student: "Jordan Williams",
     week: 12,
-    lesson: "Future Ready Skills",
+    lesson: "BUILD6 Skills",
     title: "Week 12 Reflection",
     submitted: "Today",
     submittedAt: "Today",
     submittedDate: "Today",
-    prompt: "How did you apply Future Ready skills this week?",
+    prompt: "How did you apply BUILD6 skills this week?",
     response:
       "I learned how adaptability and communication work together when a team is solving a problem.",
     status: "Pending",
@@ -334,7 +334,7 @@ export const reflectionSubmissions: ReflectionSubmission[] = [
     studentName: "Cameron Reed",
     student: "Cameron Reed",
     week: 12,
-    lesson: "Future Ready Skills",
+    lesson: "BUILD6 Skills",
     title: "Week 12 Reflection",
     submitted: "Yesterday",
     submittedAt: "Yesterday",
@@ -457,7 +457,7 @@ export const todaysAgenda: AgendaItem[] = [
   {
     id: "agenda-002",
     time: "9:10 AM",
-    title: "Future Ready Skills Workshop",
+    title: "BUILD6 Skills Workshop",
     type: "Week 12 lesson",
   },
   {

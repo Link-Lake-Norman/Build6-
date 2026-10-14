@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         typeof body.instructions === "string" &&
         body.instructions.trim()
           ? body.instructions.trim()
-          : `Complete the Future Ready™ resource: ${title}.`;
+          : `Complete the BUILD6™ resource: ${title}.`;
 
       const assignment = await prisma.assignment.create({
         data: {
@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
 
     const instructions =
       body.instructions?.trim() ||
-      `Complete the attached Future Ready™ resource: ${resource.title}.`;
+      `Complete the attached BUILD6™ resource: ${resource.title}.`;
 
     const assignment = await prisma.assignment.create({
       data: {

@@ -616,7 +616,7 @@ export default function MessagesWorkspace() {
               </div>
 
               <h2 className="mt-5 text-xl font-black text-[#0B3B60]">
-                Future Ready™ Messages
+                BUILD6™ Messages
               </h2>
 
               <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">

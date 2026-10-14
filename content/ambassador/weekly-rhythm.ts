@@ -26,7 +26,7 @@ export const ambassadorWeeklyRhythm: AmbassadorWeeklyDay[] = [
       "Help students look back, make meaning from the previous week, organize their work, and prepare for what comes next.",
     activities: [
       "Previous-week reflection",
-      "Future Ready Friday follow-through",
+      "BUILD6 Friday follow-through",
       "Life Economy check-in",
       "Finish or improve incomplete work",
       "Portfolio evidence organization",
@@ -46,9 +46,9 @@ export const ambassadorWeeklyRhythm: AmbassadorWeeklyDay[] = [
     dayNumber: 2,
     day: "Tuesday",
     type: "CORE_LESSON",
-    title: "Core Future Ready™ Lesson",
+    title: "Core BUILD6™ Lesson",
     purpose:
-      "Teach the primary Future Ready™ concept, skill, or framework for the week.",
+      "Teach the primary BUILD6™ concept, skill, or framework for the week.",
     activities: [
       "Weekly lesson",
       "Guided discussion",
@@ -97,7 +97,7 @@ export const ambassadorWeeklyRhythm: AmbassadorWeeklyDay[] = [
     type: "EXPERIENCE_FLEX",
     title: "Experience + Flex Day",
     purpose:
-      "Connect Future Ready™ skills to professionals, workplaces, community experiences, or deeper classroom application.",
+      "Connect BUILD6™ skills to professionals, workplaces, community experiences, or deeper classroom application.",
     flexible: true,
     activities: [
       "Guest speaker",
@@ -116,7 +116,7 @@ export const ambassadorWeeklyRhythm: AmbassadorWeeklyDay[] = [
       "Prepare students before speakers, panels, and field trips.",
       "Require active participation rather than passive attendance.",
       "Connect the experience back to the week's skill.",
-      "Capture something students can reflect on or add to their Future Ready record.",
+      "Capture something students can reflect on or add to their BUILD6 record.",
     ],
   },
 
@@ -124,7 +124,7 @@ export const ambassadorWeeklyRhythm: AmbassadorWeeklyDay[] = [
     dayNumber: 5,
     day: "Friday",
     type: "FUTURE_READY_FRIDAY",
-    title: "Future Ready Friday™",
+    title: "BUILD6™ Friday",
     purpose:
       "Close the learning loop by reviewing decisions, money, habits, growth, and what students will carry into the next week.",
     activities: [

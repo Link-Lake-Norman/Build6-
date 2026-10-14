@@ -4,7 +4,7 @@ export const weekOneMainDelivery = {
   title: "Who You Are Matters",
   capstoneTitle: "My Story Begins Here",
   weeklyGoal:
-    "Begin understanding who you are, what has shaped you, and how your strengths, interests, values, experiences, and ideas become part of your Future Ready™ story.",
+    "Begin understanding who you are, what has shaped you, and how your strengths, interests, values, experiences, and ideas become part of your BUILD6™ story.",
 
   rhythm: [
     {
@@ -40,7 +40,7 @@ export const weekOneMainDelivery = {
   ],
 
   monday: {
-    goal: "Students understand the Future Ready™ Capstone and begin their My Story Brain Map.",
+    goal: "Students understand the BUILD6™ Capstone and begin their My Story Brain Map.",
 
     agenda: [
       {
@@ -85,6 +85,6 @@ export const weekOneMainDelivery = {
     ],
 
     coachFlex:
-      "Add your own coaching, examples, discussion, team activity, or extension. The method is flexible; the Future Ready™ outcome stays aligned.",
+      "Add your own coaching, examples, discussion, team activity, or extension. The method is flexible; the BUILD6™ outcome stays aligned.",
   },
 } as const;

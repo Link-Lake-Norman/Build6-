@@ -6,7 +6,7 @@ export default function EmployerOpportunitiesPage() {
     <main className="max-w-7xl mx-auto p-8 space-y-8">
       <div className="rounded-3xl bg-[#0D1B3D] text-white p-10">
         <p className="text-sm uppercase tracking-[0.2em] text-[#F2B705] font-bold">
-          Future Ready™ Employer Hub
+          BUILD6™ Employer Hub
         </p>
 
         <h1 className="mt-3 text-4xl font-bold">
@@ -15,7 +15,7 @@ export default function EmployerOpportunitiesPage() {
 
         <p className="mt-4 text-lg text-slate-200 max-w-3xl">
           Explore internships, mentoring, workplace projects and career
-          experiences available to Future Ready™ students.
+          experiences available to BUILD6™ students.
         </p>
       </div>
 

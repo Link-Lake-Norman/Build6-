@@ -28,7 +28,7 @@ export default function ModuleOnePage() {
         </h1>
 
         <p>
-          Build self-awareness and understand what makes you uniquely Future Ready™.
+          Build self-awareness and understand what makes you uniquely BUILD6™.
         </p>
 
       </section>

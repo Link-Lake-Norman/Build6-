@@ -45,7 +45,7 @@ export default function PartnerPortal() {
       <section>
 
         <h1 className="text-4xl font-bold">
-          Future Ready™ Partner Portal
+          BUILD6™ Partner Portal
         </h1>
 
 
@@ -264,7 +264,7 @@ export default function PartnerPortal() {
 
 
         <h2 className="text-2xl font-bold">
-          Future Ready™ Impact Dashboard
+          BUILD6™ Impact Dashboard
         </h2>
 
 

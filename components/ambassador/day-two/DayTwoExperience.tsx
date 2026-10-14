@@ -74,10 +74,10 @@ const SNAPSHOT_FIELDS: {
   {
     key: "futureSkill",
     number: "06",
-    title: "My Future Ready Goal",
+    title: "My BUILD6 Goal",
     prompt:
-      "By the end of Future Ready™, what do you want to be able to say you can do?",
-    placeholder: "By the end of Future Ready™, I want to be able to...",
+      "By the end of BUILD6™, what do you want to be able to say you can do?",
+    placeholder: "By the end of BUILD6™, I want to be able to...",
   },
 ];
 
@@ -182,7 +182,7 @@ export default function DayTwoExperience({ studentId, firstName }: Props) {
       snapshot.reputation &&
         `If an employer met me today, I would want them to remember that ${snapshot.reputation}`,
       snapshot.futureSkill &&
-        `By the end of Future Ready™, I want to be able to ${snapshot.futureSkill}`,
+        `By the end of BUILD6™, I want to be able to ${snapshot.futureSkill}`,
     ].filter(Boolean);
 
     setReflection(parts.join(". ") + (parts.length ? "." : ""));
@@ -247,7 +247,7 @@ export default function DayTwoExperience({ studentId, firstName }: Props) {
             </p>
 
             <h2 className="mt-2 text-3xl font-black">
-              Start Your Future Ready™ Story
+              Start Your BUILD6™ Story
             </h2>
 
             <p className="mt-3 max-w-3xl text-base leading-7 text-slate-200">
@@ -380,7 +380,7 @@ export default function DayTwoExperience({ studentId, firstName }: Props) {
 
           <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-600">
             Right now, what do you know about yourself, what are you still
-            figuring out, and what is one thing you want Future Ready™ to help
+            figuring out, and what is one thing you want BUILD6™ to help
             you accomplish?
           </p>
 

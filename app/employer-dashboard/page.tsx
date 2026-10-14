@@ -13,7 +13,7 @@ export default function EmployerDashboardPage() {
       <section className="hero">
 
         <h1>
-          Future Ready™ Employer Dashboard
+          BUILD6™ Employer Dashboard
         </h1>
 
         <p>
